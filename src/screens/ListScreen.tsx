@@ -80,16 +80,9 @@ function ItemRow({ item, onUpdate, onDelete, onBuyerOpen }: ItemRowProps) {
           </button>
         </div>
         <div
-          className="toggle"
-          style={{ background: item.enabled ? 'var(--accent)' : 'var(--gb)' }}
-          onClick={() => onUpdate(item.id, 'enabled', !item.enabled)}>
-          <span style={{
-            position: 'absolute', top: 2,
-            left: item.enabled ? 18 : 2,
-            width: 16, height: 16, borderRadius: '50%',
-            background: 'white', transition: 'left .2s',
-          }} />
-        </div>
+          className={`toggle${item.enabled ? ' on' : ''}`}
+          onClick={() => onUpdate(item.id, 'enabled', !item.enabled)}
+        />
         <button onClick={() => { haptic('medium'); if (confirm('Удалить?')) onDelete(item.id) }}
           className="text-[12px] cursor-pointer border-none bg-transparent px-1"
           style={{ color: 'var(--muted)' }}>
