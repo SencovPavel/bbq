@@ -7,7 +7,7 @@ interface GroupBarProps {
   onBack: () => void
 }
 
-export function GroupBar({ group, wsOk, onBack }: GroupBarProps) {
+export function GroupBar({ group, onBack }: GroupBarProps) {
   const [copied, setCopied] = useState(false)
 
   function copyCode() {
@@ -18,30 +18,32 @@ export function GroupBar({ group, wsOk, onBack }: GroupBarProps) {
   }
 
   return (
-    <div className="flex items-center justify-between gap-2 px-4 py-2">
+    <div className="flex items-center gap-2 px-3 py-2">
+
+      {/* ← Назад */}
       <button onClick={onBack}
-        className="text-xl leading-none border-none bg-transparent cursor-pointer p-0"
-        title="К списку групп">
-        🔥
+        className="flex items-center gap-1 border-none bg-transparent cursor-pointer p-0 flex-shrink-0"
+        style={{ color: 'var(--muted)', fontSize: 13, fontWeight: 600 }}>
+        <span style={{ fontSize: 16, lineHeight: 1 }}>←</span>
+        Назад
       </button>
-      <div className="flex-1 min-w-0 text-center">
-        <div className="text-sm font-extrabold truncate" style={{ color: 'var(--text)' }}>
-          {group?.name || '…'}
-        </div>
-        <button onClick={copyCode}
-          className="inline-flex items-center gap-1 rounded-full px-3 py-[3px] text-[11px] font-bold cursor-pointer border-none mt-[3px]"
-          style={{ background: 'var(--g)', border: '1px solid var(--gb)', color: 'var(--muted)' }}>
-          Код: <b style={{ color: 'var(--accent2)', letterSpacing: '.06em' }}>
-            {copied ? '✓ скопировано' : (group?.invite_code || '—')}
-          </b>
-        </button>
+
+      {/* Название группы */}
+      <div className="flex-1 min-w-0 text-center font-extrabold truncate"
+        style={{ fontSize: 15, color: 'var(--text)' }}>
+        {group?.name || '…'}
       </div>
-      <div className="w-2 h-2 rounded-full flex-shrink-0"
-        style={{
-          background: wsOk ? 'var(--green)' : 'var(--muted)',
-          boxShadow:  wsOk ? '0 0 8px var(--green)' : 'none',
-          transition: 'background .4s',
-        }} />
+
+      {/* Код · тап → скопировать */}
+      <button onClick={copyCode}
+        className="flex items-center gap-1 flex-shrink-0 border-none bg-transparent cursor-pointer p-0"
+        style={{ color: copied ? 'var(--green)' : 'var(--muted)', fontSize: 13, fontWeight: 600 }}>
+        {copied
+          ? '✓ скопировано'
+          : <><b style={{ color: 'var(--accent2)', letterSpacing: '.05em' }}>{group?.invite_code || '—'}</b> 📋</>
+        }
+      </button>
+
     </div>
   )
 }
