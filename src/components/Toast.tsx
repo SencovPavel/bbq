@@ -7,11 +7,12 @@ export function Toast() {
       style={{
         transform: toast.visible
           ? 'translateX(-50%) translateY(0)'
-          : 'translateX(-50%) translateY(20px)',
-        opacity:    toast.visible ? 1 : 0,
-        bottom:     16,
+          : 'translateX(-50%) translateY(16px)',
+        opacity: toast.visible ? 1 : 0,
+        bottom:  20,
         background: toast.color,
-        color:      toast.color === 'var(--green)' ? '#0d0f1e' : '#fff',
+        color: '#fff',
+        boxShadow: `0 4px 20px ${toast.color}55`,
       }}>
       {toast.msg}
     </div>
