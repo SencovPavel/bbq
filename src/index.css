@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg:      #0d0f1e;
+  --accent:  #FF6B35;
+  --accent2: #FFB347;
+  --green:   #4ade80;
+  --red:     #f87171;
+  --blue:    #60a5fa;
+  --text:    #f0f0f8;
+  --muted:   rgba(240,240,248,0.5);
+  --g:       rgba(255,255,255,0.07);
+  --gb:      rgba(255,255,255,0.14);
+  --gbs:     rgba(255,255,255,0.24);
+}
+
+html, body, #root {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* glass utilities */
+@layer components {
+  .glass {
+    background: var(--g);
+    border: 1px solid var(--gb);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .glass-strong {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid var(--gbs);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+  .glass-input {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--gb);
+    color: var(--text);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .glass-input:focus {
+    border-color: var(--accent);
+  }
+  .btn-accent {
+    background: var(--accent);
+    color: white;
+    font-weight: 800;
+    transition: opacity .15s;
+  }
+  .btn-accent:active { opacity: 0.85; }
+  .btn-glass {
+    background: var(--g);
+    border: 1px solid var(--gb);
+    color: var(--text);
+    font-weight: 800;
+    backdrop-filter: blur(12px);
+    transition: border-color .15s;
+  }
+  .btn-glass:active { border-color: var(--accent); }
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 0; }
+
+/* toggle */
+.toggle {
+  width: 36px; height: 20px;
+  border-radius: 100px;
+  background: var(--gb);
+  position: relative;
+  cursor: pointer;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: white;
+  transition: transform .2s;
+}
+.toggle.on { background: var(--accent); }
+.toggle.on::after { transform: translateX(16px); }
+
+/* animation */
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+.pulse { animation: pulse 1.2s infinite; }
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.slide-up { animation: slideUp .25s ease-out; }

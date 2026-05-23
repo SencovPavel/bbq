@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master, dev]
+
+jobs:
+  deploy:
+    name: Deploy → ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          BRANCH: ${{ github.ref_name }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: BRANCH
+          script: |
+            set -e
+
+            if [ "$BRANCH" = "master" ]; then
+              DEPLOY_DIR="/var/www/picnic"
+              PM2_APP="picnic"
+            else
+              DEPLOY_DIR="/var/www/picnic-dev"
+              PM2_APP="picnic-dev"
+            fi
+
+            echo "▶ Deploying branch '$BRANCH' → $DEPLOY_DIR"
+
+            cd "$DEPLOY_DIR/picnic-frontend"
+
+            git fetch origin
+            git checkout "$BRANCH"
+            git reset --hard "origin/$BRANCH"
+
+            npm ci --prefer-offline
+            npm run build
+
+            pm2 restart "$PM2_APP" --update-env
+
+            echo "✅ Done: $BRANCH deployed to $DEPLOY_DIR"
