@@ -23,16 +23,14 @@ jobs:
             set -e
 
             if [ "$BRANCH" = "main" ]; then
-              DEPLOY_DIR="/var/www/picnic"
-              PM2_APP="picnic"
+              DEPLOY_DIR="/var/www/picnic/picnic-main"
             else
-              DEPLOY_DIR="/var/www/picnic-dev"
-              PM2_APP="picnic-dev"
+              DEPLOY_DIR="/var/www/picnic/picnic-dev"
             fi
 
             echo "▶ Deploying branch '$BRANCH' → $DEPLOY_DIR"
 
-            cd "$DEPLOY_DIR/picnic-frontend"
+            cd "$DEPLOY_DIR"
 
             git fetch origin
             git checkout "$BRANCH"
@@ -41,6 +39,4 @@ jobs:
             npm ci --prefer-offline
             npm run build
 
-            pm2 restart "$PM2_APP" --update-env
-
-            echo "✅ Done: $BRANCH deployed to $DEPLOY_DIR"
+            echo "✅ Done: $BRANCH → $DEPLOY_DIR/dist"

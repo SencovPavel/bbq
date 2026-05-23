@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp /tmp/picnic-v3-extract/picnic-v3/agent.js \"/Users/pavel/Desktop/project/Бот покупок/picnic-backend/agent.js\")",
+      "Bash(cp /tmp/picnic-v3-extract/picnic-v3/bot.js \"/Users/pavel/Desktop/project/Бот покупок/picnic-backend/bot.js\")",
+      "Bash(cp /tmp/picnic-v3-extract/picnic-v3/migrate.js \"/Users/pavel/Desktop/project/Бот покупок/picnic-backend/migrate.js\")",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(ssh-add --apple-use-keychain ~/.ssh/id_rsa)",
+      "Bash(ssh-add -K ~/.ssh/id_rsa)",
+      "Bash(GIT_SSH_COMMAND=\"ssh -o IdentitiesOnly=yes\" git push -u origin main)",
+      "Bash(git add *)"
+    ]
+  }
+}
