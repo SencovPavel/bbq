@@ -3,17 +3,23 @@
 @tailwind utilities;
 
 :root {
-  --bg:      #0d0f1e;
-  --accent:  #FF6B35;
-  --accent2: #FFB347;
+  /* warm dark palette */
+  --bg:      #100e0b;
+  --card:    rgba(255,240,200,0.05);
+  --card-b:  rgba(255,220,150,0.12);
+
+  --accent:  #F97316;
+  --accent2: #FBBF24;
   --green:   #4ade80;
   --red:     #f87171;
   --blue:    #60a5fa;
-  --text:    #f0f0f8;
-  --muted:   rgba(240,240,248,0.5);
-  --g:       rgba(255,255,255,0.07);
-  --gb:      rgba(255,255,255,0.14);
-  --gbs:     rgba(255,255,255,0.24);
+
+  --text:    #f5f0ea;
+  --muted:   rgba(245,240,234,0.45);
+
+  --g:       rgba(255,240,200,0.05);
+  --gb:      rgba(255,220,150,0.12);
+  --gbs:     rgba(255,220,150,0.22);
 }
 
 html, body, #root {
@@ -34,13 +40,13 @@ html, body, #root {
     -webkit-backdrop-filter: blur(20px);
   }
   .glass-strong {
-    background: rgba(255,255,255,0.10);
+    background: rgba(255,240,200,0.08);
     border: 1px solid var(--gbs);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
   .glass-input {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,240,200,0.06);
     border: 1px solid var(--gb);
     color: var(--text);
     outline: none;
@@ -77,8 +83,8 @@ html, body, #root {
   background: var(--gb);
   position: relative;
   cursor: pointer;
-  transition: background .2s;
   flex-shrink: 0;
+  transition: background .2s;
 }
 .toggle::after {
   content: '';

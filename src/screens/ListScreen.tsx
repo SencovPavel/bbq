@@ -41,54 +41,57 @@ function ItemRow({ item, onUpdate, onDelete, onBuyerOpen }: ItemRowProps) {
   const qty   = item.qty
 
   return (
-    <div className="grid gap-2 px-[15px] py-[11px]" style={{ gridTemplateColumns: '1fr auto' }}>
-      <div>
-        <div className="text-[13px] font-bold mb-[2px]">
-          {item.name}
+    <div className="px-[15px] py-[12px]" style={{ opacity: item.enabled ? 1 : 0.4, transition: 'opacity .2s' }}>
+
+      {/* Строка 1: название + тогл */}
+      <div className="flex items-center justify-between gap-3 mb-[8px]">
+        <div className="flex-1 min-w-0 flex items-center gap-1 flex-wrap">
+          <span className="text-[14px] font-bold leading-tight"
+            style={{ textDecoration: item.enabled ? 'none' : 'line-through', color: 'var(--text)' }}>
+            {item.name}
+          </span>
           <SourceBadge source={item.source} />
         </div>
-        <div className="text-[11px]" style={{ color: 'var(--muted)' }}>
-          {qty} {item.unit}
-          {price > 0 && <span style={{ color: 'var(--accent2)', marginLeft: 6 }}>{fmt(price)}/{item.unit}</span>}
-          {!price && <span style={{ marginLeft: 6 }}>· цена не указана</span>}
-          {item.chat_hint && <span style={{ fontStyle: 'italic', marginLeft: 6 }}>"{item.chat_hint}"</span>}
-        </div>
-        <button
-          onClick={() => onBuyerOpen(item.id)}
-          className="inline-flex items-center gap-1 rounded-full text-[11px] font-bold cursor-pointer border-none mt-[5px]"
-          style={{
-            background: item.buyer_name ? 'rgba(255,107,53,.15)' : 'var(--g)',
-            border: `1px solid ${item.buyer_name ? 'rgba(255,107,53,.3)' : 'var(--gb)'}`,
-            color: item.buyer_name ? 'var(--accent)' : 'var(--muted)',
-            padding: '2px 8px', fontFamily: 'inherit',
-          }}>
-          {item.buyer_name ? `👤 ${item.buyer_name}` : '+ Кто купит?'}
-        </button>
+        <div className={`toggle${item.enabled ? ' on' : ''}`}
+          onClick={() => { haptic(); onUpdate(item.id, 'enabled', !item.enabled) }} />
       </div>
-      <div className="flex flex-col items-end gap-[5px]">
-        <div className="flex items-center gap-[5px]">
-          <button onClick={() => { haptic(); onUpdate(item.id, 'qty', Math.max(0, +(qty - 0.5).toFixed(2))) }}
-            className="flex items-center justify-center rounded-[7px] text-[15px] cursor-pointer border-none"
-            style={{ width: 26, height: 26, background: 'rgba(255,255,255,.08)', border: '1px solid var(--gbs)', color: 'var(--text)' }}>
-            −
-          </button>
-          <span className="text-[13px] font-bold text-center" style={{ minWidth: 28 }}>{qty}</span>
-          <button onClick={() => { haptic(); onUpdate(item.id, 'qty', +(qty + 0.5).toFixed(2)) }}
-            className="flex items-center justify-center rounded-[7px] text-[15px] cursor-pointer border-none"
-            style={{ width: 26, height: 26, background: 'rgba(255,255,255,.08)', border: '1px solid var(--gbs)', color: 'var(--text)' }}>
-            +
-          </button>
-        </div>
-        <div
-          className={`toggle${item.enabled ? ' on' : ''}`}
-          onClick={() => onUpdate(item.id, 'enabled', !item.enabled)}
-        />
+
+      {/* Строка 2: степпер + цена + удалить */}
+      <div className="flex items-center gap-[8px]">
+        <button onClick={() => { haptic(); onUpdate(item.id, 'qty', Math.max(0, +(qty - 0.5).toFixed(2))) }}
+          className="flex items-center justify-center cursor-pointer border-none flex-shrink-0"
+          style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--g)', border: '1px solid var(--gbs)', color: 'var(--text)', fontSize: 15 }}>
+          −
+        </button>
+        <span className="text-[13px] font-bold" style={{ minWidth: 40, textAlign: 'center' }}>
+          {qty} {item.unit}
+        </span>
+        <button onClick={() => { haptic(); onUpdate(item.id, 'qty', +(qty + 0.5).toFixed(2)) }}
+          className="flex items-center justify-center cursor-pointer border-none flex-shrink-0"
+          style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--g)', border: '1px solid var(--gbs)', color: 'var(--text)', fontSize: 15 }}>
+          +
+        </button>
+        <span className="text-[11px] flex-1" style={{ color: price > 0 ? 'var(--accent2)' : 'var(--muted)' }}>
+          {price > 0 ? `${fmt(price)} ₽/${item.unit}` : 'цена не указана'}
+        </span>
         <button onClick={() => { haptic('medium'); if (confirm('Удалить?')) onDelete(item.id) }}
-          className="text-[12px] cursor-pointer border-none bg-transparent px-1"
-          style={{ color: 'var(--muted)' }}>
+          className="cursor-pointer border-none bg-transparent p-[3px]"
+          style={{ color: 'var(--muted)', fontSize: 13 }}>
           🗑
         </button>
       </div>
+
+      {/* Строка 3: покупатель */}
+      <button onClick={() => onBuyerOpen(item.id)}
+        className="inline-flex items-center gap-1 rounded-full text-[11px] font-bold cursor-pointer border-none mt-[8px]"
+        style={{
+          background: item.buyer_name ? 'rgba(249,115,22,.15)' : 'transparent',
+          border: `1px solid ${item.buyer_name ? 'rgba(249,115,22,.3)' : 'var(--gb)'}`,
+          color: item.buyer_name ? 'var(--accent)' : 'var(--muted)',
+          padding: '3px 10px', fontFamily: 'inherit',
+        }}>
+        {item.buyer_name ? `👤 ${item.buyer_name}` : '+ Кто купит?'}
+      </button>
     </div>
   )
 }

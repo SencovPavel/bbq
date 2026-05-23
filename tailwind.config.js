@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        accent:  '#FF6B35',
-        accent2: '#FFB347',
-        glass:   'rgba(255,255,255,0.07)',
+        accent:  '#F97316',
+        accent2: '#FBBF24',
+        glass:   'rgba(255,240,200,0.05)',
       },
       fontFamily: {
         sans: ['-apple-system', 'SF Pro Display', 'Nunito', 'sans-serif'],
