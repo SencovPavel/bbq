@@ -24,7 +24,7 @@ export function useWebSocket(groupId: string | null, userId: string | undefined)
   const connect = useCallback(() => {
     if (!groupId) return
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:'
-    const ws    = new WebSocket(`${proto}//${location.host}`)
+    const ws    = new WebSocket(`${proto}//${location.host}/ws`)
     wsRef.current = ws
 
     ws.onopen = () => {
