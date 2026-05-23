@@ -15,7 +15,7 @@ interface TopNavProps {
 export function TopNav({ active, onChange }: TopNavProps) {
   return (
     <div className="sticky top-0 z-50 flex border-b"
-      style={{ background: 'rgba(13,15,30,0.75)', backdropFilter: 'blur(24px)', borderColor: 'var(--gb)' }}>
+      style={{ background: 'rgba(16,14,11,0.88)', backdropFilter: 'blur(24px)', borderColor: 'var(--gb)' }}>
       {TABS.map(t => (
         <button key={t.id}
           onClick={() => onChange(t.id)}

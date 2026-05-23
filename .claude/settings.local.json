@@ -11,7 +11,11 @@
       "Bash(GIT_SSH_COMMAND=\"ssh -o IdentitiesOnly=yes\" git push -u origin main)",
       "Bash(git add *)",
       "Bash(npm install *)",
-      "Bash(git commit -m 'chore: add package-lock.json for reproducible installs *)"
+      "Bash(git commit -m 'chore: add package-lock.json for reproducible installs *)",
+      "Bash(git commit -m 'fix: remove duplicate toggle circle \\(span + ::after conflict\\) *)",
+      "Bash(git commit -m 'redesign: clean header — back button, name, copy code *)",
+      "Bash(mkdir -p \"/Users/pavel/Desktop/project/Бот покупок/picnic-frontend/.claude\")",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }

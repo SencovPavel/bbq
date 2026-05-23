@@ -51,9 +51,9 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
               className="glass rounded-[16px] p-4 mb-[10px] flex items-center gap-3 cursor-pointer active:opacity-80 transition-opacity">
               <div className="flex items-center justify-center rounded-[12px] text-[22px] flex-shrink-0"
                 style={{ width: 46, height: 46,
-                  background: 'linear-gradient(135deg,rgba(255,107,53,.3),rgba(255,179,71,.2))',
-                  border: '1px solid rgba(255,107,53,.3)' }}>
-                🔥
+                  background: 'linear-gradient(135deg,rgba(249,115,22,.25),rgba(251,191,36,.15))',
+                  border: '1px solid rgba(249,115,22,.25)' }}>
+                🏕️
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-[15px] font-extrabold truncate">{g.name}</div>

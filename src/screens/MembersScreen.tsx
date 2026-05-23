@@ -65,7 +65,7 @@ export function MembersScreen() {
               <div className="flex items-center gap-[10px] px-[15px] py-[12px]">
                 <div className="flex items-center justify-center rounded-full text-[14px] font-extrabold flex-shrink-0"
                   style={{ width: 36, height: 36,
-                    background: 'linear-gradient(135deg,rgba(255,107,53,.3),rgba(124,58,237,.3))',
+                    background: 'linear-gradient(135deg,rgba(249,115,22,.3),rgba(251,191,36,.2))',
                     border: '1px solid var(--gbs)', color: 'var(--accent)' }}>
                   {m.name.charAt(0).toUpperCase()}
                 </div>

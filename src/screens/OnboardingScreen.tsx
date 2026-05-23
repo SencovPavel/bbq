@@ -46,7 +46,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
   const inputStyle: CSSProperties = {
     width: '100%', padding: '12px 14px',
     border: '1px solid var(--gb)', borderRadius: 12,
-    background: 'rgba(255,255,255,.08)', color: 'var(--text)',
+    background: 'rgba(255,240,200,.06)', color: 'var(--text)',
     fontFamily: 'inherit', fontSize: 14, fontWeight: 600, outline: 'none',
   }
 
@@ -69,7 +69,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
                 color:      tab === t ? '#fff' : 'var(--muted)',
                 fontFamily: 'inherit',
               }}>
-              {t === 'create' ? 'Создать группу' : 'Войти по коду'}
+              {t === 'create' ? '＋ Создать группу' : 'Войти по коду'}
             </button>
           ))}
         </div>

@@ -61,8 +61,8 @@ export function SummaryScreen() {
     <div className="px-[14px] pt-2 pb-8 relative z-10">
       {/* Hero */}
       <div className="rounded-[20px] p-[22px] mb-3 grid grid-cols-2 gap-[14px]"
-        style={{ background: 'linear-gradient(135deg,rgba(255,107,53,.25),rgba(255,179,71,.15))',
-                 border: '1px solid rgba(255,107,53,.3)', backdropFilter: 'blur(20px)' }}>
+        style={{ background: 'linear-gradient(135deg,rgba(249,115,22,.22),rgba(251,191,36,.12))',
+                 border: '1px solid rgba(249,115,22,.28)', backdropFilter: 'blur(20px)' }}>
         <div>
           <div className="text-[10px] font-bold uppercase tracking-[.08em] mb-[5px]" style={{ opacity: .65 }}>Куплено</div>
           <div className="text-[26px] font-black tracking-tight">

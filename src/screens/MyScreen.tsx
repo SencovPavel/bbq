@@ -71,7 +71,7 @@ export function MyScreen() {
                 width: 28, height: 28,
                 border:     it.bought ? '2px solid var(--green)' : '2px solid var(--gbs)',
                 background: it.bought ? 'var(--green)' : 'transparent',
-                color:      it.bought ? '#0d0f1e' : 'transparent',
+                color:      it.bought ? '#100e0b' : 'transparent',
                 fontSize: 13,
               }}>
               ✓
@@ -81,13 +81,13 @@ export function MyScreen() {
               <div className="flex items-center gap-[5px] mt-[6px]">
                 <button onClick={() => changeQty(it.id, qty, -0.5)}
                   className="flex items-center justify-center rounded-[7px] text-[13px] cursor-pointer border-none"
-                  style={{ width: 22, height: 22, background: 'rgba(255,255,255,.08)', border: '1px solid var(--gbs)', color: 'var(--text)' }}>
+                  style={{ width: 22, height: 22, background: 'rgba(255,240,200,.06)', border: '1px solid var(--gbs)', color: 'var(--text)' }}>
                   −
                 </button>
                 <span className="text-[13px] font-bold">{qty}</span>
                 <button onClick={() => changeQty(it.id, qty, 0.5)}
                   className="flex items-center justify-center rounded-[7px] text-[13px] cursor-pointer border-none"
-                  style={{ width: 22, height: 22, background: 'rgba(255,255,255,.08)', border: '1px solid var(--gbs)', color: 'var(--text)' }}>
+                  style={{ width: 22, height: 22, background: 'rgba(255,240,200,.06)', border: '1px solid var(--gbs)', color: 'var(--text)' }}>
                   +
                 </button>
                 <span className="text-[11px]" style={{ color: 'var(--muted)' }}>{it.unit}</span>
