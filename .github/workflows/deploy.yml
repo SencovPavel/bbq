@@ -23,9 +23,9 @@ jobs:
             set -e
 
             if [ "$BRANCH" = "main" ]; then
-              DEPLOY_DIR="/var/www/picnic/picnic-main"
+              DEPLOY_DIR="/var/www/picnic/fe-main"
             else
-              DEPLOY_DIR="/var/www/picnic/picnic-dev"
+              DEPLOY_DIR="/var/www/picnic/fe-dev"
             fi
 
             echo "▶ Deploying branch '$BRANCH' → $DEPLOY_DIR"

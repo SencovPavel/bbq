@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { GlassCard, Divider } from '../components/GlassCard'
 import { Modal, ModalButtons, GlassInput, GlassSelect } from '../components/Modal'
+import { ConfirmModal } from '../components/ConfirmModal'
+import { PriceCell } from '../components/PriceCell'
 import { fmt } from '../lib/session'
 import { haptic } from '../lib/tg'
 import { useWsStore } from '../stores/wsStore'
@@ -32,13 +34,55 @@ interface ItemRowProps {
   item: Item
   members: Member[]
   onUpdate: (id: string, field: string, value: unknown) => void
-  onDelete: (id: string) => void
+  onDeleteRequest: (id: string) => void
   onBuyerOpen: (id: string) => void
 }
 
-function ItemRow({ item, onUpdate, onDelete, onBuyerOpen }: ItemRowProps) {
-  const price = item.price
-  const qty   = item.qty
+function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps) {
+  // ── qty: local optimistic state + debounce ──
+  const [localQty, setLocalQty] = useState(item.qty)
+  const qtyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (!qtyTimer.current) setLocalQty(item.qty)
+  }, [item.qty])
+
+  function changeQty(delta: number) {
+    haptic()
+    const next = Math.max(0, +(localQty + delta).toFixed(2))
+    setLocalQty(next)
+    if (qtyTimer.current) clearTimeout(qtyTimer.current)
+    qtyTimer.current = setTimeout(() => {
+      onUpdate(item.id, 'qty', next)
+      qtyTimer.current = null
+    }, 400)
+  }
+
+  // ── name: inline edit ──
+  const [editing,  setEditing] = useState(false)
+  const [editName, setEditName] = useState(item.name)
+  const nameRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!editing) setEditName(item.name)
+  }, [item.name, editing])
+
+  function startEdit() {
+    setEditing(true)
+    setTimeout(() => nameRef.current?.focus(), 0)
+  }
+
+  function commitEdit() {
+    const trimmed = editName.trim()
+    if (trimmed && trimmed !== item.name) onUpdate(item.id, 'name', trimmed)
+    else setEditName(item.name)
+    setEditing(false)
+  }
+
+  function cancelEdit() {
+    setEditName(item.name)
+    setEditing(false)
+  }
 
   return (
     <div className="px-[15px] py-[12px]" style={{ opacity: item.enabled ? 1 : 0.4, transition: 'opacity .2s' }}>
@@ -46,11 +90,31 @@ function ItemRow({ item, onUpdate, onDelete, onBuyerOpen }: ItemRowProps) {
       {/* Строка 1: название + тогл */}
       <div className="flex items-center justify-between gap-3 mb-[8px]">
         <div className="flex-1 min-w-0 flex items-center gap-1 flex-wrap">
-          <span className="text-[14px] font-bold leading-tight"
-            style={{ textDecoration: item.enabled ? 'none' : 'line-through', color: 'var(--text)' }}>
-            {item.name}
-          </span>
-          <SourceBadge source={item.source} />
+          {editing ? (
+            <input
+              ref={nameRef}
+              value={editName}
+              onChange={e => setEditName(e.target.value)}
+              onBlur={commitEdit}
+              onKeyDown={e => {
+                if (e.key === 'Enter') { e.preventDefault(); commitEdit() }
+                if (e.key === 'Escape') cancelEdit()
+              }}
+              className="glass-input text-[14px] font-bold rounded-[8px] flex-1"
+              style={{ minWidth: 0, padding: '2px 8px',
+                border: '1px solid var(--accent)', background: 'rgba(249,115,22,.08)', color: 'var(--text)' }}
+            />
+          ) : (
+            <span
+              className="text-[14px] font-bold leading-tight cursor-text"
+              style={{ textDecoration: item.enabled ? 'none' : 'line-through', color: 'var(--text)' }}
+              onClick={startEdit}
+              title="Нажмите чтобы изменить"
+            >
+              {item.name}
+            </span>
+          )}
+          {!editing && <SourceBadge source={item.source} />}
         </div>
         <div className={`toggle${item.enabled ? ' on' : ''}`}
           onClick={() => { haptic(); onUpdate(item.id, 'enabled', !item.enabled) }} />
@@ -58,24 +122,28 @@ function ItemRow({ item, onUpdate, onDelete, onBuyerOpen }: ItemRowProps) {
 
       {/* Строка 2: степпер + цена + удалить */}
       <div className="flex items-center gap-[8px]">
-        <button onClick={() => { haptic(); onUpdate(item.id, 'qty', Math.max(0, +(qty - 0.5).toFixed(2))) }}
+        <button onClick={() => changeQty(-0.5)}
           className="flex items-center justify-center cursor-pointer border-none flex-shrink-0"
           style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--g)', border: '1px solid var(--gbs)', color: 'var(--text)', fontSize: 15 }}>
           −
         </button>
         <span className="text-[13px] font-bold" style={{ minWidth: 40, textAlign: 'center' }}>
-          {qty} {item.unit}
+          {localQty} {item.unit}
         </span>
-        <button onClick={() => { haptic(); onUpdate(item.id, 'qty', +(qty + 0.5).toFixed(2)) }}
+        <button onClick={() => changeQty(+0.5)}
           className="flex items-center justify-center cursor-pointer border-none flex-shrink-0"
           style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--g)', border: '1px solid var(--gbs)', color: 'var(--text)', fontSize: 15 }}>
           +
         </button>
-        <span className="text-[11px] flex-1" style={{ color: price > 0 ? 'var(--accent2)' : 'var(--muted)' }}>
-          {price > 0 ? `${fmt(price)} ₽/${item.unit}` : 'цена не указана'}
-        </span>
-        <button onClick={() => { haptic('medium'); if (confirm('Удалить?')) onDelete(item.id) }}
-          className="cursor-pointer border-none bg-transparent p-[3px]"
+
+        {/* Цена прямо в строке */}
+        <div className="flex items-center gap-[4px] ml-auto">
+          <PriceCell item={item} onChange={(id, price) => onUpdate(id, 'price', price)} />
+          <span className="text-[10px]" style={{ color: 'var(--muted)' }}>₽/{item.unit}</span>
+        </div>
+
+        <button onClick={() => { haptic('medium'); onDeleteRequest(item.id) }}
+          className="cursor-pointer border-none bg-transparent p-[3px] flex-shrink-0"
           style={{ color: 'var(--muted)', fontSize: 13 }}>
           🗑
         </button>
@@ -109,15 +177,39 @@ export function ListScreen() {
   const [newItem,     setNewItem]     = useState({ name: '', qty: '1', unit: 'шт' })
   const [newCat,      setNewCat]      = useState({ title: '' })
   const [customBuyer, setCustomBuyer] = useState('')
+  const [confirmCat,  setConfirmCat]  = useState<{ id: string; title: string } | null>(null)
+
+  // Undo-удаление позиций: id → таймер реального send
+  const [pendingDeletes, setPendingDeletes] = useState<Map<string, ReturnType<typeof setTimeout>>>(new Map())
 
   const { categories = [], items = [], members = [] } = serverState ?? {}
+
+  // Скрываем позиции, ожидающие удаления
+  const visibleItems = items.filter(i => !pendingDeletes.has(i.id))
 
   function toggleCat(id: string) { setOpenCats(p => ({ ...p, [id]: !p[id] })) }
 
   function onUpdate(id: string, field: string, value: unknown) {
     send({ type: 'item:update', id, field, value })
   }
-  function onDelete(id: string) { send({ type: 'item:delete', id }) }
+
+  function requestDeleteItem(id: string) {
+    // Оптимистично скрываем, запускаем таймер
+    const timer = setTimeout(() => {
+      send({ type: 'item:delete', id })
+      setPendingDeletes(m => { const n = new Map(m); n.delete(id); return n })
+    }, 4000)
+
+    setPendingDeletes(m => new Map(m).set(id, timer))
+
+    showToast('Позиция удалена', 'var(--red)', {
+      label: 'Отмена',
+      fn: () => {
+        clearTimeout(timer)
+        setPendingDeletes(m => { const n = new Map(m); n.delete(id); return n })
+      },
+    })
+  }
 
   function saveItem() {
     if (!newItem.name.trim()) return
@@ -150,8 +242,27 @@ export function ListScreen() {
 
   return (
     <div className="px-[14px] pt-2 pb-8 relative z-10">
+
+      {/* Empty state */}
+      {categories.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="text-[60px] mb-4">🛒</div>
+          <div className="text-[17px] font-extrabold mb-2">Список пустой</div>
+          <div className="text-[13px] leading-relaxed mb-6" style={{ color: 'var(--muted)', maxWidth: 260 }}>
+            Добавь категорию — например «Мясо» или «Напитки», и начни собирать список
+          </div>
+          <button
+            onClick={() => { setEmoji('📦'); setCatModal(true) }}
+            className="px-6 py-[13px] rounded-[14px] text-[14px] font-extrabold cursor-pointer border-none"
+            style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}
+          >
+            ＋ Первая категория
+          </button>
+        </div>
+      )}
+
       {categories.map(cat => {
-        const catItems = items.filter(i => i.cat_id === cat.id)
+        const catItems = visibleItems.filter(i => i.cat_id === cat.id)
         const total    = catItems.filter(i => i.enabled).reduce((s, i) => s + i.price * i.qty, 0)
         const isOpen   = openCats[cat.id] !== false
 
@@ -166,7 +277,7 @@ export function ListScreen() {
               <div className="text-[14px] font-extrabold flex-1">{cat.title}</div>
               {total > 0 && <div className="text-[13px] font-bold" style={{ color: 'var(--accent)' }}>{fmt(total)}</div>}
               <button
-                onClick={e => { e.stopPropagation(); if (confirm(`Удалить категорию «${cat.title}»?`)) send({ type: 'cat:delete', id: cat.id }) }}
+                onClick={e => { e.stopPropagation(); setConfirmCat({ id: cat.id, title: cat.title }) }}
                 className="text-[14px] cursor-pointer border-none bg-transparent px-1 rounded"
                 style={{ color: 'var(--muted)' }}>
                 🗑
@@ -176,11 +287,16 @@ export function ListScreen() {
 
             {isOpen && (
               <>
+                {catItems.length === 0 && (
+                  <div className="py-5 text-center text-[12px]" style={{ color: 'var(--muted)' }}>
+                    Пусто — добавь первую позицию ↓
+                  </div>
+                )}
                 {catItems.map(it => (
                   <div key={it.id}>
                     <Divider />
                     <ItemRow item={it} members={members}
-                      onUpdate={onUpdate} onDelete={onDelete} onBuyerOpen={openBuyer} />
+                      onUpdate={onUpdate} onDeleteRequest={requestDeleteItem} onBuyerOpen={openBuyer} />
                   </div>
                 ))}
                 <Divider />
@@ -195,11 +311,13 @@ export function ListScreen() {
         )
       })}
 
-      <button onClick={() => { setEmoji('📦'); setCatModal(true) }}
-        className="w-full py-[13px] rounded-[14px] border-none text-[13px] font-bold flex items-center justify-center gap-[6px] cursor-pointer mb-[10px]"
-        style={{ background: 'var(--g)', border: '1px dashed var(--gb)', color: 'var(--muted)', fontFamily: 'inherit' }}>
-        ＋ Добавить категорию
-      </button>
+      {categories.length > 0 && (
+        <button onClick={() => { setEmoji('📦'); setCatModal(true) }}
+          className="w-full py-[13px] rounded-[14px] border-none text-[13px] font-bold flex items-center justify-center gap-[6px] cursor-pointer mb-[10px]"
+          style={{ background: 'var(--g)', border: '1px dashed var(--gb)', color: 'var(--muted)', fontFamily: 'inherit' }}>
+          ＋ Добавить категорию
+        </button>
+      )}
 
       {/* Add item modal */}
       <Modal open={!!addModal} onClose={() => setAddModal(null)} title="Добавить позицию">
@@ -238,12 +356,21 @@ export function ListScreen() {
         <ModalButtons onCancel={() => setCatModal(false)} onConfirm={saveCat} confirmText="Создать" />
       </Modal>
 
+      {/* Confirm delete category */}
+      <ConfirmModal
+        open={!!confirmCat}
+        message={confirmCat ? `Удалить категорию «${confirmCat.title}» и все её позиции?` : ''}
+        confirmText="Удалить"
+        onConfirm={() => { if (confirmCat) send({ type: 'cat:delete', id: confirmCat.id }); setConfirmCat(null) }}
+        onCancel={() => setConfirmCat(null)}
+      />
+
       {/* Buyer modal */}
       <Modal open={!!buyerModal} onClose={() => setBuyerModal(null)} title="Кто купит?">
         <div className="grid gap-[7px] mb-3" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
           {members.map(m => {
-            const item   = items.find(i => i.id === buyerModal)
-            const active = item?.buyer_id === m.user_id
+            const it     = items.find(i => i.id === buyerModal)
+            const active = it?.buyer_id === m.user_id
             return (
               <button key={m.user_id} onClick={() => assignBuyer(m.user_id, m.name)}
                 className="py-[9px] px-1 rounded-[10px] text-[12px] font-bold cursor-pointer border-none text-center"

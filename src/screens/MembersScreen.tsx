@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { GlassCard, Divider } from '../components/GlassCard'
+import { ConfirmModal } from '../components/ConfirmModal'
 import { fmt } from '../lib/session'
 import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
@@ -12,6 +13,7 @@ export function MembersScreen() {
   const showToast   = useToastStore(s => s.show)
 
   const [copied, setCopied] = useState(false)
+  const [confirmRemove, setConfirmRemove] = useState<{ userId: string; name: string } | null>(null)
   const { members = [], items = [], group } = serverState ?? {}
 
   function copyCode() {
@@ -24,9 +26,7 @@ export function MembersScreen() {
   }
 
   function removeMember(userId: string, name: string) {
-    if (confirm(`Удалить ${name} из группы?`)) {
-      send({ type: 'member:remove', userId })
-    }
+    setConfirmRemove({ userId, name })
   }
 
   return (
@@ -52,6 +52,14 @@ export function MembersScreen() {
       <div className="text-[11px] font-extrabold uppercase tracking-[.08em] mb-[10px]" style={{ color: 'var(--muted)' }}>
         Участники · {members.length}
       </div>
+
+      <ConfirmModal
+        open={!!confirmRemove}
+        message={confirmRemove ? `Удалить ${confirmRemove.name} из группы?` : ''}
+        confirmText="Удалить"
+        onConfirm={() => { if (confirmRemove) send({ type: 'member:remove', userId: confirmRemove.userId }); setConfirmRemove(null) }}
+        onCancel={() => setConfirmRemove(null)}
+      />
 
       <GlassCard>
         {members.map((m, i) => {

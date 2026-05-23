@@ -2,6 +2,7 @@ import { fmt } from '../lib/session'
 import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useToastStore } from '../stores/toastStore'
+import { PriceCell } from '../components/PriceCell'
 
 export function MyScreen() {
   const serverState = useWsStore(s => s.serverState)
@@ -21,8 +22,7 @@ export function MyScreen() {
     send({ type: 'item:update', id, field: 'bought', value: val })
   }
 
-  function updatePrice(id: string, newPrice: string) {
-    const price = parseFloat(newPrice) || 0
+  function updatePrice(id: string, price: number) {
     send({ type: 'item:update', id, field: 'price', value: price })
     if (price > 0) showToast('Цена обновлена')
   }
@@ -98,12 +98,7 @@ export function MyScreen() {
                 {price > 0 ? fmt(price * qty) : 'нет цены'}
               </div>
               <div className="flex items-center gap-1">
-                <input type="number" min="0" step="1"
-                  defaultValue={price > 0 ? price : ''}
-                  placeholder="0"
-                  onBlur={e => updatePrice(it.id, e.target.value)}
-                  className="text-right rounded-[8px] text-[12px] font-bold glass-input"
-                  style={{ width: 64, padding: '4px 8px' }} />
+                <PriceCell item={it} onChange={updatePrice} />
                 <span className="text-[10px]" style={{ color: 'var(--muted)' }}>₽/{it.unit}</span>
               </div>
             </div>
