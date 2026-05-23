@@ -9,7 +9,9 @@
       "Bash(ssh-add --apple-use-keychain ~/.ssh/id_rsa)",
       "Bash(ssh-add -K ~/.ssh/id_rsa)",
       "Bash(GIT_SSH_COMMAND=\"ssh -o IdentitiesOnly=yes\" git push -u origin main)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(npm install *)",
+      "Bash(git commit -m 'chore: add package-lock.json for reproducible installs *)"
     ]
   }
 }
