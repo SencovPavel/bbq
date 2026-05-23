@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [master, dev]
+    branches: [main, dev]
 
 jobs:
   deploy:
@@ -22,7 +22,7 @@ jobs:
           script: |
             set -e
 
-            if [ "$BRANCH" = "master" ]; then
+            if [ "$BRANCH" = "main" ]; then
               DEPLOY_DIR="/var/www/picnic"
               PM2_APP="picnic"
             else
