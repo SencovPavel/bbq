@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { AppLoader } from './components/AppLoader'
 import { Blobs } from './components/Blobs'
 import { TopNav } from './components/TopNav'
 import { GroupBar } from './components/GroupBar'
@@ -30,9 +31,6 @@ const session    = loadSession()
 const initialMe = tgUser ?? session?.me ?? null
 if (initialMe) useSessionStore.getState().setMe(initialMe)
 if (session?.groupId) useSessionStore.getState().setGroupId(session.groupId)
-if (!startParam) {
-  useAppStore.getState().setScreen(session || tgUser ? 'groups' : 'onboarding')
-}
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function App() {
@@ -66,6 +64,14 @@ export default function App() {
   const resetWs     = useWsStore(s => s.reset)
 
   useWebSocket(screen === 'app' ? groupId : null, me?.id)
+
+  // Стартовая маршрутизация (без deep link)
+  useEffect(() => {
+    if (startParam) return
+    setScreen(session || tgUser ? 'groups' : 'onboarding')
+  }, [setScreen])
+
+  const isAppDataLoading = screen === 'app' && Boolean(groupId) && !serverState
 
   // Автовыбор ближайшего события когда загрузился state
   useEffect(() => {
@@ -121,11 +127,11 @@ export default function App() {
 
   // ── Render ────────────────────────────────────────────────────────────────
 
-  if (screen === 'loading') {
+  if (screen === 'loading' || isAppDataLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen relative">
+      <div className="relative min-h-screen">
         <Blobs />
-        <div className="text-[14px] font-bold relative z-10" style={{ color: 'var(--muted)' }}>Загрузка...</div>
+        <AppLoader message={isAppDataLoading ? 'Подключаемся...' : 'Загрузка...'} />
       </div>
     )
   }
