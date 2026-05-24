@@ -48,13 +48,16 @@ export type Platform = 'telegram' | 'max' | 'web'
 
 /** Возвращает активный WebApp объект (MAX или Telegram) либо null */
 function getWebApp(): WebAppBridge | null {
-  // MAX Bridge: window.WebApp (у него есть initDataUnsafe с user)
   const maxApp = window.WebApp
-  if (maxApp?.initDataUnsafe) return maxApp
+  const tgApp  = window.Telegram?.WebApp
 
-  // Telegram
-  const tgApp = window.Telegram?.WebApp
-  if (tgApp?.initDataUnsafe) return tgApp
+  // Сначала ищем тот, у кого есть реальный пользователь
+  if (maxApp?.initDataUnsafe?.user) return maxApp
+  if (tgApp?.initDataUnsafe?.user)  return tgApp
+
+  // Фолбэк: бридж есть, но user ещё не пришёл (редкий случай на старте)
+  if (maxApp?.initDataUnsafe) return maxApp
+  if (tgApp?.initDataUnsafe)  return tgApp
 
   return null
 }
