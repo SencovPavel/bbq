@@ -31,7 +31,7 @@ export function MembersScreen() {
   }
 
   return (
-    <div className="px-[14px] pt-2 pb-8 relative z-10">
+    <div className="px-[14px] pt-2 pb-8 relative">
       {/* Invite */}
       <div className="glass rounded-[20px] p-[16px] mb-3 text-center">
         <div className="text-[11px] font-extrabold uppercase tracking-[.06em] mb-[10px]" style={{ color: 'var(--muted)' }}>

@@ -52,7 +52,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 relative z-10">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 relative">
       <div className="flex items-center gap-[8px] text-[28px] font-black mb-2" style={{ color: 'var(--accent)' }}>
         <IconFlame size={28} strokeWidth={1.4} /> Пикник
       </div>

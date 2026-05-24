@@ -36,7 +36,7 @@ export function MyScreen() {
   }
 
   return (
-    <div className="px-[14px] pt-2 pb-8 relative z-10">
+    <div className="px-[14px] pt-2 pb-8 relative">
       {/* Hero */}
       <div className="glass rounded-[20px] p-[18px] mb-3">
         <div className="text-base font-extrabold mb-[3px]">Привет, {me?.name}!</div>

@@ -140,7 +140,7 @@ export default function App() {
   return (
     <div className="relative max-w-[500px] mx-auto min-h-screen">
       <Blobs />
-      <div className="relative z-10" style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom, 0px))' }}>
+      <div className="relative" style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom, 0px))' }}>
         <GroupBar
           group={serverState?.group}
           wsOk={wsOk}

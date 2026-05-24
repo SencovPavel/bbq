@@ -253,7 +253,7 @@ export function ListScreen() {
   }
 
   return (
-    <div className="px-[14px] pt-2 pb-8 relative z-10">
+    <div className="px-[14px] pt-2 pb-8 relative">
 
       {/* Empty state */}
       {categories.length === 0 && (

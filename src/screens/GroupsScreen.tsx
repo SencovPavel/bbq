@@ -25,7 +25,7 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
   }, [me?.id])
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 relative z-10">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 relative">
       <div className="w-full max-w-[360px]">
         <div className="flex items-center gap-[6px] text-[22px] font-black mb-1" style={{ color: 'var(--accent)', fontFamily: 'inherit' }}>
           <IconFlame size={22} strokeWidth={1.4} /> Пикник
