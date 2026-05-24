@@ -7,36 +7,28 @@ on:
 jobs:
   deploy:
     name: Deploy → ${{ github.ref_name }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Deploy frontend
         env:
           BRANCH: ${{ github.ref_name }}
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          envs: BRANCH
-          script: |
-            set -e
+        run: |
+          set -e
 
-            if [ "$BRANCH" = "main" ]; then
-              DEPLOY_DIR="/var/www/picnic/fe-main"
-            else
-              DEPLOY_DIR="/var/www/picnic/fe-dev"
-            fi
+          if [ "$BRANCH" = "main" ]; then
+            DEPLOY_DIR="/var/www/picnic/fe-main"
+          else
+            DEPLOY_DIR="/var/www/picnic/fe-dev"
+          fi
 
-            echo "▶ Deploying branch '$BRANCH' → $DEPLOY_DIR"
+          echo "▶ Deploying '$BRANCH' → $DEPLOY_DIR"
 
-            cd "$DEPLOY_DIR"
+          cd "$DEPLOY_DIR"
+          git fetch origin
+          git checkout "$BRANCH"
+          git reset --hard "origin/$BRANCH"
+          npm ci --prefer-offline
+          npm run build
 
-            git fetch origin
-            git checkout "$BRANCH"
-            git reset --hard "origin/$BRANCH"
-
-            npm ci --prefer-offline
-            npm run build
-
-            echo "✅ Done: $BRANCH → $DEPLOY_DIR/dist"
+          echo "✅ Done: $BRANCH → $DEPLOY_DIR/dist"
