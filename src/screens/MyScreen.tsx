@@ -4,6 +4,7 @@ import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
 import { PriceCell } from '../components/PriceCell'
+import { IconCalendar, IconCart, IconCheck } from '../components/Icon'
 
 export function MyScreen() {
   const serverState    = useWsStore(s => s.serverState)
@@ -38,7 +39,7 @@ export function MyScreen() {
   if (!currentEventId) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-        <div className="text-[48px] mb-3">📅</div>
+        <div className="mb-3" style={{ color: 'var(--muted)', opacity: 0.5 }}><IconCalendar size={48} /></div>
         <div className="font-extrabold text-[16px] mb-2" style={{ color: 'var(--text)' }}>Выберите событие</div>
         <div className="text-[13px] leading-relaxed mb-6" style={{ color: 'var(--muted)' }}>
           Покупки привязаны к конкретному событию.
@@ -71,7 +72,7 @@ export function MyScreen() {
 
       {myItems.length === 0 && (
         <div className="text-center py-10" style={{ color: 'var(--muted)' }}>
-          <div className="text-[44px] mb-[10px]">🛒</div>
+          <div className="mb-[10px]" style={{ color: 'var(--muted)', opacity: 0.45 }}><IconCart size={44} /></div>
           <div className="text-[14px] font-semibold leading-relaxed">
             Тебе пока ничего не назначено.<br />Перейди в список и выбери «Кто купит»!
           </div>
@@ -93,9 +94,8 @@ export function MyScreen() {
                 border:     it.bought ? '2px solid var(--green)' : '2px solid var(--gbs)',
                 background: it.bought ? 'var(--green)' : 'transparent',
                 color:      it.bought ? '#100e0b' : 'transparent',
-                fontSize: 13,
               }}>
-              ✓
+              <IconCheck size={13} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-[13px] font-bold">{it.name}</div>
@@ -129,7 +129,7 @@ export function MyScreen() {
 
       {boughtCount > 0 && actualTotal > 0 && (
         <div className="text-center text-[12px] py-2" style={{ color: 'var(--muted)' }}>
-          ✅ Куплено {boughtCount} из {myItems.length} · итого{' '}
+          Куплено {boughtCount} из {myItems.length} · итого{' '}
           <b style={{ color: 'var(--accent)' }}>{fmt(actualTotal)}</b>
         </div>
       )}

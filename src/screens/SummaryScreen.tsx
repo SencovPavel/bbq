@@ -6,6 +6,7 @@ import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
+import { IconShare, IconCalendar, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle } from '../components/Icon'
 import type { AnalysisResult } from '../types'
 
 export function SummaryScreen() {
@@ -64,7 +65,7 @@ export function SummaryScreen() {
   if (!currentEventId) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-        <div className="text-[48px] mb-3">📅</div>
+        <div className="mb-3" style={{ color: 'var(--muted)', opacity: 0.5 }}><IconCalendar size={48} /></div>
         <div className="font-extrabold text-[16px] mb-2" style={{ color: 'var(--text)' }}>Выберите событие</div>
         <div className="text-[13px] leading-relaxed mb-6" style={{ color: 'var(--muted)' }}>
           Итог считается для конкретного события.
@@ -136,22 +137,25 @@ export function SummaryScreen() {
         className="w-full py-[14px] rounded-[14px] text-[14px] font-extrabold flex items-center justify-center gap-2 cursor-pointer border-none mb-3"
         style={{ background: 'var(--g)', border: '1px solid var(--gb)', color: 'var(--text)',
                  opacity: loading ? .6 : 1, fontFamily: 'inherit' }}>
-        {loading ? '🤖 Анализирую...' : '🤖 Проверить с агентом'}
+        <IconRobot size={15} />
+        {loading ? 'Анализирую...' : 'Проверить с агентом'}
       </button>
 
       {panelOpen && analysis && (
         <GlassCard>
           <div className="px-[16px] py-[14px] text-[13px] leading-relaxed border-b"
             style={{ borderColor: 'var(--gb)' }}>
-            💬 {analysis.summary}
+            {analysis.summary}
           </div>
 
           {(analysis.missing?.length ?? 0) > 0 && (
             <div className="px-[16px] py-[10px] border-b" style={{ borderColor: 'var(--gb)' }}>
-              <div className="text-[10px] font-extrabold uppercase tracking-[.08em] mb-2" style={{ color: 'var(--red)' }}>❌ Забыли из чата</div>
+              <div className="flex items-center gap-[5px] text-[10px] font-extrabold uppercase tracking-[.08em] mb-2" style={{ color: 'var(--red)' }}>
+                <IconAlertCircle size={11} strokeWidth={2.2} /> Забыли из чата
+              </div>
               {analysis.missing!.map((m, i) => (
                 <div key={i} className="flex items-start gap-2 py-[6px] text-[12px] border-b last:border-none" style={{ borderColor: 'var(--gb)' }}>
-                  <span>❌</span>
+                  <span style={{ color: 'var(--red)', marginTop: 1 }}><IconAlertCircle size={13} /></span>
                   <div className="flex-1">
                     <div className="font-bold">{m.name}</div>
                     {m.hint && <div style={{ color: 'var(--muted)' }}>"{m.hint}"</div>}
@@ -163,10 +167,12 @@ export function SummaryScreen() {
 
           {(analysis.changed?.length ?? 0) > 0 && (
             <div className="px-[16px] py-[10px] border-b" style={{ borderColor: 'var(--gb)' }}>
-              <div className="text-[10px] font-extrabold uppercase tracking-[.08em] mb-2" style={{ color: 'var(--blue)' }}>⚠️ Количество отличается</div>
+              <div className="flex items-center gap-[5px] text-[10px] font-extrabold uppercase tracking-[.08em] mb-2" style={{ color: 'var(--blue)' }}>
+                <IconAlertTriangle size={11} strokeWidth={2.2} /> Количество отличается
+              </div>
               {analysis.changed!.map((c, i) => (
                 <div key={i} className="flex items-start gap-2 py-[6px] text-[12px] border-b last:border-none" style={{ borderColor: 'var(--gb)' }}>
-                  <span>⚠️</span>
+                  <span style={{ color: 'var(--blue)', marginTop: 1 }}><IconAlertTriangle size={13} /></span>
                   <div>
                     <div className="font-bold">{c.name}</div>
                     <div style={{ color: 'var(--muted)' }}>В чате: {c.chat_qty} · В списке: {c.list_qty}</div>
@@ -177,8 +183,8 @@ export function SummaryScreen() {
           )}
 
           {!analysis.missing?.length && !analysis.changed?.length && (
-            <div className="py-4 text-center text-[13px] font-extrabold" style={{ color: 'var(--green)' }}>
-              ✅ Список соответствует обсуждению!
+            <div className="py-4 text-center text-[13px] font-extrabold flex items-center justify-center gap-[6px]" style={{ color: 'var(--green)' }}>
+              <IconCheckCircle size={15} strokeWidth={2.2} /> Список соответствует обсуждению
             </div>
           )}
         </GlassCard>
@@ -187,7 +193,7 @@ export function SummaryScreen() {
       <button onClick={shareList}
         className="w-full py-[15px] rounded-[14px] border-none text-[14px] font-extrabold cursor-pointer"
         style={{ background: 'linear-gradient(90deg,var(--accent),var(--accent2))', color: '#fff', fontFamily: 'inherit' }}>
-        📤 Поделиться списком
+        <IconShare size={15} strokeWidth={2} /> Поделиться списком
       </button>
     </div>
   )

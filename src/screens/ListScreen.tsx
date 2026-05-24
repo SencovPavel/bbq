@@ -9,6 +9,7 @@ import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
+import { IconTrash, IconPerson, IconCalendar, IconCart } from '../components/Icon'
 import type { Item, Member } from '../types'
 
 const UNITS  = ['шт','кг','л','г','мл','упак','наб','пуч','банк','меш','рул']
@@ -16,9 +17,9 @@ const EMOJIS = ['🏡','🥩','🔥','🥗','🧃','🍽️','🍕','🍺','🥤
 
 type Source = 'chat' | 'agent' | 'manual'
 const SOURCE_MAP: Record<Source, { bg: string; border: string; color: string; label: string }> = {
-  chat:   { bg: 'rgba(96,165,250,.12)',  border: 'rgba(96,165,250,.25)',  color: '#93c5fd',        label: '💬 из чата'  },
-  agent:  { bg: 'rgba(255,107,53,.12)', border: 'rgba(255,107,53,.25)', color: 'var(--accent2)', label: '🤖 агент'    },
-  manual: { bg: 'rgba(255,255,255,.06)',border: 'rgba(255,255,255,.14)',color: 'var(--muted)',   label: '✏️ вручную' },
+  chat:   { bg: 'rgba(96,165,250,.12)',  border: 'rgba(96,165,250,.25)',  color: '#93c5fd',        label: 'из чата'  },
+  agent:  { bg: 'rgba(255,107,53,.12)', border: 'rgba(255,107,53,.25)', color: 'var(--accent2)', label: 'агент'    },
+  manual: { bg: 'rgba(255,255,255,.06)',border: 'rgba(255,255,255,.14)',color: 'var(--muted)',   label: 'вручную'  },
 }
 
 function SourceBadge({ source }: { source: Source }) {
@@ -144,9 +145,9 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
         </div>
 
         <button onClick={() => { haptic('medium'); onDeleteRequest(item.id) }}
-          className="cursor-pointer border-none bg-transparent p-[3px] flex-shrink-0"
-          style={{ color: 'var(--muted)', fontSize: 13 }}>
-          🗑
+          className="cursor-pointer border-none bg-transparent p-[3px] flex-shrink-0 flex items-center"
+          style={{ color: 'var(--muted)' }}>
+          <IconTrash size={14} />
         </button>
       </div>
 
@@ -159,7 +160,10 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
           color: item.buyer_name ? 'var(--accent)' : 'var(--muted)',
           padding: '3px 10px', fontFamily: 'inherit',
         }}>
-        {item.buyer_name ? `👤 ${item.buyer_name}` : '+ Кто купит?'}
+        {item.buyer_name
+          ? <><IconPerson size={11} strokeWidth={2} /> {item.buyer_name}</>
+          : '+ Кто купит?'
+        }
       </button>
     </div>
   )
@@ -253,7 +257,7 @@ export function ListScreen() {
   if (!currentEventId) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-        <div className="text-[48px] mb-3">📅</div>
+        <div className="mb-3" style={{ color: 'var(--muted)', opacity: 0.5 }}><IconCalendar size={48} /></div>
         <div className="font-extrabold text-[16px] mb-2" style={{ color: 'var(--text)' }}>
           Выберите событие
         </div>
@@ -277,7 +281,7 @@ export function ListScreen() {
       {/* Empty state */}
       {categories.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="text-[60px] mb-4">🛒</div>
+          <div className="mb-4" style={{ color: 'var(--muted)', opacity: 0.45 }}><IconCart size={56} /></div>
           <div className="text-[17px] font-extrabold mb-2">Список пустой</div>
           <div className="text-[13px] leading-relaxed mb-6" style={{ color: 'var(--muted)', maxWidth: 260 }}>
             Добавь категорию — например «Мясо» или «Напитки», и начни собирать список
@@ -309,9 +313,9 @@ export function ListScreen() {
               {total > 0 && <div className="text-[13px] font-bold" style={{ color: 'var(--accent)' }}>{fmt(total)}</div>}
               <button
                 onClick={e => { e.stopPropagation(); setConfirmCat({ id: cat.id, title: cat.title }) }}
-                className="text-[14px] cursor-pointer border-none bg-transparent px-1 rounded"
+                className="cursor-pointer border-none bg-transparent px-1 rounded flex items-center"
                 style={{ color: 'var(--muted)' }}>
-                🗑
+                <IconTrash size={14} />
               </button>
               <span style={{ color: 'var(--muted)', fontSize: 11, transform: isOpen ? 'rotate(90deg)' : 'none', transition: 'transform .25s' }}>▶</span>
             </div>

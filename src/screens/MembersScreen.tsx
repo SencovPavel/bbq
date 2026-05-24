@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { GlassCard, Divider } from '../components/GlassCard'
+import { IconClipboard, IconX } from '../components/Icon'
 import { ConfirmModal } from '../components/ConfirmModal'
 import { fmt } from '../lib/session'
 import { useWsStore } from '../stores/wsStore'
@@ -45,7 +46,7 @@ export function MembersScreen() {
         <button onClick={copyCode}
           className="inline-flex items-center gap-[6px] rounded-full text-[12px] font-bold cursor-pointer border-none px-4 py-2"
           style={{ background: 'rgba(255,255,255,.08)', border: '1px solid var(--gb)', color: 'var(--text)', fontFamily: 'inherit' }}>
-          📋 {copied ? 'Скопировано!' : 'Скопировать код'}
+          <IconClipboard size={13} /> {copied ? 'Скопировано!' : 'Скопировать код'}
         </button>
       </div>
 
@@ -91,8 +92,10 @@ export function MembersScreen() {
                 )}
                 {!isMe && (
                   <button onClick={() => removeMember(m.user_id, m.name)}
-                    className="text-[13px] cursor-pointer border-none bg-transparent px-1"
-                    style={{ color: 'var(--muted)' }}>✕</button>
+                    className="cursor-pointer border-none bg-transparent px-1 flex items-center"
+                    style={{ color: 'var(--muted)' }}>
+                    <IconX size={14} />
+                  </button>
                 )}
               </div>
             </div>

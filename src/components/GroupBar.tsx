@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { IconCheck } from './Icon'
 import type { Group, PicnicEvent } from '../types'
 
 interface GroupBarProps {
@@ -86,7 +87,7 @@ export function GroupBar({ group, currentEvent, onBack, onExitEvent }: GroupBarP
           color: copied ? 'var(--green)' : '#FBBF24',
           fontSize: 12, fontWeight: 700, letterSpacing: '.05em', fontFamily: 'inherit',
         }}>
-        {copied ? '✓' : (
+        {copied ? <IconCheck size={13} strokeWidth={2.5} /> : (
           <>
             {group?.invite_code || '—'}
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none"

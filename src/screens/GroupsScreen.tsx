@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getUserGroups } from '../lib/api'
+import { IconFlame, IconTent } from '../components/Icon'
 import { useSessionStore } from '../stores/sessionStore'
 import type { GroupSummary } from '../types'
 
@@ -26,8 +27,8 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 relative z-10">
       <div className="w-full max-w-[360px]">
-        <div className="text-[22px] font-black mb-1" style={{ color: 'var(--accent)', fontFamily: 'inherit' }}>
-          🔥 Пикник
+        <div className="flex items-center gap-[6px] text-[22px] font-black mb-1" style={{ color: 'var(--accent)', fontFamily: 'inherit' }}>
+          <IconFlame size={22} strokeWidth={1.4} /> Пикник
         </div>
         <div className="text-[13px] mb-6" style={{ color: 'var(--muted)' }}>
           {me?.name ? `Привет, ${me.name}!` : 'Планируй пикник вместе с друзьями'}
@@ -39,7 +40,7 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
           )}
           {!loading && groups.length === 0 && (
             <div className="text-center py-8">
-              <div className="text-[40px] mb-2">🏕️</div>
+              <div className="mb-2" style={{ color: 'var(--muted)', opacity: 0.45, display: 'inline-block' }}><IconTent size={44} /></div>
               <div className="text-[13px] font-semibold leading-relaxed" style={{ color: 'var(--muted)' }}>
                 У тебя пока нет групп.<br />Создай новую или войди по коду!
               </div>
@@ -49,11 +50,11 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
             <div key={g.id}
               onClick={() => onEnter(g.id)}
               className="glass rounded-[16px] p-4 mb-[10px] flex items-center gap-3 cursor-pointer active:opacity-80 transition-opacity">
-              <div className="flex items-center justify-center rounded-[12px] text-[22px] flex-shrink-0"
-                style={{ width: 46, height: 46,
+              <div className="flex items-center justify-center rounded-[12px] flex-shrink-0"
+                style={{ width: 46, height: 46, color: 'var(--accent)',
                   background: 'linear-gradient(135deg,rgba(249,115,22,.25),rgba(251,191,36,.15))',
                   border: '1px solid rgba(249,115,22,.25)' }}>
-                🏕️
+                <IconFlame size={22} strokeWidth={1.5} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-[15px] font-extrabold truncate">{g.name}</div>

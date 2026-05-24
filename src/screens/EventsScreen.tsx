@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useWsStore } from '../stores/wsStore'
 import { useAppStore } from '../stores/appStore'
+import { IconX, IconPencil, IconCalendar, IconMapPin } from '../components/Icon'
 import type { PicnicEvent } from '../types'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -58,8 +59,8 @@ function EventModal({ event, onSave, onClose, onDelete }: EventModalProps) {
             {event ? 'Редактировать' : 'Новое событие'}
           </span>
           <button onClick={onClose}
-            style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: 20 }}>
-            ✕
+            style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', display: 'flex' }}>
+            <IconX size={18} />
           </button>
         </div>
 
@@ -163,8 +164,9 @@ function EventCard({ event, itemCount, onEnter, onEdit }: EventCardProps) {
             {formatDate(event.event_date, event.event_time)}
           </div>
           {event.location && (
-            <div className="text-[12px] mt-[3px] truncate" style={{ color: 'rgba(251,191,36,0.7)' }}>
-              📍 {event.location}
+            <div className="flex items-center gap-[4px] text-[12px] mt-[3px] truncate" style={{ color: 'rgba(251,191,36,0.7)' }}>
+              <IconMapPin size={11} strokeWidth={2} />
+              {event.location}
             </div>
           )}
         </div>
@@ -176,8 +178,8 @@ function EventCard({ event, itemCount, onEnter, onEdit }: EventCardProps) {
           </div>
           <button
             onClick={e => { e.stopPropagation(); onEdit() }}
-            style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: '4px', fontSize: 16 }}>
-            ✏️
+            style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: '4px', display: 'flex' }}>
+            <IconPencil size={15} />
           </button>
         </div>
       </div>
@@ -254,7 +256,7 @@ export function EventsScreen() {
       {/* Empty state */}
       {events.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <div className="text-[40px] mb-3">📅</div>
+          <div className="mb-3" style={{ color: 'var(--muted)', opacity: 0.5 }}><IconCalendar size={48} /></div>
           <div className="font-bold text-[15px] mb-1" style={{ color: 'var(--text)' }}>
             Нет событий
           </div>

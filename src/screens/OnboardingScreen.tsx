@@ -1,5 +1,6 @@
 import { useState, type CSSProperties } from 'react'
 import { createGroup, joinGroup } from '../lib/api'
+import { IconFlame, IconPerson } from '../components/Icon'
 import { uid } from '../lib/session'
 import { useSessionStore } from '../stores/sessionStore'
 import type { User } from '../types'
@@ -52,7 +53,9 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 relative z-10">
-      <div className="text-[28px] font-black mb-2" style={{ color: 'var(--accent)' }}>🔥 Пикник</div>
+      <div className="flex items-center gap-[8px] text-[28px] font-black mb-2" style={{ color: 'var(--accent)' }}>
+        <IconFlame size={28} strokeWidth={1.4} /> Пикник
+      </div>
       <div className="text-[13px] mb-8 text-center" style={{ color: 'var(--muted)' }}>
         Планируй пикник вместе с друзьями
       </div>
@@ -77,7 +80,9 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
         {hasTg && (
           <div className="rounded-xl px-3 py-[10px] mb-3 text-[12px]"
             style={{ background: 'rgba(255,255,255,.06)', border: '1px solid var(--gb)', color: 'var(--muted)' }}>
-            👤 Войдёшь как <b style={{ color: 'var(--text)' }}>{me!.name}</b>
+            <span className="inline-flex items-center gap-[5px]">
+              <IconPerson size={12} strokeWidth={2} /> Войдёшь как <b style={{ color: 'var(--text)' }}>{me!.name}</b>
+            </span>
           </div>
         )}
 
@@ -99,7 +104,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
             <button onClick={doCreate}
               className="w-full py-[14px] rounded-[12px] border-none text-[15px] font-extrabold cursor-pointer mt-1"
               style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
-              Создать пикник 🔥
+              Создать пикник
             </button>
           </div>
 
