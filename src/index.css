@@ -107,3 +107,14 @@ html, body, #root {
   to   { transform: translateY(0);    opacity: 1; }
 }
 .slide-up { animation: slideUp .25s ease-out; }
+
+@keyframes tabSlideInRight {
+  from { opacity: 0; transform: translateX(22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes tabSlideInLeft {
+  from { opacity: 0; transform: translateX(-22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.tab-in-r { animation: tabSlideInRight .22s ease-out both; }
+.tab-in-l { animation: tabSlideInLeft  .22s ease-out both; }

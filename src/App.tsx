@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Blobs } from './components/Blobs'
 import { TopNav } from './components/TopNav'
 import { GroupBar } from './components/GroupBar'
@@ -18,7 +18,9 @@ import { uid } from './lib/session'
 import { useAppStore } from './stores/appStore'
 import { useSessionStore } from './stores/sessionStore'
 import { useWsStore } from './stores/wsStore'
-import type { User } from './types'
+import type { User, Tab } from './types'
+
+const TAB_ORDER: Tab[] = ['list', 'summary', 'my', 'members']
 
 // ── Module-level init ────────────────────────────────────────────────────────
 const tgUser     = getTgUser()
@@ -38,6 +40,17 @@ export default function App() {
   const tab       = useAppStore(s => s.tab)
   const setScreen = useAppStore(s => s.setScreen)
   const setTab    = useAppStore(s => s.setTab)
+
+  const [slideDir, setSlideDir] = useState<'r' | 'l'>('r')
+  const [slideKey, setSlideKey] = useState(0)
+
+  function handleTabChange(newTab: Tab) {
+    const curr = TAB_ORDER.indexOf(tab)
+    const next = TAB_ORDER.indexOf(newTab)
+    setSlideDir(next >= curr ? 'r' : 'l')
+    setSlideKey(k => k + 1)
+    setTab(newTab)
+  }
   const currentEventId    = useAppStore(s => s.currentEventId)
   const enterEvent        = useAppStore(s => s.enterEvent)
   const exitEvent         = useAppStore(s => s.exitEvent)
@@ -140,19 +153,22 @@ export default function App() {
   return (
     <div className="relative max-w-[500px] mx-auto min-h-screen">
       <Blobs />
-      <div className="relative" style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom, 0px))' }}>
+      <div style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom, 0px))' }}>
         <GroupBar
           group={serverState?.group}
           wsOk={wsOk}
           currentEvent={currentEvent}
           onBack={backToGroups}
         />
-        {tab === 'list'    && <ListScreen />}
-        {tab === 'summary' && <SummaryScreen />}
-        {tab === 'my'      && <MyScreen />}
-        {tab === 'members' && <MembersScreen />}
+        <div key={slideKey} className={slideDir === 'r' ? 'tab-in-r' : 'tab-in-l'}
+          style={{ overflow: 'hidden' }}>
+          {tab === 'list'    && <ListScreen />}
+          {tab === 'summary' && <SummaryScreen />}
+          {tab === 'my'      && <MyScreen />}
+          {tab === 'members' && <MembersScreen />}
+        </div>
       </div>
-      <TopNav active={tab} onChange={setTab} />
+      <TopNav active={tab} onChange={handleTabChange} />
       <EventSheet />
       <Toast />
     </div>
