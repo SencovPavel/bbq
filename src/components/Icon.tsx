@@ -167,3 +167,28 @@ export function IconRobot({ size = 14, strokeWidth = 1.8 }: IconProps) {
     </>
   )
 }
+
+export function IconCrown({ size = 14, strokeWidth = 1.8 }: IconProps) {
+  return base(size, strokeWidth,
+    <>
+      <path d="M2 19h20" />
+      <path d="M4 19 2 8l5 4 5-7 5 7 5-4-2 11" />
+    </>
+  )
+}
+
+export function IconLogOut({ size = 14, strokeWidth = 1.8 }: IconProps) {
+  return base(size, strokeWidth,
+    <>
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
+    </>
+  )
+}
+
+export function IconShield({ size = 14, strokeWidth = 1.8 }: IconProps) {
+  return base(size, strokeWidth,
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  )
+}

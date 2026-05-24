@@ -1,6 +1,9 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { useWsStore } from '../stores/wsStore'
 import { useToastStore } from '../stores/toastStore'
+import { useAppStore } from '../stores/appStore'
+import { useSessionStore } from '../stores/sessionStore'
+import { clearGroupSession } from '../lib/session'
 import type { ServerState } from '../types'
 
 export function useWebSocket(groupId: string | null, userId: string | undefined): void {
@@ -39,6 +42,16 @@ export function useWebSocket(groupId: string | null, userId: string | undefined)
       }
       if (msg.type === 'state' && msg.state) setServerState(msg.state)
       if (msg.type === 'agent_notify' && msg.message) showToast(msg.message, 'var(--blue)')
+      if (msg.type === 'group:deleted') {
+        clearGroupSession()
+        useSessionStore.getState().setGroupId(null)
+        useWsStore.getState().reset()
+        useAppStore.getState().exitEvent()
+        useAppStore.getState().setShowEventSheet(false)
+        useAppStore.getState().setScreen('groups')
+        showToast('Группа была удалена')
+        ws.close()
+      }
     }
 
     ws.onclose = () => {

@@ -6,7 +6,7 @@ import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
-import { IconShare, IconCalendar, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle } from '../components/Icon'
+import { IconShare, IconCalendar, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle, IconTent } from '../components/Icon'
 import type { AnalysisResult } from '../types'
 
 export function SummaryScreen() {
@@ -88,6 +88,17 @@ export function SummaryScreen() {
           <div className="text-[11px] mt-[3px]" style={{ opacity: .65 }}>из {ppl} чел.</div>
         </div>
       </div>
+
+      {/* Empty state */}
+      {enabled.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-10 text-center">
+          <div style={{ color: 'var(--muted)', opacity: 0.35, marginBottom: 14 }}><IconTent size={52} /></div>
+          <div className="text-[16px] font-extrabold mb-[6px]">Список пустой</div>
+          <div className="text-[13px] leading-relaxed" style={{ color: 'var(--muted)', maxWidth: 220 }}>
+            Перейди на «Список» и добавь что нужно купить
+          </div>
+        </div>
+      )}
 
       {/* Category rows */}
       <GlassCard>

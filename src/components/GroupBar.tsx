@@ -10,6 +10,27 @@ interface GroupBarProps {
   onBack: () => void
 }
 
+/** Короткий формат даты: "22 мая", "1 июн" */
+function shortDate(iso: string): string {
+  const d = new Date(iso + 'T00:00:00')
+  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })
+}
+
+const PILL: React.CSSProperties = {
+  height: 34,
+  display: 'flex',
+  alignItems: 'center',
+  gap: 5,
+  borderRadius: 34,
+  fontSize: 12,
+  fontWeight: 700,
+  fontFamily: 'inherit',
+  border: 'none',
+  cursor: 'pointer',
+  flexShrink: 0,
+  whiteSpace: 'nowrap',
+}
+
 export function GroupBar({ group, currentEvent, onBack }: GroupBarProps) {
   const [copied, setCopied] = useState(false)
   const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
@@ -21,35 +42,39 @@ export function GroupBar({ group, currentEvent, onBack }: GroupBarProps) {
     setTimeout(() => setCopied(false), 1800)
   }
 
-  return (
-    <div className="flex items-center gap-2 px-4 pt-4 pb-2">
+  const eventLabel = currentEvent
+    ? currentEvent.name + (currentEvent.event_date ? ' · ' + shortDate(currentEvent.event_date) : '')
+    : 'Событие'
 
-      {/* ← назад к группам */}
+  return (
+    <div className="flex items-center gap-[8px] px-4 pt-3 pb-2">
+
+      {/* ← назад */}
       <button onClick={onBack}
         className="flex items-center justify-center flex-shrink-0 border-none cursor-pointer transition-opacity duration-150 active:opacity-60"
         style={{
-          width: 36, height: 36, borderRadius: '50%',
+          width: 34, height: 34, borderRadius: '50%',
           background: 'rgba(255,240,200,0.08)',
           border: '1px solid rgba(255,220,150,0.12)',
           color: 'var(--text)',
         }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M15 18l-6-6 6-6"/>
         </svg>
       </button>
 
-      {/* Event pill — нажимаешь → шторка */}
+      {/* Event pill */}
       <button
         onClick={() => setShowEventSheet(true)}
-        className="flex items-center gap-[5px] flex-shrink-0 border-none cursor-pointer rounded-full transition-all duration-150 active:opacity-70"
+        className="active:opacity-70 transition-opacity duration-150"
         style={{
-          padding: '6px 10px 6px 9px',
+          ...PILL,
+          padding: '0 10px 0 9px',
+          maxWidth: 150,
           background: currentEvent ? 'rgba(249,115,22,0.12)' : 'rgba(255,255,255,0.06)',
           border: `1px solid ${currentEvent ? 'rgba(249,115,22,0.3)' : 'rgba(255,255,255,0.12)'}`,
           color: currentEvent ? 'var(--accent)' : 'var(--muted)',
-          fontSize: 12, fontWeight: 700, fontFamily: 'inherit',
-          maxWidth: 160,
         }}>
         {/* calendar icon */}
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
@@ -59,8 +84,8 @@ export function GroupBar({ group, currentEvent, onBack }: GroupBarProps) {
           <line x1="8"  y1="2" x2="8"  y2="6"/>
           <line x1="3"  y1="10" x2="21" y2="10"/>
         </svg>
-        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {currentEvent ? currentEvent.name : 'Событие'}
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', flex: 1, minWidth: 0 }}>
+          {eventLabel}
         </span>
         {/* chevron down */}
         <svg width="9" height="9" viewBox="0 0 24 24" fill="none"
@@ -71,19 +96,20 @@ export function GroupBar({ group, currentEvent, onBack }: GroupBarProps) {
 
       {/* Название группы */}
       <div className="flex-1 min-w-0 truncate"
-        style={{ fontSize: 13, fontWeight: 600, color: 'var(--muted)' }}>
+        style={{ fontSize: 12, fontWeight: 600, color: 'var(--muted)', opacity: 0.7 }}>
         {group?.name || '…'}
       </div>
 
       {/* Код приглашения */}
       <button onClick={copyCode}
-        className="flex items-center gap-[5px] flex-shrink-0 border-none cursor-pointer rounded-full transition-all duration-200 active:opacity-70"
+        className="active:opacity-70 transition-opacity duration-200"
         style={{
-          padding: '6px 10px',
+          ...PILL,
+          padding: '0 10px',
           background: copied ? 'rgba(74,222,128,0.12)' : 'rgba(251,191,36,0.1)',
           border: `1px solid ${copied ? 'rgba(74,222,128,0.25)' : 'rgba(251,191,36,0.22)'}`,
           color: copied ? 'var(--green)' : '#FBBF24',
-          fontSize: 12, fontWeight: 700, letterSpacing: '.05em', fontFamily: 'inherit',
+          letterSpacing: '.05em',
         }}>
         {copied ? <IconCheck size={13} strokeWidth={2.5} /> : (
           <>

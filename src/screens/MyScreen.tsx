@@ -53,10 +53,11 @@ export function MyScreen() {
       </div>
 
       {myItems.length === 0 && (
-        <div className="text-center py-10" style={{ color: 'var(--muted)' }}>
-          <div className="mb-[10px]" style={{ color: 'var(--muted)', opacity: 0.45 }}><IconCart size={44} /></div>
-          <div className="text-[14px] font-semibold leading-relaxed">
-            Тебе пока ничего не назначено.<br />Перейди в список и выбери «Кто купит»!
+        <div className="flex flex-col items-center justify-center py-10">
+          <div style={{ color: 'var(--muted)', opacity: 0.35, marginBottom: 14 }}><IconCart size={48} /></div>
+          <div className="text-[15px] font-extrabold mb-[6px]">Тебе ничего не назначено</div>
+          <div className="text-[13px] text-center leading-relaxed" style={{ color: 'var(--muted)', maxWidth: 220 }}>
+            Перейди в «Список» и нажми «Кто купит?»
           </div>
         </div>
       )}

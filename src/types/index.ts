@@ -45,6 +45,7 @@ export interface PicnicEvent {
 export interface Member {
   user_id: string
   name: string
+  is_admin: boolean
 }
 
 export interface ServerState {
