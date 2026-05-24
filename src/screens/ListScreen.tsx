@@ -43,7 +43,43 @@ interface ItemRowProps {
   onBuyerOpen: (id: string) => void
 }
 
+const toBool = (value: unknown): boolean => {
+  if (typeof value === 'boolean') return value
+  if (value === 'true' || value === 1 || value === '1') return true
+  if (value === 'false' || value === 0 || value === '0') return false
+  return Boolean(value)
+}
+
 function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps) {
+  // ── enabled: optimistic toggle ──
+  const [localEnabled, setLocalEnabled] = useState(() => toBool(item.enabled))
+  const pendingEnabled = useRef<boolean | null>(null)
+
+  useEffect(() => {
+    pendingEnabled.current = null
+    setLocalEnabled(toBool(item.enabled))
+  }, [item.id])
+
+  useEffect(() => {
+    const serverEnabled = toBool(item.enabled)
+    if (pendingEnabled.current !== null) {
+      if (serverEnabled === pendingEnabled.current) {
+        pendingEnabled.current = null
+        setLocalEnabled(serverEnabled)
+      }
+      return
+    }
+    setLocalEnabled(serverEnabled)
+  }, [item.enabled])
+
+  function toggleEnabled() {
+    haptic()
+    const next = !localEnabled
+    setLocalEnabled(next)
+    pendingEnabled.current = next
+    onUpdate(item.id, 'enabled', next)
+  }
+
   // ── qty: local optimistic state + debounce ──
   const [localQty, setLocalQty] = useState(() => Number(item.qty) || 0)
   const qtyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -111,7 +147,7 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
   }
 
   return (
-    <div className="px-[15px] py-[12px]" style={{ opacity: item.enabled ? 1 : 0.4, transition: 'opacity .2s' }}>
+    <div className="px-[15px] py-[12px]" style={{ opacity: localEnabled ? 1 : 0.4, transition: 'opacity .2s' }}>
 
       {/* Строка 1: название + тогл */}
       <div className="flex items-center justify-between gap-3 mb-[8px]">
@@ -133,7 +169,7 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
           ) : (
             <span
               className="text-[14px] font-bold leading-tight cursor-text"
-              style={{ textDecoration: item.enabled ? 'none' : 'line-through', color: 'var(--text)' }}
+              style={{ textDecoration: localEnabled ? 'none' : 'line-through', color: 'var(--text)' }}
               onClick={startEdit}
               title="Нажмите чтобы изменить"
             >
@@ -142,8 +178,13 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
           )}
           {!editing && <SourceBadge source={item.source} />}
         </div>
-        <div className={`toggle${item.enabled ? ' on' : ''}`}
-          onClick={() => { haptic(); onUpdate(item.id, 'enabled', !item.enabled) }} />
+        <button
+          type="button"
+          role="switch"
+          aria-checked={localEnabled}
+          className={`toggle${localEnabled ? ' on' : ''}`}
+          onClick={toggleEnabled}
+        />
       </div>
 
       {/* Строка 2: степпер + цена + удалить */}

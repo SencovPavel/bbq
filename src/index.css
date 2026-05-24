@@ -55,6 +55,15 @@ html, body, #root {
   .glass-input:focus {
     border-color: var(--accent);
   }
+  .price-input {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .price-input::-webkit-inner-spin-button,
+  .price-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
   .btn-accent {
     background: var(--accent);
     color: white;
@@ -81,10 +90,14 @@ html, body, #root {
   width: 36px; height: 20px;
   border-radius: 100px;
   background: var(--gb);
+  border: none;
+  padding: 0;
   position: relative;
   cursor: pointer;
   flex-shrink: 0;
   transition: background .2s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 .toggle::after {
   content: '';
