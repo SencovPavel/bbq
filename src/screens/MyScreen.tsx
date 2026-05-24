@@ -32,7 +32,7 @@ export function MyScreen() {
   }
 
   function changeQty(id: string, cur: number, d: number) {
-    send({ type: 'item:update', id, field: 'qty', value: Math.max(0, +(cur + d).toFixed(2)) })
+    send({ type: 'item:update', id, field: 'qty', value: Math.max(0, +(Number(cur) + d).toFixed(2)) })
   }
 
   return (

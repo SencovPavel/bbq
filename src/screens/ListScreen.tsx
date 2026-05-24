@@ -15,6 +15,9 @@ import type { Item, Member } from '../types'
 const UNITS  = ['шт','кг','л','г','мл','упак','наб','пуч','банк','меш','рул']
 const EMOJIS = ['🏡','🥩','🔥','🥗','🧃','🍽️','🍕','🍺','🥤','🍰','🫙','🌽','🥚','🧀','🥖','🧂','🫒','🍉','🍦','🎉','📦']
 
+const sortItemsByName = (list: Item[]) =>
+  [...list].sort((a, b) => a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' }))
+
 type Source = 'chat' | 'agent' | 'manual'
 const SOURCE_MAP: Record<Source, { bg: string; border: string; color: string; label: string }> = {
   chat:   { bg: 'rgba(96,165,250,.12)',  border: 'rgba(96,165,250,.25)',  color: '#93c5fd',        label: 'из чата'  },
@@ -42,17 +45,38 @@ interface ItemRowProps {
 
 function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps) {
   // ── qty: local optimistic state + debounce ──
-  const [localQty, setLocalQty] = useState(item.qty)
+  const [localQty, setLocalQty] = useState(() => Number(item.qty) || 0)
   const qtyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pendingQty = useRef<number | null>(null)
 
   useEffect(() => {
-    if (!qtyTimer.current) setLocalQty(item.qty)
+    pendingQty.current = null
+    setLocalQty(Number(item.qty) || 0)
+  }, [item.id])
+
+  useEffect(() => {
+    const serverQty = Number(item.qty) || 0
+    if (pendingQty.current !== null) {
+      if (serverQty === pendingQty.current) {
+        pendingQty.current = null
+        setLocalQty(serverQty)
+      }
+      return
+    }
+    if (!qtyTimer.current) {
+      setLocalQty(serverQty)
+    }
   }, [item.qty])
+
+  useEffect(() => () => {
+    if (qtyTimer.current) clearTimeout(qtyTimer.current)
+  }, [])
 
   function changeQty(delta: number) {
     haptic()
-    const next = Math.max(0, +(localQty + delta).toFixed(2))
+    const next = Math.max(0, +(Number(localQty) + delta).toFixed(2))
     setLocalQty(next)
+    pendingQty.current = next
     if (qtyTimer.current) clearTimeout(qtyTimer.current)
     qtyTimer.current = setTimeout(() => {
       onUpdate(item.id, 'qty', next)
@@ -274,7 +298,7 @@ export function ListScreen() {
       )}
 
       {categories.map(cat => {
-        const catItems = visibleItems.filter(i => i.cat_id === cat.id)
+        const catItems = sortItemsByName(visibleItems.filter(i => i.cat_id === cat.id))
         const total    = catItems.filter(i => i.enabled).reduce((s, i) => s + i.price * i.qty, 0)
         const isOpen   = openCats[cat.id] !== false
 

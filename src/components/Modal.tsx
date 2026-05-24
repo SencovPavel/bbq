@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode, type InputHTMLAttributes, type SelectHTMLAttributes } from 'react'
+import { createPortal } from 'react-dom'
 
 interface ModalProps {
   open: boolean
@@ -14,19 +15,24 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
   }, [open])
 
   if (!open) return null
-  return (
-    <div className="fixed inset-0 z-[200] flex items-end justify-center"
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[200] flex items-end justify-center"
       style={{ background: 'rgba(0,0,0,.7)', backdropFilter: 'blur(6px)' }}
-      onClick={e => { if (e.target === e.currentTarget) onClose() }}>
-      <div className="w-full max-w-[500px] rounded-t-[28px] overflow-y-auto slide-up"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div
+        className="w-full max-w-[500px] rounded-t-[28px] overflow-y-auto slide-up"
         style={{
           background: '#18140f',
           border: '1px solid var(--gb)',
           borderBottom: 'none',
           padding: '8px 20px calc(24px + env(safe-area-inset-bottom,0))',
           maxHeight: '85vh',
-        }}>
-        {/* drag handle */}
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex justify-center mb-4 pt-1">
           <div className="rounded-full" style={{ width: 36, height: 4, background: 'var(--gb)' }} />
         </div>
@@ -35,7 +41,8 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         )}
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
