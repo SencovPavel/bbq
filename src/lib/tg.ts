@@ -1,38 +1,85 @@
+/**
+ * Platform abstraction: поддерживает Telegram Mini Apps и MAX WebApp.
+ * Внешний интерфейс модуля остаётся прежним — остальной код не меняется.
+ */
 import type { User } from '../types'
 
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: {
-        ready(): void
-        expand(): void
-        initDataUnsafe: {
-          user?: {
-            id: number
-            first_name: string
-            last_name?: string
-            username?: string
-          }
-          start_param?: string
-        }
-        HapticFeedback: {
-          impactOccurred(style: string): void
-          notificationOccurred(type: string): void
-        }
-      }
-    }
+// ── Type declarations ─────────────────────────────────────────────────────────
+
+interface WebAppUser {
+  id: number
+  first_name: string
+  last_name?: string
+  username?: string
+}
+
+interface WebAppInitData {
+  user?: WebAppUser
+  start_param?: string
+  query_id?: string
+  auth_date?: number
+  hash?: string
+}
+
+interface WebAppBridge {
+  ready?(): void
+  expand?(): void
+  initDataUnsafe: WebAppInitData
+  platform?: string
+  version?: string
+  HapticFeedback?: {
+    impactOccurred(style: string): void
+    notificationOccurred(type: string): void
   }
 }
 
-export const tg = window.Telegram?.WebApp
+declare global {
+  interface Window {
+    // Telegram Mini Apps
+    Telegram?: { WebApp: WebAppBridge }
+    // MAX Bridge (window.WebApp напрямую)
+    WebApp?: WebAppBridge
+  }
+}
+
+// ── Platform detection ────────────────────────────────────────────────────────
+
+export type Platform = 'telegram' | 'max' | 'web'
+
+/** Возвращает активный WebApp объект (MAX или Telegram) либо null */
+function getWebApp(): WebAppBridge | null {
+  // MAX Bridge: window.WebApp (у него есть initDataUnsafe с user)
+  const maxApp = window.WebApp
+  if (maxApp?.initDataUnsafe) return maxApp
+
+  // Telegram
+  const tgApp = window.Telegram?.WebApp
+  if (tgApp?.initDataUnsafe) return tgApp
+
+  return null
+}
+
+export function getPlatform(): Platform {
+  if (window.WebApp?.initDataUnsafe?.user) return 'max'
+  if (window.Telegram?.WebApp?.initDataUnsafe?.user) return 'telegram'
+  return 'web'
+}
+
+// Для обратной совместимости с кодом, который делал import { tg }
+export const tg = window.Telegram?.WebApp ?? null
+
+// ── Public API ────────────────────────────────────────────────────────────────
 
 export function initTg(): void {
-  if (tg) { tg.ready(); tg.expand() }
+  const wa = getWebApp()
+  if (!wa) return
+  try { wa.ready?.() } catch {}
+  try { wa.expand?.() } catch {}
 }
 
 export function getTgUser(): User | null {
-  const u = tg?.initDataUnsafe?.user
-  if (!u) return null
+  const u = getWebApp()?.initDataUnsafe?.user
+  if (!u?.id) return null
   return {
     id:   String(u.id),
     name: [u.first_name, u.last_name].filter(Boolean).join(' ') || u.username || 'Участник',
@@ -40,13 +87,14 @@ export function getTgUser(): User | null {
 }
 
 export function getStartParam(): string | null {
-  return tg?.initDataUnsafe?.start_param ?? null
+  return getWebApp()?.initDataUnsafe?.start_param ?? null
 }
 
+/** Тактильная обратная связь — поддерживается только Telegram */
 export function haptic(type = 'light'): void {
-  tg?.HapticFeedback?.impactOccurred(type)
+  window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(type)
 }
 
 export function hapticNotify(type = 'success'): void {
-  tg?.HapticFeedback?.notificationOccurred(type)
+  window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred(type)
 }
