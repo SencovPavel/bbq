@@ -61,7 +61,6 @@ function IconMembers({ active }: { active: boolean }) {
 }
 
 const TABS: Array<{ id: Tab; label: string; Icon: React.FC<{ active: boolean }> }> = [
-  { id: 'events',  label: 'События',   Icon: IconEvents  },
   { id: 'list',    label: 'Список',    Icon: IconList    },
   { id: 'summary', label: 'Итог',      Icon: IconSummary },
   { id: 'my',      label: 'Моё',       Icon: IconMy      },
@@ -81,7 +80,7 @@ export function TopNav({ active, onChange }: TopNavProps) {
         bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: 370,
+        width: 310,
       }}
     >
       <div

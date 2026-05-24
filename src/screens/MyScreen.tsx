@@ -12,7 +12,6 @@ export function MyScreen() {
   const me             = useSessionStore(s => s.me)
   const showToast      = useToastStore(s => s.show)
   const currentEventId = useAppStore(s => s.currentEventId)
-  const setTab         = useAppStore(s => s.setTab)
 
   const allItems    = serverState?.items ?? []
   const items       = currentEventId ? allItems.filter(i => i.event_id === currentEventId) : allItems
@@ -34,23 +33,6 @@ export function MyScreen() {
 
   function changeQty(id: string, cur: number, d: number) {
     send({ type: 'item:update', id, field: 'qty', value: Math.max(0, +(cur + d).toFixed(2)) })
-  }
-
-  if (!currentEventId) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-        <div className="mb-3" style={{ color: 'var(--muted)', opacity: 0.5 }}><IconCalendar size={48} /></div>
-        <div className="font-extrabold text-[16px] mb-2" style={{ color: 'var(--text)' }}>Выберите событие</div>
-        <div className="text-[13px] leading-relaxed mb-6" style={{ color: 'var(--muted)' }}>
-          Покупки привязаны к конкретному событию.
-        </div>
-        <button onClick={() => setTab('events')}
-          className="px-6 py-[13px] rounded-[14px] text-[14px] font-extrabold cursor-pointer border-none"
-          style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
-          Перейти к событиям
-        </button>
-      </div>
-    )
   }
 
   return (

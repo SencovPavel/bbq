@@ -174,7 +174,6 @@ export function ListScreen() {
   const meId          = useSessionStore(s => s.me?.id)
   const showToast     = useToastStore(s => s.show)
   const currentEventId = useAppStore(s => s.currentEventId)
-  const setTab         = useAppStore(s => s.setTab)
 
   const [openCats,    setOpenCats]    = useState<Record<string, boolean>>({ rent: true, meat: true })
   const [addModal,    setAddModal]    = useState<string | null>(null)
@@ -251,28 +250,6 @@ export function ListScreen() {
     send({ type: 'item:update', id: buyerModal!, field: 'buyer_id',   value: userId })
     send({ type: 'item:update', id: buyerModal!, field: 'buyer_name', value: name   })
     setBuyerModal(null)
-  }
-
-  // Если нет выбранного события — подсказка
-  if (!currentEventId) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-        <div className="mb-3" style={{ color: 'var(--muted)', opacity: 0.5 }}><IconCalendar size={48} /></div>
-        <div className="font-extrabold text-[16px] mb-2" style={{ color: 'var(--text)' }}>
-          Выберите событие
-        </div>
-        <div className="text-[13px] leading-relaxed mb-6" style={{ color: 'var(--muted)' }}>
-          Список покупок привязан к конкретному событию.<br />
-          Перейдите во вкладку «События» и выберите пикник.
-        </div>
-        <button
-          onClick={() => setTab('events')}
-          className="px-6 py-[13px] rounded-[14px] text-[14px] font-extrabold cursor-pointer border-none"
-          style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
-          Перейти к событиям
-        </button>
-      </div>
-    )
   }
 
   return (

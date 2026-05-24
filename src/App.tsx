@@ -2,12 +2,12 @@ import { useEffect } from 'react'
 import { Blobs } from './components/Blobs'
 import { TopNav } from './components/TopNav'
 import { GroupBar } from './components/GroupBar'
+import { EventSheet } from './components/EventSheet'
 import { Toast } from './components/Toast'
 import { ListScreen } from './screens/ListScreen'
 import { SummaryScreen } from './screens/SummaryScreen'
 import { MyScreen } from './screens/MyScreen'
 import { MembersScreen } from './screens/MembersScreen'
-import { EventsScreen } from './screens/EventsScreen'
 import { GroupsScreen } from './screens/GroupsScreen'
 import { OnboardingScreen } from './screens/OnboardingScreen'
 import { useWebSocket } from './hooks/useWebSocket'
@@ -20,7 +20,7 @@ import { useSessionStore } from './stores/sessionStore'
 import { useWsStore } from './stores/wsStore'
 import type { User } from './types'
 
-// ── Module-level init (runs once before first render) ────────────────────────
+// ── Module-level init ────────────────────────────────────────────────────────
 const tgUser     = getTgUser()
 const startParam = getStartParam()
 const session    = loadSession()
@@ -38,33 +38,40 @@ export default function App() {
   const tab       = useAppStore(s => s.tab)
   const setScreen = useAppStore(s => s.setScreen)
   const setTab    = useAppStore(s => s.setTab)
-  const currentEventId = useAppStore(s => s.currentEventId)
-  const enterEvent     = useAppStore(s => s.enterEvent)
-  const exitEvent      = useAppStore(s => s.exitEvent)
+  const currentEventId    = useAppStore(s => s.currentEventId)
+  const enterEvent        = useAppStore(s => s.enterEvent)
+  const exitEvent         = useAppStore(s => s.exitEvent)
+  const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
 
-  const me        = useSessionStore(s => s.me)
-  const groupId   = useSessionStore(s => s.groupId)
-  const setMe     = useSessionStore(s => s.setMe)
+  const me         = useSessionStore(s => s.me)
+  const groupId    = useSessionStore(s => s.groupId)
+  const setMe      = useSessionStore(s => s.setMe)
   const setGroupId = useSessionStore(s => s.setGroupId)
 
   const serverState = useWsStore(s => s.serverState)
   const wsOk        = useWsStore(s => s.wsOk)
   const resetWs     = useWsStore(s => s.reset)
 
-  // Connect WebSocket only when inside the app screen
   useWebSocket(screen === 'app' ? groupId : null, me?.id)
 
-  // Handle deep link (startParam present = loading screen)
+  // Автовыбор ближайшего события когда загрузился state
+  useEffect(() => {
+    if (screen !== 'app' || currentEventId) return
+    const events = serverState?.events ?? []
+    if (!events.length) return
+    const upcoming = events.find(e => !e.event_date || new Date(e.event_date + 'T23:59:59') >= new Date())
+    const pick = upcoming ?? events[0]
+    if (pick) enterEvent(pick.id)
+  }, [serverState?.events, screen]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Deep link
   useEffect(() => {
     if (!startParam) return
     const user: User = tgUser ?? session?.me ?? { id: uid(), name: 'Гость' }
     joinGroupById({ groupId: startParam, userId: user.id, userName: user.name })
       .then(d => {
         if (d.id) {
-          setMe(user)
-          setGroupId(d.id)
-          saveSession(user, d.id)
-          setScreen('app')
+          setMe(user); setGroupId(d.id); saveSession(user, d.id); setScreen('app')
         } else {
           setScreen(tgUser || session ? 'groups' : 'onboarding')
         }
@@ -77,15 +84,13 @@ export default function App() {
     setGroupId(gId)
     saveSession(me, gId)
     resetWs()
+    exitEvent()
     setScreen('app')
-    setTab('events')
+    setTab('list')
   }
 
   function onOnboardingDone(user: User, gId: string) {
-    setMe(user)
-    setGroupId(gId)
-    saveSession(user, gId)
-    setScreen('groups')
+    setMe(user); setGroupId(gId); saveSession(user, gId); setScreen('groups')
   }
 
   function backToGroups() {
@@ -93,10 +98,10 @@ export default function App() {
     setGroupId(null)
     resetWs()
     exitEvent()
+    setShowEventSheet(false)
     setScreen('groups')
   }
 
-  // Найти текущее событие по id
   const currentEvent = currentEventId
     ? serverState?.events?.find(e => e.id === currentEventId)
     : undefined
@@ -107,9 +112,7 @@ export default function App() {
     return (
       <div className="flex items-center justify-center min-h-screen relative">
         <Blobs />
-        <div className="text-[14px] font-bold relative z-10" style={{ color: 'var(--muted)' }}>
-          Загрузка...
-        </div>
+        <div className="text-[14px] font-bold relative z-10" style={{ color: 'var(--muted)' }}>Загрузка...</div>
       </div>
     )
   }
@@ -128,11 +131,7 @@ export default function App() {
     return (
       <div className="relative">
         <Blobs />
-        <GroupsScreen
-          onEnter={enterGroup}
-          onCreate={() => setScreen('onboarding')}
-          onJoin={() => setScreen('onboarding')}
-        />
+        <GroupsScreen onEnter={enterGroup} onCreate={() => setScreen('onboarding')} onJoin={() => setScreen('onboarding')} />
         <Toast />
       </div>
     )
@@ -147,16 +146,14 @@ export default function App() {
           wsOk={wsOk}
           currentEvent={currentEvent}
           onBack={backToGroups}
-          onExitEvent={exitEvent}
         />
-
-        {tab === 'events'  && <EventsScreen />}
         {tab === 'list'    && <ListScreen />}
         {tab === 'summary' && <SummaryScreen />}
         {tab === 'my'      && <MyScreen />}
         {tab === 'members' && <MembersScreen />}
       </div>
       <TopNav active={tab} onChange={setTab} />
+      <EventSheet />
       <Toast />
     </div>
   )
