@@ -145,12 +145,24 @@ export function IconFlame({ size = 24, strokeWidth = 1.6 }: IconProps) {
   )
 }
 
-export function IconTent({ size = 40, strokeWidth = 1.5 }: IconProps) {
+export function IconUsers({ size = 40, strokeWidth = 1.5 }: IconProps) {
   return base(size, strokeWidth,
     <>
-      <path d="M3.5 21L12 3l8.5 18" />
-      <path d="M12 3L5 14h14L12 3z" />
-      <line x1="3.5" y1="21" x2="20.5" y2="21" />
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </>
+  )
+}
+
+export function IconReceipt({ size = 40, strokeWidth = 1.5 }: IconProps) {
+  return base(size, strokeWidth,
+    <>
+      <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
+      <path d="M16 8H8" />
+      <path d="M16 12H8" />
+      <path d="M12 16H8" />
     </>
   )
 }

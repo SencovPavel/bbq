@@ -6,7 +6,7 @@ import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
-import { IconShare, IconCalendar, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle, IconTent } from '../components/Icon'
+import { IconShare, IconCalendar, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle, IconReceipt } from '../components/Icon'
 import type { AnalysisResult } from '../types'
 
 export function SummaryScreen() {
@@ -92,7 +92,7 @@ export function SummaryScreen() {
       {/* Empty state */}
       {enabled.length === 0 && (
         <div className="flex flex-col items-center justify-center py-10 text-center">
-          <div style={{ color: 'var(--muted)', opacity: 0.35, marginBottom: 14 }}><IconTent size={52} /></div>
+          <div style={{ color: 'var(--muted)', opacity: 0.35, marginBottom: 14 }}><IconReceipt size={52} /></div>
           <div className="text-[16px] font-extrabold mb-[6px]">Список пустой</div>
           <div className="text-[13px] leading-relaxed" style={{ color: 'var(--muted)', maxWidth: 220 }}>
             Перейди на «Список» и добавь что нужно купить
@@ -184,7 +184,7 @@ export function SummaryScreen() {
       )}
 
       <button onClick={shareList}
-        className="w-full py-[15px] rounded-[14px] border-none text-[14px] font-extrabold cursor-pointer"
+        className="w-full py-[15px] rounded-[14px] border-none text-[14px] font-extrabold cursor-pointer flex items-center justify-center gap-2"
         style={{ background: 'linear-gradient(90deg,var(--accent),var(--accent2))', color: '#fff', fontFamily: 'inherit' }}>
         <IconShare size={15} strokeWidth={2} /> Поделиться списком
       </button>

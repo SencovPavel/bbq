@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getUserGroups } from '../lib/api'
-import { IconFlame, IconTent } from '../components/Icon'
+import { IconFlame, IconUsers } from '../components/Icon'
 import { useSessionStore } from '../stores/sessionStore'
 import type { GroupSummary } from '../types'
 
@@ -40,7 +40,7 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
           )}
           {!loading && groups.length === 0 && (
             <div className="text-center py-8">
-              <div className="mb-2" style={{ color: 'var(--muted)', opacity: 0.45, display: 'inline-block' }}><IconTent size={44} /></div>
+              <div className="mb-2" style={{ color: 'var(--muted)', opacity: 0.45, display: 'inline-block' }}><IconUsers size={44} /></div>
               <div className="text-[13px] font-semibold leading-relaxed" style={{ color: 'var(--muted)' }}>
                 У тебя пока нет групп.<br />Создай новую или войди по коду!
               </div>
