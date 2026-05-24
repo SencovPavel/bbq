@@ -60,35 +60,49 @@ interface TopNavProps {
 export function TopNav({ active, onChange }: TopNavProps) {
   return (
     <div
-      className="fixed bottom-0 z-50 flex w-full max-w-[500px]"
+      className="fixed z-50"
       style={{
+        bottom: 'calc(16px + env(safe-area-inset-bottom, 0px))',
         left: '50%',
         transform: 'translateX(-50%)',
-        background: 'rgba(14,12,9,0.94)',
-        backdropFilter: 'blur(28px)',
-        borderTop: '1px solid var(--gb)',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        width: 'calc(100% - 32px)',
+        maxWidth: 460,
       }}
     >
-      {TABS.map(({ id, label, Icon }) => {
-        const isActive = active === id
-        return (
-          <button key={id}
-            onClick={() => onChange(id)}
-            className="flex flex-1 flex-col items-center justify-center gap-[3px] py-[8px] border-none bg-transparent cursor-pointer transition-all duration-150"
-            style={{ color: isActive ? 'var(--accent)' : 'var(--muted)', fontFamily: 'inherit' }}>
-            <Icon active={isActive} />
-            <span style={{
-              fontSize: 10,
-              fontWeight: isActive ? 700 : 500,
-              letterSpacing: '.02em',
-              transition: 'color .15s',
-            }}>
-              {label}
-            </span>
-          </button>
-        )
-      })}
+      {/* Glass pill */}
+      <div
+        className="flex items-center rounded-[28px] px-[6px] py-[6px]"
+        style={{
+          background: 'rgba(30,25,18,0.72)',
+          backdropFilter: 'blur(32px)',
+          border: '1px solid rgba(255,220,150,0.14)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.45), 0 1px 0 rgba(255,220,150,0.08) inset',
+        }}
+      >
+        {TABS.map(({ id, label, Icon }) => {
+          const isActive = active === id
+          return (
+            <button key={id}
+              onClick={() => onChange(id)}
+              className="flex flex-1 flex-col items-center justify-center gap-[3px] py-[7px] px-[6px] rounded-[22px] border-none cursor-pointer transition-all duration-200"
+              style={{
+                background: isActive ? 'rgba(249,115,22,0.18)' : 'transparent',
+                color: isActive ? 'var(--accent)' : 'rgba(245,240,234,0.4)',
+                fontFamily: 'inherit',
+                boxShadow: isActive ? '0 0 0 1px rgba(249,115,22,0.25)' : 'none',
+              }}>
+              <Icon active={isActive} />
+              <span style={{
+                fontSize: 10,
+                fontWeight: isActive ? 700 : 500,
+                letterSpacing: '.02em',
+              }}>
+                {label}
+              </span>
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }

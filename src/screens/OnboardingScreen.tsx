@@ -88,8 +88,10 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
           </div>
         )}
 
-        {tab === 'create' ? (
-          <>
+        {/* Оба таба в одной grid-ячейке — высота карточки всегда = max(обоих) */}
+        <div style={{ display: 'grid' }}>
+          {/* Создать */}
+          <div style={{ gridArea: '1/1', visibility: tab === 'create' ? 'visible' : 'hidden' }}>
             <div className="mb-3">
               <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>Название группы</label>
               <input style={inputStyle} value={groupName} onChange={e => setGroupName(e.target.value)} placeholder="Пикник на даче" />
@@ -99,13 +101,14 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
               style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
               Создать пикник 🔥
             </button>
-          </>
-        ) : (
-          <>
+          </div>
+
+          {/* Войти по коду */}
+          <div style={{ gridArea: '1/1', visibility: tab === 'join' ? 'visible' : 'hidden' }}>
             <div className="mb-3">
               <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>Код приглашения</label>
               <input
-                style={{ ...inputStyle, textTransform: 'uppercase', letterSpacing: '.1em', fontSize: 18, textAlign: 'center' }}
+                style={{ ...inputStyle, textTransform: 'uppercase', letterSpacing: '.1em', fontSize: 18, textAlign: 'center', lineHeight: '1.2' }}
                 value={code} onChange={e => setCode(e.target.value)} placeholder="XXXXXX" maxLength={6} />
             </div>
             <button onClick={doJoin}
@@ -113,8 +116,8 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
               style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
               Присоединиться
             </button>
-          </>
-        )}
+          </div>
+        </div>
 
         {err && <div className="text-center text-[12px] mt-3" style={{ color: 'var(--red)' }}>{err}</div>}
       </div>
