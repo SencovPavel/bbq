@@ -131,8 +131,7 @@ export default function App() {
   return (
     <div className="relative max-w-[500px] mx-auto min-h-screen">
       <Blobs />
-      <div className="relative z-10">
-        <TopNav active={tab} onChange={setTab} />
+      <div className="relative z-10" style={{ paddingBottom: 'calc(56px + env(safe-area-inset-bottom, 0px))' }}>
         <GroupBar group={serverState?.group} wsOk={wsOk} onBack={backToGroups} />
 
         {tab === 'list'    && <ListScreen />}
@@ -140,6 +139,7 @@ export default function App() {
         {tab === 'my'      && <MyScreen />}
         {tab === 'members' && <MembersScreen />}
       </div>
+      <TopNav active={tab} onChange={setTab} />
       <Toast />
     </div>
   )
