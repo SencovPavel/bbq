@@ -44,7 +44,7 @@ function EventModal({ event, onSave, onClose, onDelete }: EventModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center"
+      className="fixed inset-0 z-[200] flex items-end justify-center"
       style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
