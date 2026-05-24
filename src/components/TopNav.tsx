@@ -1,20 +1,5 @@
 import type { Tab } from '../types'
 
-function IconEvents({ active }: { active: boolean }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth={active ? 2.2 : 1.7} strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="4" width="18" height="18" rx="2"/>
-      <line x1="16" y1="2" x2="16" y2="6"/>
-      <line x1="8"  y1="2" x2="8"  y2="6"/>
-      <line x1="3"  y1="10" x2="21" y2="10"/>
-      <circle cx="8"  cy="15" r="1" fill="currentColor" stroke="none"/>
-      <circle cx="12" cy="15" r="1" fill="currentColor" stroke="none"/>
-      <circle cx="16" cy="15" r="1" fill="currentColor" stroke="none"/>
-    </svg>
-  )
-}
-
 function IconList({ active }: { active: boolean }) {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -72,7 +57,12 @@ interface TopNavProps {
   onChange: (tab: Tab) => void
 }
 
+const TAB_COUNT = TABS.length
+const NAV_PADDING_PX = 4
+
 export function TopNav({ active, onChange }: TopNavProps) {
+  const activeIndex = TABS.findIndex((tab) => tab.id === active)
+
   return (
     <div
       className="fixed z-50"
@@ -84,7 +74,7 @@ export function TopNav({ active, onChange }: TopNavProps) {
       }}
     >
       <div
-        className="flex items-center rounded-[22px] p-[4px]"
+        className="relative flex items-center rounded-[22px] p-[4px]"
         style={{
           background: 'rgba(22,18,13,0.88)',
           backdropFilter: 'blur(32px)',
@@ -92,20 +82,43 @@ export function TopNav({ active, onChange }: TopNavProps) {
           boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
         }}
       >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute rounded-[18px]"
+          style={{
+            top: NAV_PADDING_PX,
+            bottom: NAV_PADDING_PX,
+            left: NAV_PADDING_PX,
+            width: `calc((100% - ${NAV_PADDING_PX * 2}px) / ${TAB_COUNT})`,
+            transform: `translateX(${activeIndex * 100}%)`,
+            transition: 'transform 0.32s cubic-bezier(0.4, 0, 0.2, 1)',
+            background: 'rgba(249,115,22,0.13)',
+            boxShadow: '0 0 0 1px rgba(249,115,22,0.22)',
+          }}
+        />
+
         {TABS.map(({ id, label, Icon }) => {
           const isActive = active === id
           return (
-            <button key={id}
+            <button
+              key={id}
+              type="button"
               onClick={() => onChange(id)}
-              className="flex flex-1 flex-col items-center justify-center gap-[2px] py-[7px] rounded-[18px] border-none cursor-pointer transition-all duration-200"
+              className="relative z-10 flex flex-1 flex-col items-center justify-center gap-[2px] rounded-[18px] border-none bg-transparent py-[7px] cursor-pointer transition-colors duration-200"
               style={{
-                background: isActive ? 'rgba(249,115,22,0.13)' : 'transparent',
-                color:      isActive ? 'var(--accent)' : 'rgba(245,240,234,0.38)',
+                color: isActive ? 'var(--accent)' : 'rgba(245,240,234,0.38)',
                 fontFamily: 'inherit',
-                boxShadow:  isActive ? '0 0 0 1px rgba(249,115,22,0.22)' : 'none',
-              }}>
+              }}
+            >
               <Icon active={isActive} />
-              <span style={{ fontSize: 9.5, fontWeight: isActive ? 700 : 500, letterSpacing: '.02em', lineHeight: 1 }}>
+              <span
+                style={{
+                  fontSize: 9.5,
+                  fontWeight: isActive ? 700 : 500,
+                  letterSpacing: '.02em',
+                  lineHeight: 1,
+                }}
+              >
                 {label}
               </span>
             </button>
