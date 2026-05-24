@@ -7,6 +7,7 @@ import { fmt } from '../lib/session'
 import { haptic } from '../lib/tg'
 import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
+import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
 import type { Item, Member } from '../types'
 
@@ -166,8 +167,10 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
 
 export function ListScreen() {
   const { serverState, send } = useWsStore()
-  const meId      = useSessionStore(s => s.me?.id)
-  const showToast = useToastStore(s => s.show)
+  const meId          = useSessionStore(s => s.me?.id)
+  const showToast     = useToastStore(s => s.show)
+  const currentEventId = useAppStore(s => s.currentEventId)
+  const setTab         = useAppStore(s => s.setTab)
 
   const [openCats,    setOpenCats]    = useState<Record<string, boolean>>({ rent: true, meat: true })
   const [addModal,    setAddModal]    = useState<string | null>(null)
@@ -184,8 +187,13 @@ export function ListScreen() {
 
   const { categories = [], items = [], members = [] } = serverState ?? {}
 
+  // Фильтруем по текущему событию
+  const eventItems = currentEventId
+    ? items.filter(i => i.event_id === currentEventId)
+    : items
+
   // Скрываем позиции, ожидающие удаления
-  const visibleItems = items.filter(i => !pendingDeletes.has(i.id))
+  const visibleItems = eventItems.filter(i => !pendingDeletes.has(i.id))
 
   function toggleCat(id: string) { setOpenCats(p => ({ ...p, [id]: !p[id] })) }
 
@@ -214,7 +222,8 @@ export function ListScreen() {
   function saveItem() {
     if (!newItem.name.trim()) return
     send({ type: 'item:add', catId: addModal!, name: newItem.name.trim(),
-           qty: parseFloat(newItem.qty) || 1, price: 0, unit: newItem.unit })
+           qty: parseFloat(newItem.qty) || 1, price: 0, unit: newItem.unit,
+           eventId: currentEventId ?? undefined })
     setNewItem({ name: '', qty: '1', unit: 'шт' })
     setAddModal(null)
     setOpenCats(p => ({ ...p, [addModal!]: true }))
@@ -238,6 +247,28 @@ export function ListScreen() {
     send({ type: 'item:update', id: buyerModal!, field: 'buyer_id',   value: userId })
     send({ type: 'item:update', id: buyerModal!, field: 'buyer_name', value: name   })
     setBuyerModal(null)
+  }
+
+  // Если нет выбранного события — подсказка
+  if (!currentEventId) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center px-6">
+        <div className="text-[48px] mb-3">📅</div>
+        <div className="font-extrabold text-[16px] mb-2" style={{ color: 'var(--text)' }}>
+          Выберите событие
+        </div>
+        <div className="text-[13px] leading-relaxed mb-6" style={{ color: 'var(--muted)' }}>
+          Список покупок привязан к конкретному событию.<br />
+          Перейдите во вкладку «События» и выберите пикник.
+        </div>
+        <button
+          onClick={() => setTab('events')}
+          className="px-6 py-[13px] rounded-[14px] text-[14px] font-extrabold cursor-pointer border-none"
+          style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
+          Перейти к событиям
+        </button>
+      </div>
+    )
   }
 
   return (

@@ -18,6 +18,7 @@ export interface Category {
 export interface Item {
   id: string
   cat_id: string
+  event_id: string | null
   name: string
   qty: number
   unit: string
@@ -30,6 +31,17 @@ export interface Item {
   chat_hint?: string
 }
 
+export interface PicnicEvent {
+  id: string
+  group_id: string
+  name: string
+  event_date: string | null   // ISO date "YYYY-MM-DD"
+  event_time: string | null   // "HH:MM:SS"
+  location: string | null
+  description: string | null
+  created_at: string
+}
+
 export interface Member {
   user_id: string
   name: string
@@ -40,6 +52,7 @@ export interface ServerState {
   categories: Category[]
   items: Item[]
   members: Member[]
+  events: PicnicEvent[]
 }
 
 export interface GroupSummary {
@@ -56,4 +69,4 @@ export interface AnalysisResult {
 }
 
 export type Screen = 'loading' | 'onboarding' | 'groups' | 'app'
-export type Tab    = 'list' | 'summary' | 'my' | 'members'
+export type Tab    = 'events' | 'list' | 'summary' | 'my' | 'members'

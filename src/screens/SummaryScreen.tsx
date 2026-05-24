@@ -4,20 +4,24 @@ import { fmt } from '../lib/session'
 import { analyzeWithAgent } from '../lib/api'
 import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
+import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
 import type { AnalysisResult } from '../types'
 
 export function SummaryScreen() {
-  const serverState = useWsStore(s => s.serverState)
-  const groupId     = useSessionStore(s => s.groupId)
-  const showToast   = useToastStore(s => s.show)
+  const serverState    = useWsStore(s => s.serverState)
+  const groupId        = useSessionStore(s => s.groupId)
+  const showToast      = useToastStore(s => s.show)
+  const currentEventId = useAppStore(s => s.currentEventId)
+  const setTab         = useAppStore(s => s.setTab)
 
   const [analysis,  setAnalysis]  = useState<AnalysisResult | null>(null)
   const [loading,   setLoading]   = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
 
   const { categories = [], items = [], members = [] } = serverState ?? {}
-  const enabled     = items.filter(i => i.enabled)
+  const allItems    = currentEventId ? items.filter(i => i.event_id === currentEventId) : items
+  const enabled     = allItems.filter(i => i.enabled)
   const bought      = enabled.filter(i => i.bought && i.price > 0)
   const actualTotal = bought.reduce((s, i) => s + i.price * i.qty, 0)
   const boughtCount = enabled.filter(i => i.bought).length
@@ -55,6 +59,23 @@ export function SummaryScreen() {
     text += `💰 Куплено: ${fmt(actualTotal)}\n👤 На человека (${ppl} чел.): ${fmt(ppl ? actualTotal / ppl : 0)}`
     if (navigator.share) navigator.share({ text }).catch(() => {})
     else navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
+  }
+
+  if (!currentEventId) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center px-6">
+        <div className="text-[48px] mb-3">📅</div>
+        <div className="font-extrabold text-[16px] mb-2" style={{ color: 'var(--text)' }}>Выберите событие</div>
+        <div className="text-[13px] leading-relaxed mb-6" style={{ color: 'var(--muted)' }}>
+          Итог считается для конкретного события.
+        </div>
+        <button onClick={() => setTab('events')}
+          className="px-6 py-[13px] rounded-[14px] text-[14px] font-extrabold cursor-pointer border-none"
+          style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
+          Перейти к событиям
+        </button>
+      </div>
+    )
   }
 
   return (

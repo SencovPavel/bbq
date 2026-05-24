@@ -7,6 +7,7 @@ import { ListScreen } from './screens/ListScreen'
 import { SummaryScreen } from './screens/SummaryScreen'
 import { MyScreen } from './screens/MyScreen'
 import { MembersScreen } from './screens/MembersScreen'
+import { EventsScreen } from './screens/EventsScreen'
 import { GroupsScreen } from './screens/GroupsScreen'
 import { OnboardingScreen } from './screens/OnboardingScreen'
 import { useWebSocket } from './hooks/useWebSocket'
@@ -37,6 +38,9 @@ export default function App() {
   const tab       = useAppStore(s => s.tab)
   const setScreen = useAppStore(s => s.setScreen)
   const setTab    = useAppStore(s => s.setTab)
+  const currentEventId = useAppStore(s => s.currentEventId)
+  const enterEvent     = useAppStore(s => s.enterEvent)
+  const exitEvent      = useAppStore(s => s.exitEvent)
 
   const me        = useSessionStore(s => s.me)
   const groupId   = useSessionStore(s => s.groupId)
@@ -74,7 +78,7 @@ export default function App() {
     saveSession(me, gId)
     resetWs()
     setScreen('app')
-    setTab('list')
+    setTab('events')
   }
 
   function onOnboardingDone(user: User, gId: string) {
@@ -88,8 +92,14 @@ export default function App() {
     clearGroupSession()
     setGroupId(null)
     resetWs()
+    exitEvent()
     setScreen('groups')
   }
+
+  // Найти текущее событие по id
+  const currentEvent = currentEventId
+    ? serverState?.events?.find(e => e.id === currentEventId)
+    : undefined
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -132,8 +142,15 @@ export default function App() {
     <div className="relative max-w-[500px] mx-auto min-h-screen">
       <Blobs />
       <div className="relative z-10" style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom, 0px))' }}>
-        <GroupBar group={serverState?.group} wsOk={wsOk} onBack={backToGroups} />
+        <GroupBar
+          group={serverState?.group}
+          wsOk={wsOk}
+          currentEvent={currentEvent}
+          onBack={backToGroups}
+          onExitEvent={exitEvent}
+        />
 
+        {tab === 'events'  && <EventsScreen />}
         {tab === 'list'    && <ListScreen />}
         {tab === 'summary' && <SummaryScreen />}
         {tab === 'my'      && <MyScreen />}

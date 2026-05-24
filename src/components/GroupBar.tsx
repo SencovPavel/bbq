@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import type { Group } from '../types'
+import type { Group, PicnicEvent } from '../types'
 
 interface GroupBarProps {
   group: Group | undefined
   wsOk: boolean
+  currentEvent: PicnicEvent | undefined
   onBack: () => void
+  onExitEvent: () => void
 }
 
-export function GroupBar({ group, onBack }: GroupBarProps) {
+export function GroupBar({ group, currentEvent, onBack, onExitEvent }: GroupBarProps) {
   const [copied, setCopied] = useState(false)
 
   function copyCode() {
@@ -17,6 +19,39 @@ export function GroupBar({ group, onBack }: GroupBarProps) {
     setTimeout(() => setCopied(false), 1800)
   }
 
+  // ── Режим события ─────────────────────────────────────────────────────────
+  if (currentEvent) {
+    return (
+      <div className="flex items-center gap-3 px-4 pt-4 pb-2">
+        {/* ← назад к списку событий */}
+        <button onClick={onExitEvent}
+          className="flex items-center justify-center flex-shrink-0 border-none cursor-pointer transition-opacity duration-150 active:opacity-60"
+          style={{
+            width: 36, height: 36, borderRadius: '50%',
+            background: 'rgba(255,240,200,0.08)',
+            border: '1px solid rgba(255,220,150,0.12)',
+            color: 'var(--text)',
+          }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+
+        {/* Название события */}
+        <div className="flex-1 min-w-0">
+          <div className="font-extrabold truncate" style={{ fontSize: 15, color: 'var(--text)' }}>
+            {currentEvent.name}
+          </div>
+          <div className="text-[11px] truncate" style={{ color: 'var(--muted)' }}>
+            {group?.name ?? ''}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Режим группы ──────────────────────────────────────────────────────────
   return (
     <div className="flex items-center gap-3 px-4 pt-4 pb-2">
 
