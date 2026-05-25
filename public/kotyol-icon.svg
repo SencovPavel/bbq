@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#DC2626"/>
+    </linearGradient>
+    <clipPath id="shape">
+      <rect width="1024" height="1024" rx="230" ry="230"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="230" ry="230" fill="url(#bg)"/>
+
+  <!-- Icon mark (scaled to fill nicely) -->
+  <g transform="translate(112, 100) scale(8)">
+    <!-- Steam wisps -->
+    <path d="M33 26Q28 18 33 10Q38 2 33-4" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.85"/>
+    <path d="M50 23Q45 15 50 7Q55-1 50-7" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.85"/>
+    <path d="M67 26Q62 18 67 10Q72 2 67-4" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.85"/>
+    <!-- Rim -->
+    <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+    <!-- Body -->
+    <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+    <!-- Left handle -->
+    <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <!-- Right handle -->
+    <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <!-- Shine -->
+    <ellipse cx="36" cy="55" rx="8" ry="11" fill="rgba(255,255,255,0.12)" transform="rotate(-15 36 55)"/>
+  </g>
+</svg>

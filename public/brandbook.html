@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Котёл — Брендбук</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: #0C0A09;
+  color: #FFF7ED;
+  padding: 32px 36px 40px;
+  width: 1200px;
+}
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.card {
+  background: #1C1917;
+  border: 1px solid #292524;
+  border-radius: 20px;
+  padding: 24px;
+}
+.label {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: #78716C;
+  margin-bottom: 16px;
+}
+
+/* ── Icon SVG reused ── */
+.pot-sm { display:inline-flex; align-items:center; justify-content:center; }
+
+/* HERO row */
+.hero {
+  display: flex; align-items: center; gap: 20px;
+  background: linear-gradient(135deg,#1C1917,#0C0A09);
+  border: 1px solid #292524; border-radius: 20px;
+  padding: 28px 32px; margin-bottom: 16px;
+}
+.hero-icon {
+  width: 88px; height: 88px; border-radius: 22px; flex-shrink: 0;
+  background: linear-gradient(135deg,#F97316,#DC2626);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 16px 48px rgba(249,115,22,.4);
+}
+.wordmark { font-size: 52px; font-weight: 900; letter-spacing: -.03em; }
+.tagline  { font-size: 14px; color: #A8A29E; margin-top: 4px; font-weight: 600; }
+
+/* Sizes row */
+.sizes { display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+.sz { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.sz-lbl { font-size: 10px; color: #78716C; font-weight: 700; }
+.ibox {
+  border-radius: calc(var(--r)*1px);
+  background: linear-gradient(135deg,#F97316,#DC2626);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(249,115,22,.28);
+}
+
+/* Variants */
+.vars { display: flex; gap: 12px; }
+.var {
+  flex: 1; border-radius: 16px; padding: 20px 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  border: 1px solid #292524;
+}
+.var-lbl { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #78716C; }
+
+/* Colors */
+.swatches { display: flex; gap: 8px; }
+.swatch { flex: 1; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.06); }
+.sw-color { height: 56px; }
+.sw-info { padding: 8px 10px; background: #292524; }
+.sw-name { font-size: 11px; font-weight: 800; }
+.sw-hex  { font-size: 9px; color: #78716C; font-family: monospace; margin-top: 1px; }
+
+/* Gradients */
+.grads { display: flex; gap: 8px; margin-top: 10px; }
+.grad-box { flex:1; height: 48px; border-radius: 10px; border: 1px solid rgba(255,255,255,.06); }
+
+/* Type */
+.type-rows { display: flex; flex-direction: column; gap: 0; }
+.tr {
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 8px 0; border-bottom: 1px solid #292524;
+}
+.tr:last-child { border-bottom: none; }
+.tr-meta { font-size: 9px; color: #78716C; font-weight: 700; width: 90px; flex-shrink: 0; }
+
+/* Mockups */
+.mockups { display: flex; gap: 12px; }
+.mock {
+  flex: 1; background: #292524; border-radius: 14px; padding: 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.mock-lbl { font-size: 9px; color: #78716C; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+
+.dl-btn {
+  padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
+  background: linear-gradient(135deg,#F97316,#DC2626); color: #fff;
+  text-decoration: none; display: inline-flex; align-items: center;
+  transition: opacity .15s;
+}
+.dl-btn:hover { opacity: .85; }
+.dl-sm  { padding: 10px 14px; background: #292524; color: #FFF7ED; }
+.dl-svg { background: #1C1917; border: 1px solid #F97316; color: #F97316; }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-icon">
+    <svg width="54" height="54" viewBox="0 0 100 100" fill="none">
+      <path d="M33 26Q28 18 33 10Q38 2 33-4" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+      <path d="M50 23Q45 15 50 7Q55-1 50-7" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+      <path d="M67 26Q62 18 67 10Q72 2 67-4" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+      <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+      <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+      <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+      <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="36" cy="55" rx="8" ry="11" fill="rgba(255,255,255,.1)" transform="rotate(-15 36 55)"/>
+    </svg>
+  </div>
+  <div>
+    <div class="wordmark">Котёл</div>
+    <div class="tagline">Совместные события — общий вклад</div>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:20px;">
+    <!-- Horizontal logo -->
+    <div style="display:flex;align-items:center;gap:10px;background:#292524;padding:10px 16px;border-radius:12px;">
+      <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#F97316,#DC2626);display:flex;align-items:center;justify-content:center;">
+        <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+          <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+          <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+          <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span style="font-size:22px;font-weight:900;letter-spacing:-.02em;">Котёл</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── ROW 1: Sizes + Variants ── -->
+<div class="grid" style="margin-bottom:16px;">
+
+  <!-- Sizes -->
+  <div class="card">
+    <div class="label">Иконка — размеры</div>
+    <div class="sizes">
+      <div class="sz">
+        <div class="ibox" style="--r:18;width:76px;height:76px;">
+          <svg width="47" viewBox="0 0 100 100" fill="none">
+            <path d="M33 26Q28 18 33 10Q38 2 33-4" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+            <path d="M50 23Q45 15 50 7Q55-1 50-7" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+            <path d="M67 26Q62 18 67 10Q72 2 67-4" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+            <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+            <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+            <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+            <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="sz-lbl">1024 px</div>
+      </div>
+      <div class="sz">
+        <div class="ibox" style="--r:15;width:60px;height:60px;">
+          <svg width="37" viewBox="0 0 100 100" fill="none">
+            <path d="M33 26Q28 18 33 10Q38 2 33-4" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+            <path d="M50 23Q45 15 50 7Q55-1 50-7" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+            <path d="M67 26Q62 18 67 10Q72 2 67-4" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+            <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+            <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+            <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+            <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="sz-lbl">512 px</div>
+      </div>
+      <div class="sz">
+        <div class="ibox" style="--r:12;width:48px;height:48px;">
+          <svg width="30" viewBox="0 0 100 100" fill="none">
+            <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+            <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+            <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="sz-lbl">192 px</div>
+      </div>
+      <div class="sz">
+        <div class="ibox" style="--r:9;width:36px;height:36px;">
+          <svg width="22" viewBox="0 0 100 100" fill="none">
+            <rect x="12" y="27" width="76" height="14" rx="7" fill="white"/>
+            <path d="M17 41L83 41L80 82Q78 92 50 92Q22 92 20 82Z" fill="white"/>
+            <path d="M18 44Q4 44 4 56Q4 67 18 67" stroke="white" stroke-width="8" fill="none" stroke-linecap="round"/>
+            <path d="M82 44Q96 44 96 56Q96 67 82 67" stroke="white" stroke-width="8" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="sz-lbl">60 px</div>
+      </div>
+      <div class="sz">
+        <div class="ibox" style="--r:6;width:26px;height:26px;">
+          <svg width="16" viewBox="0 0 100 100" fill="none">
+            <rect x="12" y="27" width="76" height="16" rx="8" fill="white"/>
+            <path d="M17 43L83 43L80 84Q78 93 50 93Q22 93 20 84Z" fill="white"/>
+            <path d="M18 46Q3 46 3 58Q3 70 18 70" stroke="white" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M82 46Q97 46 97 58Q97 70 82 70" stroke="white" stroke-width="9" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="sz-lbl">29 px</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Variants -->
+  <div class="card">
+    <div class="label">Варианты</div>
+    <div class="vars">
+      <div class="var" style="background:#0C0A09;">
+        <div style="width:52px;height:52px;border-radius:13px;background:linear-gradient(135deg,#F97316,#DC2626);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(249,115,22,.4);">
+          <svg width="32" viewBox="0 0 100 100" fill="none">
+            <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+            <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+            <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+            <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="var-lbl">Тёмный</div>
+      </div>
+      <div class="var" style="background:#FFF7ED;">
+        <div style="width:52px;height:52px;border-radius:13px;background:linear-gradient(135deg,#F97316,#DC2626);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(249,115,22,.3);">
+          <svg width="32" viewBox="0 0 100 100" fill="none">
+            <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+            <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+            <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+            <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="var-lbl" style="color:#78716C;">Светлый</div>
+      </div>
+      <div class="var" style="background:#1C1917;">
+        <div style="width:52px;height:52px;border-radius:13px;background:#292524;display:flex;align-items:center;justify-content:center;">
+          <svg width="32" viewBox="0 0 100 100" fill="none">
+            <rect x="13" y="29" width="74" height="10" rx="5" fill="#F97316"/>
+            <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="#F97316"/>
+            <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="#F97316" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+            <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="#F97316" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="var-lbl">Монохром</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── ROW 2: Colors + Typography ── -->
+<div class="grid" style="margin-bottom:16px;">
+
+  <!-- Colors -->
+  <div class="card">
+    <div class="label">Цветовая палитра</div>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="sw-color" style="background:#F97316;"></div>
+        <div class="sw-info"><div class="sw-name">Огонь</div><div class="sw-hex">#F97316</div></div>
+      </div>
+      <div class="swatch">
+        <div class="sw-color" style="background:#DC2626;"></div>
+        <div class="sw-info"><div class="sw-name">Пламя</div><div class="sw-hex">#DC2626</div></div>
+      </div>
+      <div class="swatch">
+        <div class="sw-color" style="background:#F59E0B;"></div>
+        <div class="sw-info"><div class="sw-name">Янтарь</div><div class="sw-hex">#F59E0B</div></div>
+      </div>
+      <div class="swatch">
+        <div class="sw-color" style="background:#1C1917;"></div>
+        <div class="sw-info"><div class="sw-name">Уголь</div><div class="sw-hex">#1C1917</div></div>
+      </div>
+      <div class="swatch">
+        <div class="sw-color" style="background:#78716C;"></div>
+        <div class="sw-info"><div class="sw-name">Зола</div><div class="sw-hex">#78716C</div></div>
+      </div>
+      <div class="swatch">
+        <div class="sw-color" style="background:#FFF7ED;"></div>
+        <div class="sw-info" style="background:#292524;"><div class="sw-name">Сливки</div><div class="sw-hex">#FFF7ED</div></div>
+      </div>
+    </div>
+    <div class="grads">
+      <div class="grad-box" style="background:linear-gradient(135deg,#F97316,#DC2626);"></div>
+      <div class="grad-box" style="background:linear-gradient(135deg,#FCD34D,#F97316 50%,#DC2626);"></div>
+      <div class="grad-box" style="background:linear-gradient(135deg,#292524,#1C1917);"></div>
+    </div>
+  </div>
+
+  <!-- Typography -->
+  <div class="card">
+    <div class="label">Типографика — Nunito</div>
+    <div class="type-rows">
+      <div class="tr">
+        <div class="tr-meta">900 · 40px</div>
+        <div style="font-size:40px;font-weight:900;letter-spacing:-.03em;line-height:1;">Котёл</div>
+      </div>
+      <div class="tr">
+        <div class="tr-meta">900 · 24px</div>
+        <div style="font-size:24px;font-weight:900;letter-spacing:-.02em;">Совместные события</div>
+      </div>
+      <div class="tr">
+        <div class="tr-meta">800 · 16px</div>
+        <div style="font-size:16px;font-weight:800;">Добавь участников, начни планировать</div>
+      </div>
+      <div class="tr">
+        <div class="tr-meta">700 · 14px</div>
+        <div style="font-size:14px;font-weight:700;">Все скидываются — никто не тянет один</div>
+      </div>
+      <div class="tr">
+        <div class="tr-meta">400 · 13px</div>
+        <div style="font-size:13px;color:#A8A29E;">Создай событие, пригласи компанию, распредели покупки</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── DOWNLOAD ── -->
+<div class="card" style="margin-bottom:16px;">
+  <div class="label">Скачать иконку</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+    <button onclick="downloadPNG(1024)" class="dl-btn">⬇ PNG 1024×1024</button>
+    <button onclick="downloadPNG(512)"  class="dl-btn">⬇ PNG 512×512</button>
+    <button onclick="downloadPNG(192)"  class="dl-btn">⬇ PNG 192×192</button>
+    <button onclick="downloadPNG(60)"   class="dl-btn dl-sm">⬇ 60px</button>
+    <button onclick="downloadPNG(29)"   class="dl-btn dl-sm">⬇ 29px</button>
+    <a href="/kotyol-icon.svg" download="kotyol-icon.svg" class="dl-btn dl-svg">⬇ SVG (Figma)</a>
+  </div>
+</div>
+
+<!-- ── ROW 3: Mockups full width ── -->
+<div class="card">
+  <div class="label">Применение</div>
+  <div class="mockups">
+
+    <!-- Splash -->
+    <div class="mock" style="background:#0C0A09;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#F97316,#DC2626);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 36px rgba(249,115,22,.45);">
+          <svg width="40" viewBox="0 0 100 100" fill="none">
+            <path d="M33 26Q28 18 33 10Q38 2 33-4" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+            <path d="M50 23Q45 15 50 7Q55-1 50-7" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+            <path d="M67 26Q62 18 67 10Q72 2 67-4" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".85"/>
+            <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+            <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+            <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+            <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div style="font-size:18px;font-weight:900;letter-spacing:-.02em;">Котёл</div>
+        <div style="font-size:10px;color:#78716C;font-weight:600;">Совместные события</div>
+      </div>
+      <div class="mock-lbl">Сплэш</div>
+    </div>
+
+    <!-- Push notification -->
+    <div class="mock" style="flex:2.5;">
+      <div style="width:100%;background:#1C1917;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#F97316,#DC2626);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" viewBox="0 0 100 100" fill="none">
+            <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+            <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+            <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+            <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:800;margin-bottom:2px;">Котёл · Шашлыки на даче</div>
+          <div style="font-size:11px;color:#A8A29E;">Серёга добавил: мясо, угли, соус 🥩</div>
+        </div>
+        <div style="margin-left:auto;font-size:10px;color:#78716C;">сейчас</div>
+      </div>
+      <div class="mock-lbl">Уведомление</div>
+    </div>
+
+    <!-- iOS -->
+    <div class="mock">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+        <div style="width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#F97316,#DC2626);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(249,115,22,.4);">
+          <svg width="32" viewBox="0 0 100 100" fill="none">
+            <rect x="13" y="29" width="74" height="10" rx="5" fill="white"/>
+            <path d="M18 39L82 39L79 78Q77 88 50 88Q23 88 21 78Z" fill="white"/>
+            <path d="M19 41Q6 41 6 52Q6 63 19 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+            <path d="M81 41Q94 41 94 52Q94 63 81 63" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div style="font-size:10px;font-weight:600;">Котёл</div>
+      </div>
+      <div class="mock-lbl">Рабочий стол</div>
+    </div>
+
+    <!-- Favicon -->
+    <div class="mock">
+      <div style="display:flex;align-items:center;gap:6px;background:#1C1917;padding:6px 10px;border-radius:8px;">
+        <div style="width:16px;height:16px;border-radius:3px;background:linear-gradient(135deg,#F97316,#DC2626);display:flex;align-items:center;justify-content:center;">
+          <svg width="10" viewBox="0 0 100 100" fill="none">
+            <rect x="12" y="27" width="76" height="16" rx="8" fill="white"/>
+            <path d="M17 43L83 43L80 84Q78 93 50 93Q22 93 20 84Z" fill="white"/>
+            <path d="M18 46Q3 46 3 58Q3 70 18 70" stroke="white" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M82 46Q97 46 97 58Q97 70 82 70" stroke="white" stroke-width="9" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span style="font-size:11px;color:#A8A29E;">kotyol.app</span>
+      </div>
+      <div class="mock-lbl">Favicon</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SVG_SRC = '/kotyol-icon.svg';
+
+function downloadPNG(size) {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width  = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, size, size);
+    const a = document.createElement('a');
+    a.download = `kotyol-icon-${size}.png`;
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  };
+  // Cache-bust so browser actually loads fresh
+  img.src = SVG_SRC + '?t=' + Date.now();
+}
+</script>
+</body>
+</html>
