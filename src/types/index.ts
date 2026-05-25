@@ -69,5 +69,5 @@ export interface AnalysisResult {
   changed?: Array<{ name: string; chat_qty: number | string; list_qty: number | string }>
 }
 
-export type Screen = 'loading' | 'onboarding' | 'groups' | 'app'
+export type Screen = 'loading' | 'auth' | 'onboarding' | 'groups' | 'app'
 export type Tab    = 'events' | 'list' | 'summary' | 'my' | 'members'

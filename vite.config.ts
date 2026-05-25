@@ -11,6 +11,7 @@ export default defineConfig({
       '/groups': 'http://localhost:3001',
       '/users':  'http://localhost:3001',
       '/agent':  'http://localhost:3001',
+      '/auth':   'http://localhost:3001',
     },
   },
 })

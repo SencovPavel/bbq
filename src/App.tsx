@@ -11,11 +11,13 @@ import { MyScreen } from './screens/MyScreen'
 import { MembersScreen } from './screens/MembersScreen'
 import { GroupsScreen } from './screens/GroupsScreen'
 import { OnboardingScreen } from './screens/OnboardingScreen'
+import { AuthScreen } from './screens/AuthScreen'
 import { useWebSocket } from './hooks/useWebSocket'
 import { joinGroupById } from './lib/api'
-import { getTgUser, getStartParam } from './lib/tg'
+import { getTgUser, getStartParam, getPlatform } from './lib/tg'
 import { loadSession, saveSession, clearGroupSession } from './lib/session'
 import { uid } from './lib/session'
+import { authMe } from './lib/auth'
 import { useAppStore } from './stores/appStore'
 import { useSessionStore } from './stores/sessionStore'
 import { useWsStore } from './stores/wsStore'
@@ -68,8 +70,24 @@ export default function App() {
   // Стартовая маршрутизация (без deep link)
   useEffect(() => {
     if (startParam) return
+
+    // Web — проверяем cookie-сессию
+    if (getPlatform() === 'web') {
+      authMe().then(webUser => {
+        if (webUser) {
+          setMe({ id: webUser.id, name: webUser.name })
+          if (session?.groupId) setGroupId(session.groupId)
+          setScreen('groups')
+        } else {
+          setScreen('auth')
+        }
+      })
+      return
+    }
+
+    // Telegram / MAX
     setScreen(session || tgUser ? 'groups' : 'onboarding')
-  }, [setScreen])
+  }, [setScreen]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isAppDataLoading = screen === 'app' && Boolean(groupId) && !serverState
 
@@ -132,6 +150,16 @@ export default function App() {
       <div className="relative min-h-screen">
         <Blobs />
         <AppLoader message={isAppDataLoading ? 'Подключаемся...' : 'Загрузка...'} />
+      </div>
+    )
+  }
+
+  if (screen === 'auth') {
+    return (
+      <div className="relative">
+        <Blobs />
+        <AuthScreen onDone={user => { setMe(user); setScreen('groups') }} />
+        <Toast />
       </div>
     )
   }
