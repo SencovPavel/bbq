@@ -134,7 +134,8 @@ function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigge
 
   return (
     <div className="px-3.5 py-2.5">
-      <div className="flex items-center justify-between gap-2.5 mb-1.5">
+      {/* Row 1: name + assign chip */}
+      <div className="flex items-center gap-2 mb-1.5">
         <div className="flex-1 min-w-0 flex items-center gap-1.5 flex-wrap">
           {editing ? (
             <input
@@ -165,24 +166,16 @@ function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigge
           )}
           {!editing && <SourceBadge source={item.source} />}
         </div>
-      </div>
 
-      <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={() => onBuyerTap(item.id)}
           className="inline-flex items-center gap-1 rounded-pill text-xs font-extrabold cursor-pointer shrink-0 border"
           style={{
-            padding: '4px 9px',
-            background: isMe      ? 'rgba(249,115,22,.18)'
-              : hasOther          ? 'rgba(96,165,250,.10)'
-              : 'transparent',
-            borderColor: isMe     ? 'rgba(249,115,22,.45)'
-              : hasOther          ? 'rgba(96,165,250,.25)'
-              : 'var(--gb)',
-            color: isMe           ? 'var(--accent)'
-              : hasOther          ? '#93c5fd'
-              : 'var(--muted)',
+            padding: '3px 8px',
+            background: isMe ? 'rgba(249,115,22,.15)' : 'transparent',
+            borderColor: isMe ? 'rgba(249,115,22,.4)' : 'var(--gb)',
+            color: isMe ? 'var(--accent)' : 'var(--muted)',
             fontFamily: 'inherit',
           }}
         >
@@ -192,6 +185,10 @@ function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigge
               ? <><IconPerson size={10} strokeWidth={2} /> {item.buyer_name}</>
               : '＋ Взять'}
         </button>
+      </div>
+
+      {/* Row 2: qty + price + dots */}
+      <div className="flex items-center gap-2">
 
         <div
           className="flex items-center shrink-0 rounded-sm p-px"
