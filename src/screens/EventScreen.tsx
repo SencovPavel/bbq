@@ -220,7 +220,7 @@ export function EventScreen() {
               fontFamily: 'inherit',
             }}
           >
-            <IconClipboard size={13} /> {copied ? '✓' : 'Копировать'}
+            <IconClipboard size={13} /> {copied ? '✓' : ''}
           </button>
         </div>
 
