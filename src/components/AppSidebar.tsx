@@ -1,14 +1,11 @@
-import { useState } from 'react'
-
 import { NAV_TABS } from '../config/nav-tabs'
 import { useAppStore } from '../stores/appStore'
-import { IconCheck, IconFlame } from './Icon'
+import { IconFlame } from './Icon'
 
 import type { Group, PicnicEvent, Tab } from '../types'
 
 interface AppSidebarProps {
   group: Group | undefined
-  wsOk: boolean
   currentEvent: PicnicEvent | undefined
   activeTab: Tab
   onTabChange: (tab: Tab) => void
@@ -22,24 +19,15 @@ const shortDate = (iso: string): string => {
 
 export function AppSidebar({
   group,
-  wsOk,
   currentEvent,
   activeTab,
   onTabChange,
   onBack,
 }: AppSidebarProps) {
-  const [copied, setCopied] = useState(false)
   const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
   const eventLabel = currentEvent
     ? currentEvent.name + (currentEvent.event_date ? ` · ${shortDate(currentEvent.event_date)}` : '')
     : 'Выбрать событие'
-
-  const copyCode = () => {
-    if (!group?.invite_code) return
-    navigator.clipboard?.writeText(group.invite_code).catch(() => {})
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1800)
-  }
 
   return (
     <aside className="app-sidebar hidden lg:flex">
@@ -74,19 +62,8 @@ export function AppSidebar({
 
       {/* Group info — прилипает к низу */}
       <div className="app-sidebar__footer">
-        <div className="app-sidebar__group cloud-panel">
+        <div className="app-sidebar__group">
           <div className="app-sidebar__group-name">{group?.name || 'Группа'}</div>
-          <div className="app-sidebar__meta">
-            <span
-              className="app-sidebar__status"
-              style={{ color: wsOk ? 'var(--green)' : 'var(--muted)' }}
-            >
-              {wsOk ? '● Онлайн' : '○ Подключение…'}
-            </span>
-            <button type="button" className="app-sidebar__code" onClick={copyCode}>
-              {copied ? <IconCheck size={13} strokeWidth={2.5} /> : group?.invite_code || '—'}
-            </button>
-          </div>
           <button
             type="button"
             className="app-sidebar__event"
