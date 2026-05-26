@@ -24,13 +24,13 @@ export function MyScreen() {
   const allItems    = serverState?.items ?? []
   const members     = serverState?.members ?? []
   const items       = currentEventId ? allItems.filter(i => i.event_id === currentEventId) : allItems
-  const myItems     = items.filter(i => i.enabled && i.buyer_id === me?.id)
+  const myItems     = items.filter(i => i.buyer_id === me?.id)
   const boughtItems = myItems.filter(i => i.bought && i.price > 0)
   const actualTotal = boughtItems.reduce((s, i) => s + i.price * i.qty, 0)
   const boughtCount = myItems.filter(i => i.bought).length
   const pct         = myItems.length ? Math.round(boughtCount / myItems.length * 100) : 0
-  const sorted      = [...myItems.filter(i => !i.bought), ...myItems.filter(i => i.bought)]
   const amIAdmin    = members.find(m => m.user_id === me?.id)?.is_admin ?? false
+  const sorted      = [...myItems].sort((a, b) => a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' }))
 
   const toggleBought = (id: string, val: boolean) => {
     send({ type: 'item:update', id, field: 'bought', value: val })
