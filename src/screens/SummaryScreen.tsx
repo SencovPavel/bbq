@@ -109,7 +109,7 @@ export function SummaryScreen() {
           <div style={{ color: 'var(--muted)', opacity: 0.35, marginBottom: 14 }}><IconReceipt size={52} /></div>
           <div className="text-[16px] font-extrabold mb-[6px]">Список пустой</div>
           <div className="text-[13px] leading-relaxed" style={{ color: 'var(--muted)', maxWidth: 220 }}>
-            Перейди на «Список» и добавь что нужно купить
+            Перейди в «Список» и добавь что нужно купить
           </div>
         </div>
       )}

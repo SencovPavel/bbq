@@ -368,9 +368,32 @@ export function ListScreen() {
 
   const actionItem = actionItemId ? visibleItems.find(i => i.id === actionItemId) ?? null : null
 
+  const enabledItems = visibleItems.filter(i => i.enabled)
+  const listTotal    = enabledItems.reduce((s, i) => s + i.price * i.qty, 0)
+
   return (
     <div className="px-3.5 pt-2 pb-8 relative">
       {!wsOk && <OfflineBanner />}
+
+      {categories.length > 0 && (
+        <div
+          className="flex items-center justify-between mb-3 px-0.5"
+          aria-label="Сумма по списку"
+        >
+          <span
+            className="text-[11px] font-extrabold uppercase tracking-wider"
+            style={{ color: 'var(--muted)' }}
+          >
+            По списку
+          </span>
+          <span
+            className="text-sm font-black tabular-nums tracking-tight"
+            style={{ color: listTotal > 0 ? 'var(--accent)' : 'var(--muted)' }}
+          >
+            {listTotal > 0 ? fmt(listTotal) : `${enabledItems.length} поз.`}
+          </span>
+        </div>
+      )}
 
       {categories.length === 0 && (
         <EmptyState
@@ -384,7 +407,6 @@ export function ListScreen() {
 
       {categories.map(cat => {
         const catItems = sortItemsByName(visibleItems.filter(i => i.cat_id === cat.id))
-        const total    = catItems.filter(i => i.enabled).reduce((s, i) => s + i.price * i.qty, 0)
         const isOpen   = openCats[cat.id] !== false
 
         return (
@@ -396,7 +418,6 @@ export function ListScreen() {
                 {cat.icon}
               </div>
               <div className="text-[14px] font-extrabold flex-1">{cat.title}</div>
-              {total > 0 && <div className="text-[13px] font-bold" style={{ color: 'var(--accent)' }}>{fmt(total)}</div>}
               <button
                 onClick={e => { e.stopPropagation(); setConfirmCat({ id: cat.id, title: cat.title }) }}
                 className="cursor-pointer border-none bg-transparent px-1 rounded flex items-center"

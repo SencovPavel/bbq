@@ -48,7 +48,7 @@ function IconMapPin({ active }: { active: boolean }) {
 export const NAV_TABS: Array<{ id: Tab; label: string; Icon: FC<{ active: boolean }> }> = [
   { id: 'list', label: 'Список', Icon: IconList },
   { id: 'my', label: 'Моё', Icon: IconMy },
-  { id: 'summary', label: 'Итог', Icon: IconSummary },
+  { id: 'summary', label: 'Сводка', Icon: IconSummary },
   { id: 'members', label: 'Событие', Icon: IconMapPin },
 ]
 
