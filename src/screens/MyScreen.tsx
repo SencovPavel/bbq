@@ -1,16 +1,16 @@
-import { fmt } from '../lib/session'
-import { useWsStore } from '../stores/wsStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useAppStore } from '../stores/appStore'
-import { useToastStore } from '../stores/toastStore'
-import { PriceCell } from '../components/PriceCell'
 import { useState } from 'react'
 
 import { EmptyState } from '../components/states/EmptyState'
 import { OfflineBanner } from '../components/states/OfflineBanner'
-import { ReceiptFAB } from '../components/receipt/ReceiptFAB'
+import { UserAvatar } from '../components/UserAvatar'
 import { ReceiptScanner } from '../components/receipt/ReceiptScanner'
-import { IconCart, IconCheck } from '../components/Icon'
+import { IconCart, IconCheck, IconQrScan } from '../components/Icon'
+import { PriceCell } from '../components/PriceCell'
+import { fmt } from '../lib/session'
+import { useAppStore } from '../stores/appStore'
+import { useSessionStore } from '../stores/sessionStore'
+import { useToastStore } from '../stores/toastStore'
+import { useWsStore } from '../stores/wsStore'
 
 export function MyScreen() {
   const serverState    = useWsStore(s => s.serverState)
@@ -22,6 +22,7 @@ export function MyScreen() {
   const [scanOpen, setScanOpen] = useState(false)
 
   const allItems    = serverState?.items ?? []
+  const members     = serverState?.members ?? []
   const items       = currentEventId ? allItems.filter(i => i.event_id === currentEventId) : allItems
   const myItems     = items.filter(i => i.enabled && i.buyer_id === me?.id)
   const boughtItems = myItems.filter(i => i.bought && i.price > 0)
@@ -29,104 +30,181 @@ export function MyScreen() {
   const boughtCount = myItems.filter(i => i.bought).length
   const pct         = myItems.length ? Math.round(boughtCount / myItems.length * 100) : 0
   const sorted      = [...myItems.filter(i => !i.bought), ...myItems.filter(i => i.bought)]
+  const amIAdmin    = members.find(m => m.user_id === me?.id)?.is_admin ?? false
 
-  function toggleBought(id: string, val: boolean) {
+  const toggleBought = (id: string, val: boolean) => {
     send({ type: 'item:update', id, field: 'bought', value: val })
   }
 
-  function updatePrice(id: string, price: number) {
+  const updatePrice = (id: string, price: number) => {
     send({ type: 'item:update', id, field: 'price', value: price })
     if (price > 0) showToast('Цена обновлена')
   }
 
-  function changeQty(id: string, cur: number, d: number) {
+  const changeQty = (id: string, cur: number, d: number) => {
     send({ type: 'item:update', id, field: 'qty', value: Math.max(0, +(Number(cur) + d).toFixed(2)) })
   }
 
   return (
     <>
-    <div className="px-3.5 pt-2 pb-24 relative">
-      {!wsOk && <OfflineBanner />}
-      {/* Hero */}
-      <div className="glass rounded-[20px] p-[18px] mb-3">
-        <div className="text-base font-extrabold mb-[3px]">Привет, {me?.name}!</div>
-        <div className="text-[12px]" style={{ color: 'var(--muted)' }}>
-          {boughtItems.length > 0 ? `Потрачено по факту · ${boughtCount} из ${myItems.length} куплено` : 'Вноси цены когда покупаешь'}
+      <div className="px-3.5 pt-2 pb-8 relative">
+        {!wsOk && <OfflineBanner />}
+
+        <div className="glass rounded-lg p-5 mb-3">
+          <div className="flex items-center gap-3 mb-3">
+            <UserAvatar name={me?.name ?? '?'} size={48} isAdmin={amIAdmin} />
+            <div className="flex-1 min-w-0">
+              <div className="text-base font-black">Привет, {me?.name}!</div>
+              <div className="text-[11.5px] mt-0.5 font-semibold" style={{ color: 'var(--muted)' }}>
+                {myItems.length > 0
+                  ? `${boughtCount} из ${myItems.length} куплено`
+                  : 'Вноси цены когда покупаешь'}
+              </div>
+            </div>
+            <button
+              type="button"
+              title="Отсканировать чек"
+              onClick={() => setScanOpen(true)}
+              className="h-[38px] px-3 pl-[11px] rounded-pill shrink-0 inline-flex items-center gap-1.5
+                         text-xs font-extrabold cursor-pointer border active:scale-95 transition"
+              style={{
+                background: 'linear-gradient(135deg, rgba(249,115,22,.18), rgba(251,191,36,.08))',
+                borderColor: 'rgba(249,115,22,.32)',
+                color: 'var(--accent)',
+                fontFamily: 'inherit',
+              }}
+            >
+              <IconQrScan size={15} strokeWidth={2} />
+              <span>Чек</span>
+            </button>
+          </div>
+
+          <div
+            className="text-[11px] font-extrabold uppercase tracking-wider mb-1"
+            style={{ color: 'var(--muted)' }}
+          >
+            Потрачено по факту
+          </div>
+          <div
+            className="text-display font-black tracking-tight tabular-nums"
+            style={{ color: 'var(--accent)' }}
+          >
+            {boughtItems.length > 0 ? fmt(actualTotal) : `${myItems.length} поз.`}
+          </div>
+          <div
+            className="h-[5px] rounded-full mt-2.5 overflow-hidden"
+            style={{ background: 'rgba(255,255,255,.1)' }}
+          >
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${pct}%`,
+                background: 'linear-gradient(90deg, var(--accent), var(--green))',
+              }}
+            />
+          </div>
         </div>
-        <div className="text-[28px] font-black mt-[10px]" style={{ color: 'var(--accent)' }}>
-          {boughtItems.length > 0 ? fmt(actualTotal) : `${myItems.length} поз.`}
-        </div>
-        <div className="h-[5px] rounded-full mt-[10px] overflow-hidden" style={{ background: 'rgba(255,255,255,.1)' }}>
-          <div className="h-full rounded-full transition-all duration-500"
-            style={{ width: `${pct}%`, background: 'linear-gradient(90deg,var(--accent),var(--green))' }} />
-        </div>
+
+        {myItems.length === 0 && (
+          <EmptyState
+            icon={<IconCart size={48} strokeWidth={1.4} />}
+            title="Тебе ничего не назначено"
+            body="Перейди в «Список» и нажми «+ покупатель» рядом с позицией"
+          />
+        )}
+
+        {sorted.map(it => {
+          const price = it.price
+          const qty   = it.qty
+          return (
+            <div
+              key={it.id}
+              className="glass rounded-md p-3 flex items-start gap-3 mb-2 transition-all duration-200"
+              style={{
+                borderColor: it.bought ? 'rgba(74,222,128,.3)' : 'var(--gb)',
+                opacity: it.bought ? 0.65 : 1,
+              }}
+            >
+              <div
+                onClick={() => toggleBought(it.id, !it.bought)}
+                className="flex items-center justify-center rounded-full shrink-0 cursor-pointer mt-px transition-all duration-200"
+                style={{
+                  width: 28,
+                  height: 28,
+                  border: it.bought ? '2px solid var(--green)' : '2px solid var(--gbs)',
+                  background: it.bought ? 'var(--green)' : 'transparent',
+                  color: it.bought ? '#100e0b' : 'transparent',
+                }}
+              >
+                <IconCheck size={13} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-bold">{it.name}</div>
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  <button
+                    type="button"
+                    onClick={() => changeQty(it.id, qty, -0.5)}
+                    className="flex items-center justify-center rounded-sm text-sm cursor-pointer border size-[22px]"
+                    style={{
+                      background: 'rgba(255,240,200,.06)',
+                      borderColor: 'var(--gbs)',
+                      color: 'var(--text)',
+                    }}
+                  >
+                    −
+                  </button>
+                  <span className="text-sm font-bold">{qty}</span>
+                  <button
+                    type="button"
+                    onClick={() => changeQty(it.id, qty, 0.5)}
+                    className="flex items-center justify-center rounded-sm text-sm cursor-pointer border size-[22px]"
+                    style={{
+                      background: 'rgba(255,240,200,.06)',
+                      borderColor: 'var(--gbs)',
+                      color: 'var(--text)',
+                    }}
+                  >
+                    +
+                  </button>
+                  <span className="text-[11px]" style={{ color: 'var(--muted)' }}>
+                    {it.unit}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
+                <div
+                  className="font-extrabold tabular-nums"
+                  style={{
+                    color: price > 0 ? 'var(--accent)' : 'var(--muted)',
+                    fontSize: price > 0 ? 13 : 11,
+                  }}
+                >
+                  {price > 0 ? fmt(price * qty) : 'нет цены'}
+                </div>
+                <div className="flex items-center gap-1">
+                  <PriceCell item={it} onChange={updatePrice} />
+                  <span className="text-[10px]" style={{ color: 'var(--muted)' }}>
+                    ₽/{it.unit}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+
+        {boughtCount > 0 && actualTotal > 0 && (
+          <div className="text-center text-xs py-2" style={{ color: 'var(--muted)' }}>
+            Куплено {boughtCount} из {myItems.length} · итого{' '}
+            <b style={{ color: 'var(--accent)' }}>{fmt(actualTotal)}</b>
+          </div>
+        )}
       </div>
 
-      {myItems.length === 0 && (
-        <EmptyState
-          icon={<IconCart size={48} strokeWidth={1.4} />}
-          title="Тебе ничего не назначено"
-          body="Перейди в «Список» и нажми «+ покупатель» рядом с позицией"
-        />
-      )}
-
-      {sorted.map(it => {
-        const price = it.price
-        const qty   = it.qty
-        return (
-          <div key={it.id}
-            className="glass rounded-[14px] p-[13px] flex items-start gap-3 mb-2 transition-all duration-200"
-            style={{ borderColor: it.bought ? 'rgba(74,222,128,.3)' : 'var(--gb)', opacity: it.bought ? .65 : 1 }}>
-            <div
-              onClick={() => toggleBought(it.id, !it.bought)}
-              className="flex items-center justify-center rounded-full flex-shrink-0 cursor-pointer mt-[1px] transition-all duration-200"
-              style={{
-                width: 28, height: 28,
-                border:     it.bought ? '2px solid var(--green)' : '2px solid var(--gbs)',
-                background: it.bought ? 'var(--green)' : 'transparent',
-                color:      it.bought ? '#100e0b' : 'transparent',
-              }}>
-              <IconCheck size={13} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-[13px] font-bold">{it.name}</div>
-              <div className="flex items-center gap-[5px] mt-[6px]">
-                <button onClick={() => changeQty(it.id, qty, -0.5)}
-                  className="flex items-center justify-center rounded-[7px] text-[13px] cursor-pointer border-none"
-                  style={{ width: 22, height: 22, background: 'rgba(255,240,200,.06)', border: '1px solid var(--gbs)', color: 'var(--text)' }}>
-                  −
-                </button>
-                <span className="text-[13px] font-bold">{qty}</span>
-                <button onClick={() => changeQty(it.id, qty, 0.5)}
-                  className="flex items-center justify-center rounded-[7px] text-[13px] cursor-pointer border-none"
-                  style={{ width: 22, height: 22, background: 'rgba(255,240,200,.06)', border: '1px solid var(--gbs)', color: 'var(--text)' }}>
-                  +
-                </button>
-                <span className="text-[11px]" style={{ color: 'var(--muted)' }}>{it.unit}</span>
-              </div>
-            </div>
-            <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
-              <div className="font-extrabold" style={{ color: price > 0 ? 'var(--accent)' : 'var(--muted)', fontSize: price > 0 ? 13 : 11 }}>
-                {price > 0 ? fmt(price * qty) : 'нет цены'}
-              </div>
-              <div className="flex items-center gap-1">
-                <PriceCell item={it} onChange={updatePrice} />
-                <span className="text-[10px]" style={{ color: 'var(--muted)' }}>₽/{it.unit}</span>
-              </div>
-            </div>
-          </div>
-        )
-      })}
-
-      {boughtCount > 0 && actualTotal > 0 && (
-        <div className="text-center text-[12px] py-2" style={{ color: 'var(--muted)' }}>
-          Куплено {boughtCount} из {myItems.length} · итого{' '}
-          <b style={{ color: 'var(--accent)' }}>{fmt(actualTotal)}</b>
-        </div>
-      )}
-    </div>
-    <ReceiptFAB onClick={() => setScanOpen(true)} />
-    <ReceiptScanner open={scanOpen} onClose={() => setScanOpen(false)} eventId={currentEventId} />
+      <ReceiptScanner
+        open={scanOpen}
+        onClose={() => setScanOpen(false)}
+        eventId={currentEventId}
+      />
     </>
   )
 }
