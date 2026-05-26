@@ -90,8 +90,13 @@ export default function App() {
 
         if (webUser) {
           setMe({ id: webUser.id, name: webUser.name })
-          if (session?.groupId) setGroupId(session.groupId)
-          setScreen('groups')
+          if (session?.groupId) {
+            setGroupId(session.groupId)
+            hydrateGroupUi(session.groupId)
+            setScreen('app')
+          } else {
+            setScreen('groups')
+          }
         } else {
           setScreen('auth')
         }
