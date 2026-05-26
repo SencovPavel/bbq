@@ -2,7 +2,7 @@ import type { Tab } from '../types'
 
 const STORAGE_KEY = 'picnic_ui_v1'
 
-const APP_TABS: Tab[] = ['list', 'summary', 'my', 'members']
+const APP_TABS: Tab[] = ['list', 'my', 'summary', 'members']
 
 export interface GroupUiState {
   tab: Tab

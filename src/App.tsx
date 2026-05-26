@@ -23,7 +23,7 @@ import { useSessionStore } from './stores/sessionStore'
 import { useWsStore } from './stores/wsStore'
 import type { User, Tab } from './types'
 
-const TAB_ORDER: Tab[] = ['list', 'summary', 'my', 'members']
+const TAB_ORDER: Tab[] = ['list', 'my', 'summary', 'members']
 
 // ── Module-level init ────────────────────────────────────────────────────────
 const tgUser     = getTgUser()
