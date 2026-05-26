@@ -41,8 +41,9 @@ function SourceBadge({ source }: { source: Source }) {
 
 interface ItemRowProps {
   item: Item
+  meId?: string
   onUpdate: (id: string, field: string, value: unknown) => void
-  onBuyerOpen: (id: string) => void
+  onBuyerTap: (id: string) => void
   onOpenActions: (id: string) => void
   renameTrigger: number
 }
@@ -54,36 +55,7 @@ const toBool = (value: unknown): boolean => {
   return Boolean(value)
 }
 
-function ItemRow({ item, onUpdate, onBuyerOpen, onOpenActions, renameTrigger }: ItemRowProps) {
-  // ── enabled: optimistic toggle ──
-  const [localEnabled, setLocalEnabled] = useState(() => toBool(item.enabled))
-  const pendingEnabled = useRef<boolean | null>(null)
-
-  useEffect(() => {
-    pendingEnabled.current = null
-    setLocalEnabled(toBool(item.enabled))
-  }, [item.id])
-
-  useEffect(() => {
-    const serverEnabled = toBool(item.enabled)
-    if (pendingEnabled.current !== null) {
-      if (serverEnabled === pendingEnabled.current) {
-        pendingEnabled.current = null
-        setLocalEnabled(serverEnabled)
-      }
-      return
-    }
-    setLocalEnabled(serverEnabled)
-  }, [item.enabled])
-
-  function toggleEnabled() {
-    haptic()
-    const next = !localEnabled
-    setLocalEnabled(next)
-    pendingEnabled.current = next
-    onUpdate(item.id, 'enabled', next)
-  }
-
+function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigger }: ItemRowProps) {
   // ── qty: local optimistic state + debounce ──
   const [localQty, setLocalQty] = useState(() => Number(item.qty) || 0)
   const qtyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -157,10 +129,11 @@ function ItemRow({ item, onUpdate, onBuyerOpen, onOpenActions, renameTrigger }: 
     }, 400)
   }
 
+  const isMe      = !!(meId && item.buyer_id === meId)
+  const hasOther  = !!(item.buyer_id && !isMe)
+
   return (
-    <div
-      className={`px-3.5 py-2.5 transition-opacity ${!localEnabled ? 'opacity-40' : ''}`}
-    >
+    <div className="px-3.5 py-2.5">
       <div className="flex items-center justify-between gap-2.5 mb-1.5">
         <div className="flex-1 min-w-0 flex items-center gap-1.5 flex-wrap">
           {editing ? (
@@ -185,7 +158,6 @@ function ItemRow({ item, onUpdate, onBuyerOpen, onOpenActions, renameTrigger }: 
           ) : (
             <span
               className="text-md font-extrabold leading-tight tracking-tight cursor-text"
-              style={{ textDecoration: localEnabled ? 'none' : 'line-through' }}
               onClick={startEdit}
             >
               {item.name}
@@ -193,31 +165,32 @@ function ItemRow({ item, onUpdate, onBuyerOpen, onOpenActions, renameTrigger }: 
           )}
           {!editing && <SourceBadge source={item.source} />}
         </div>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={localEnabled}
-          className={`toggle${localEnabled ? ' on' : ''}`}
-          onClick={toggleEnabled}
-        />
       </div>
 
       <div className="flex items-center gap-2">
         <button
           type="button"
-          onClick={() => onBuyerOpen(item.id)}
+          onClick={() => onBuyerTap(item.id)}
           className="inline-flex items-center gap-1 rounded-pill text-xs font-extrabold cursor-pointer shrink-0 border"
           style={{
             padding: '4px 9px',
-            background: item.buyer_name ? 'rgba(249,115,22,.13)' : 'transparent',
-            borderColor: item.buyer_name ? 'rgba(249,115,22,.28)' : 'var(--gb)',
-            color: item.buyer_name ? 'var(--accent)' : 'var(--muted)',
+            background: isMe      ? 'rgba(249,115,22,.18)'
+              : hasOther          ? 'rgba(96,165,250,.10)'
+              : 'transparent',
+            borderColor: isMe     ? 'rgba(249,115,22,.45)'
+              : hasOther          ? 'rgba(96,165,250,.25)'
+              : 'var(--gb)',
+            color: isMe           ? 'var(--accent)'
+              : hasOther          ? '#93c5fd'
+              : 'var(--muted)',
             fontFamily: 'inherit',
           }}
         >
-          {item.buyer_name
-            ? <><IconPerson size={10} strokeWidth={2} /> {item.buyer_name}</>
-            : '+ покупатель'}
+          {isMe
+            ? <>✓ Я</>
+            : item.buyer_name
+              ? <><IconPerson size={10} strokeWidth={2} /> {item.buyer_name}</>
+              : '＋ Взять'}
         </button>
 
         <div
@@ -271,7 +244,7 @@ function ItemRow({ item, onUpdate, onBuyerOpen, onOpenActions, renameTrigger }: 
 
 export function ListScreen() {
   const { serverState, send, wsOk } = useWsStore()
-  const meId           = useSessionStore(s => s.me?.id)
+  const me             = useSessionStore(s => s.me)
   const groupId        = useSessionStore(s => s.groupId)
   const showToast      = useToastStore(s => s.show)
   const currentEventId = useAppStore(s => s.currentEventId)
@@ -360,6 +333,24 @@ export function ListScreen() {
     setBuyerModal(itemId)
   }
 
+  function handleBuyerTap(itemId: string) {
+    const item = visibleItems.find(i => i.id === itemId)
+    if (!item) return
+    haptic()
+    if (!item.buyer_id) {
+      // Никто не берёт → назначаю себя
+      send({ type: 'item:update', id: itemId, field: 'buyer_id',   value: me?.id   ?? null })
+      send({ type: 'item:update', id: itemId, field: 'buyer_name', value: me?.name ?? null })
+    } else if (item.buyer_id === me?.id) {
+      // Моё → снять
+      send({ type: 'item:update', id: itemId, field: 'buyer_id',   value: null })
+      send({ type: 'item:update', id: itemId, field: 'buyer_name', value: null })
+    } else {
+      // Чужое → открыть модалку
+      openBuyer(itemId)
+    }
+  }
+
   function assignBuyer(userId: string | null, name: string | null) {
     send({ type: 'item:update', id: buyerModal!, field: 'buyer_id',   value: userId })
     send({ type: 'item:update', id: buyerModal!, field: 'buyer_name', value: name   })
@@ -368,8 +359,7 @@ export function ListScreen() {
 
   const actionItem = actionItemId ? visibleItems.find(i => i.id === actionItemId) ?? null : null
 
-  const enabledItems = visibleItems.filter(i => i.enabled)
-  const listTotal    = enabledItems.reduce((s, i) => s + i.price * i.qty, 0)
+  const listTotal = visibleItems.reduce((s, i) => s + i.price * i.qty, 0)
 
   return (
     <div className="px-3.5 pt-2 pb-8 relative">
@@ -390,7 +380,7 @@ export function ListScreen() {
             className="text-sm font-black tabular-nums tracking-tight"
             style={{ color: listTotal > 0 ? 'var(--accent)' : 'var(--muted)' }}
           >
-            {listTotal > 0 ? fmt(listTotal) : `${enabledItems.length} поз.`}
+            {listTotal > 0 ? fmt(listTotal) : `${visibleItems.length} поз.`}
           </span>
         </div>
       )}
@@ -439,8 +429,9 @@ export function ListScreen() {
                     <Divider />
                     <ItemRow
                       item={it}
+                      meId={me?.id}
                       onUpdate={onUpdate}
-                      onBuyerOpen={openBuyer}
+                      onBuyerTap={handleBuyerTap}
                       onOpenActions={setActionItemId}
                       renameTrigger={it.id === renamingId ? renameTick : 0}
                     />
@@ -545,7 +536,7 @@ export function ListScreen() {
                   border:     active ? '1px solid var(--accent)' : '1px solid var(--gb)',
                   color:      active ? '#fff' : 'var(--text)', fontFamily: 'inherit',
                 }}>
-                {m.name}{m.user_id === meId ? ' (я)' : ''}
+                {m.name}{m.user_id === me?.id ? ' (я)' : ''}
               </button>
             )
           })}
