@@ -510,7 +510,6 @@ export function ListScreen() {
             setActionItemId(null)
           }
         }}
-        onSetPrice={() => showToast('Нажми на сумму в строке позиции', 'var(--muted)')}
         onDelete={requestDeleteItem}
         onShare={(it) => {
           const text = `${it.name} — ${it.qty} ${it.unit}`

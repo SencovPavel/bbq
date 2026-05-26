@@ -7,7 +7,6 @@ interface ItemActionsSheetProps {
   item: Item | null
   onClose: () => void
   onRename: (id: string) => void
-  onSetPrice: (id: string) => void
   onDelete: (id: string) => void
   onShare: (item: Item) => void
 }
@@ -16,7 +15,6 @@ export function ItemActionsSheet({
   item,
   onClose,
   onRename,
-  onSetPrice,
   onDelete,
   onShare,
 }: ItemActionsSheetProps) {
@@ -28,14 +26,6 @@ export function ItemActionsSheet({
 
   return (
     <Modal open onClose={onClose} title={item.name}>
-      <button
-        type="button"
-        className={rowClass}
-        style={rowStyle}
-        onClick={() => { onSetPrice(item.id); onClose() }}
-      >
-        Указать цену
-      </button>
       <button
         type="button"
         className={rowClass}
