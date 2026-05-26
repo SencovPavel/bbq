@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GlassCard, Divider } from '../components/GlassCard'
 import { fmt } from '../lib/session'
+import { loadGroupUi, saveGroupUiPatch } from '../lib/ui-persist'
 import { analyzeWithAgent } from '../lib/api'
 import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
@@ -18,6 +19,16 @@ export function SummaryScreen() {
   const [analysis,  setAnalysis]  = useState<AnalysisResult | null>(null)
   const [loading,   setLoading]   = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
+
+  useEffect(() => {
+    if (!groupId) return
+    setPanelOpen(loadGroupUi(groupId).summaryPanelOpen)
+  }, [groupId])
+
+  useEffect(() => {
+    if (!groupId) return
+    saveGroupUiPatch(groupId, { summaryPanelOpen: panelOpen })
+  }, [groupId, panelOpen])
 
   const { categories = [], items = [], members = [] } = serverState ?? {}
   const allItems    = currentEventId ? items.filter(i => i.event_id === currentEventId) : items

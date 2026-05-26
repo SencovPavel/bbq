@@ -54,6 +54,7 @@ export default function App() {
   const currentEventId    = useAppStore(s => s.currentEventId)
   const enterEvent        = useAppStore(s => s.enterEvent)
   const exitEvent         = useAppStore(s => s.exitEvent)
+  const hydrateGroupUi    = useAppStore(s => s.hydrateGroupUi)
   const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
 
   const me         = useSessionStore(s => s.me)
@@ -104,6 +105,13 @@ export default function App() {
 
   const isAppDataLoading = screen === 'app' && Boolean(groupId) && !serverState
 
+  // Сброс события, если оно удалено на сервере
+  useEffect(() => {
+    if (screen !== 'app' || !currentEventId || !serverState?.events) return
+    const exists = serverState.events.some(e => e.id === currentEventId)
+    if (!exists) exitEvent()
+  }, [serverState?.events, currentEventId, screen, exitEvent])
+
   // Автовыбор ближайшего события когда загрузился state
   useEffect(() => {
     if (screen !== 'app' || currentEventId) return
@@ -112,7 +120,7 @@ export default function App() {
     const upcoming = events.find(e => !e.event_date || new Date(e.event_date + 'T23:59:59') >= new Date())
     const pick = upcoming ?? events[0]
     if (pick) enterEvent(pick.id)
-  }, [serverState?.events, screen]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [serverState?.events, screen, currentEventId, enterEvent])
 
   // Deep link
   useEffect(() => {
@@ -121,7 +129,11 @@ export default function App() {
     joinGroupById({ groupId: startParam, userId: user.id, userName: user.name })
       .then(d => {
         if (d.id) {
-          setMe(user); setGroupId(d.id); saveSession(user, d.id); setScreen('app')
+          setMe(user)
+          setGroupId(d.id)
+          saveSession(user, d.id)
+          hydrateGroupUi(d.id)
+          setScreen('app')
         } else {
           setScreen(tgUser || session ? 'groups' : 'onboarding')
         }
@@ -134,9 +146,8 @@ export default function App() {
     setGroupId(gId)
     saveSession(me, gId)
     resetWs()
-    exitEvent()
+    hydrateGroupUi(gId)
     setScreen('app')
-    setTab('list')
   }
 
   function onOnboardingDone(user: User, gId: string) {

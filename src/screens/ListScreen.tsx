@@ -4,6 +4,7 @@ import { Modal, ModalButtons, GlassInput, GlassSelect } from '../components/Moda
 import { ConfirmModal } from '../components/ConfirmModal'
 import { PriceCell } from '../components/PriceCell'
 import { fmt } from '../lib/session'
+import { loadOpenCats, saveOpenCats } from '../lib/ui-persist'
 import { haptic } from '../lib/tg'
 import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
@@ -236,11 +237,12 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
 
 export function ListScreen() {
   const { serverState, send } = useWsStore()
-  const meId          = useSessionStore(s => s.me?.id)
-  const showToast     = useToastStore(s => s.show)
+  const meId           = useSessionStore(s => s.me?.id)
+  const groupId        = useSessionStore(s => s.groupId)
+  const showToast      = useToastStore(s => s.show)
   const currentEventId = useAppStore(s => s.currentEventId)
 
-  const [openCats,    setOpenCats]    = useState<Record<string, boolean>>({ rent: true, meat: true })
+  const [openCats, setOpenCats] = useState<Record<string, boolean>>({})
   const [addModal,    setAddModal]    = useState<string | null>(null)
   const [catModal,    setCatModal]    = useState(false)
   const [buyerModal,  setBuyerModal]  = useState<string | null>(null)
@@ -254,6 +256,16 @@ export function ListScreen() {
   const [pendingDeletes, setPendingDeletes] = useState<Map<string, ReturnType<typeof setTimeout>>>(new Map())
 
   const { categories = [], items = [], members = [] } = serverState ?? {}
+
+  useEffect(() => {
+    if (!groupId) return
+    setOpenCats(loadOpenCats(groupId, currentEventId))
+  }, [groupId, currentEventId])
+
+  useEffect(() => {
+    if (!groupId) return
+    saveOpenCats(groupId, currentEventId, openCats)
+  }, [groupId, currentEventId, openCats])
 
   // Фильтруем по текущему событию
   const eventItems = currentEventId
