@@ -1,0 +1,30 @@
+/* Глобальная типографика и скролл */
+html,
+body,
+#root {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+@media (min-width: 1024px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 220, 150, 0.2);
+    border-radius: 99px;
+  }
+
+  html[data-platform='web'] {
+    scrollbar-gutter: stable;
+  }
+}

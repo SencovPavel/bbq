@@ -1,0 +1,90 @@
+/* Полноэкранные веб-страницы: auth, groups, onboarding */
+.web-page {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.web-page__body {
+  width: 100%;
+  max-width: 420px;
+}
+
+.web-page__card {
+  border-radius: 24px;
+  padding: 28px 24px;
+}
+
+@media (min-width: 1024px) {
+  .web-page {
+    padding: 40px 48px;
+    align-items: stretch;
+  }
+
+  .web-page--wide {
+    display: grid;
+    grid-template-columns: 1fr minmax(380px, 440px);
+    gap: 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: center;
+  }
+
+  .web-page__promo {
+    align-items: center;
+  }
+
+  .web-page__promo-inner {
+    max-width: 420px;
+  }
+
+  .web-page__logo {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+
+  .web-page__headline {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .web-page__tagline {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .web-page__features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(245, 240, 234, 0.75);
+  }
+
+  .web-page__features li::before {
+    content: '✓ ';
+    color: var(--accent);
+  }
+
+  .web-page__body {
+    max-width: none;
+  }
+
+  .web-page__card {
+    padding: 36px 32px;
+  }
+}

@@ -1,0 +1,69 @@
+/* Переиспользуемые glass-классы (глобальные утилиты) */
+.glass {
+  background: var(--g);
+  border: 1px solid var(--gb);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-strong {
+  background: rgba(255, 240, 200, 0.08);
+  border: 1px solid var(--gbs);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.glass-input {
+  background: rgba(255, 240, 200, 0.06);
+  border: 1px solid var(--gb);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.glass-input:focus {
+  border-color: var(--accent);
+}
+
+.price-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.price-input::-webkit-inner-spin-button,
+.price-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: white;
+  font-weight: 800;
+  transition: opacity 0.15s;
+}
+
+.btn-accent:active {
+  opacity: 0.85;
+}
+
+.btn-glass {
+  background: var(--g);
+  border: 1px solid var(--gb);
+  color: var(--text);
+  font-weight: 800;
+  backdrop-filter: blur(12px);
+  transition: border-color 0.15s;
+}
+
+.btn-glass:active {
+  border-color: var(--accent);
+}
+
+.cloud-panel {
+  background: rgba(255, 240, 200, 0.05);
+  border: 1px solid var(--gb);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}

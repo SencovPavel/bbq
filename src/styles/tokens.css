@@ -1,0 +1,25 @@
+/* Дизайн-токены: палитра, отступы layout */
+:root {
+  --bg: #100e0b;
+  --card: rgba(255, 240, 200, 0.05);
+  --card-b: rgba(255, 220, 150, 0.12);
+
+  --accent: #f97316;
+  --accent2: #fbbf24;
+  --green: #4ade80;
+  --red: #f87171;
+  --blue: #60a5fa;
+
+  --text: #f5f0ea;
+  --muted: rgba(245, 240, 234, 0.45);
+
+  --g: rgba(255, 240, 200, 0.05);
+  --gb: rgba(255, 220, 150, 0.12);
+  --gbs: rgba(255, 220, 150, 0.22);
+
+  --shell-sidebar: 272px;
+  --content-max: 920px;
+
+  /* Совпадает с Tailwind `lg` */
+  --bp-desktop: 1024px;
+}

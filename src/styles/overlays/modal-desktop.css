@@ -1,0 +1,39 @@
+/* Модалки и bottom sheet на десктопе */
+@media (min-width: 1024px) {
+  .modal-overlay {
+    align-items: center !important;
+    padding: 24px;
+  }
+
+  .modal-panel {
+    border-radius: 24px !important;
+    border-bottom: 1px solid var(--gb) !important;
+    max-height: min(85vh, 720px) !important;
+    padding-bottom: 24px !important;
+  }
+
+  .modal-panel .modal-drag-handle {
+    display: none;
+  }
+
+  .event-sheet-panel {
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    width: min(420px, 100vw) !important;
+    max-width: none !important;
+    height: 100% !important;
+    border-radius: 24px 0 0 24px !important;
+    padding-bottom: 24px !important;
+  }
+
+  .event-sheet-panel .modal-drag-handle {
+    display: none;
+  }
+
+  .blob-glow-tl {
+    width: 560px !important;
+    height: 560px !important;
+  }
+}
