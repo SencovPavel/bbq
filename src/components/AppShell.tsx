@@ -32,7 +32,6 @@ export function AppShell({
     <div className="app-shell relative min-h-screen">
       <AppSidebar
         group={group}
-        wsOk={wsOk}
         currentEvent={currentEvent}
         activeTab={tab}
         onTabChange={onTabChange}
