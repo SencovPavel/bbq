@@ -12,6 +12,7 @@ export default defineConfig({
       '/users':  'http://localhost:3001',
       '/agent':  'http://localhost:3001',
       '/auth':   'http://localhost:3001',
+      '/ws':     { target: 'ws://localhost:3001', ws: true },
     },
   },
 })

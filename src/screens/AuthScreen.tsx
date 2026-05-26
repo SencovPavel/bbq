@@ -69,11 +69,12 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-5">
-      {/* Logo */}
-      <div style={{ fontSize: 44, marginBottom: 8 }}>🔥</div>
-      <div style={{ fontSize: 26, fontWeight: 900, letterSpacing: '-.02em', marginBottom: 4 }}>Пикник</div>
-      <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 36 }}>
+    <div className="w-full">
+      <div className="lg:hidden" style={{ fontSize: 44, marginBottom: 8 }}>🔥</div>
+      <div className="text-[26px] lg:text-[22px] font-black mb-1" style={{ letterSpacing: '-.02em' }}>
+        {mode === 'login' ? 'Вход' : 'Регистрация'}
+      </div>
+      <div className="text-[13px] mb-6" style={{ color: 'var(--muted)' }}>
         Список покупок для компании
       </div>
 
@@ -81,7 +82,6 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
       <div style={{
         display: 'flex',
         width: '100%',
-        maxWidth: 380,
         padding: 4,
         borderRadius: 14,
         background: 'var(--g)',
@@ -111,9 +111,8 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
       </div>
 
       {/* Form card */}
-      <div style={{
+      <div className="lg:bg-transparent lg:border-none lg:p-0" style={{
         width: '100%',
-        maxWidth: 380,
         borderRadius: 20,
         background: 'var(--g)',
         border: '1px solid var(--gb)',

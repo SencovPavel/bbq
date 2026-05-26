@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { AppLoader } from './components/AppLoader'
 import { Blobs } from './components/Blobs'
-import { TopNav } from './components/TopNav'
-import { GroupBar } from './components/GroupBar'
+import { AppShell } from './components/AppShell'
+import { WebPageLayout } from './components/WebPageLayout'
 import { EventSheet } from './components/EventSheet'
 import { Toast } from './components/Toast'
 import { ListScreen } from './screens/ListScreen'
@@ -17,7 +17,7 @@ import { joinGroupById } from './lib/api'
 import { getTgUser, getStartParam, getPlatform } from './lib/tg'
 import { loadSession, saveSession, clearGroupSession } from './lib/session'
 import { uid } from './lib/session'
-import { authMe } from './lib/auth'
+import { authDevLogin, authMe } from './lib/auth'
 import { useAppStore } from './stores/appStore'
 import { useSessionStore } from './stores/sessionStore'
 import { useWsStore } from './stores/wsStore'
@@ -71,9 +71,22 @@ export default function App() {
   useEffect(() => {
     if (startParam) return
 
-    // Web — проверяем cookie-сессию
+    // Web — dev-автовход или cookie-сессия
     if (getPlatform() === 'web') {
-      authMe().then(webUser => {
+      void (async () => {
+        let webUser = null
+
+        if (import.meta.env.DEV) {
+          webUser = await authDevLogin()
+          if (webUser) {
+            console.info('[dev] Вход как', webUser.name, `(${webUser.email})`)
+          }
+        }
+
+        if (!webUser) {
+          webUser = await authMe()
+        }
+
         if (webUser) {
           setMe({ id: webUser.id, name: webUser.name })
           if (session?.groupId) setGroupId(session.groupId)
@@ -81,7 +94,7 @@ export default function App() {
         } else {
           setScreen('auth')
         }
-      })
+      })()
       return
     }
 
@@ -156,9 +169,11 @@ export default function App() {
 
   if (screen === 'auth') {
     return (
-      <div className="relative">
+      <div className="relative min-h-screen">
         <Blobs />
-        <AuthScreen onDone={user => { setMe(user); setScreen('groups') }} />
+        <WebPageLayout wide>
+          <AuthScreen onDone={user => { setMe(user); setScreen('groups') }} />
+        </WebPageLayout>
         <Toast />
       </div>
     )
@@ -166,9 +181,11 @@ export default function App() {
 
   if (screen === 'onboarding') {
     return (
-      <div className="relative">
+      <div className="relative min-h-screen">
         <Blobs />
-        <OnboardingScreen onDone={onOnboardingDone} />
+        <WebPageLayout>
+          <OnboardingScreen onDone={onOnboardingDone} />
+        </WebPageLayout>
         <Toast />
       </div>
     )
@@ -176,33 +193,34 @@ export default function App() {
 
   if (screen === 'groups') {
     return (
-      <div className="relative">
+      <div className="relative min-h-screen">
         <Blobs />
-        <GroupsScreen onEnter={enterGroup} onCreate={() => setScreen('onboarding')} onJoin={() => setScreen('onboarding')} />
+        <WebPageLayout wide>
+          <GroupsScreen onEnter={enterGroup} onCreate={() => setScreen('onboarding')} onJoin={() => setScreen('onboarding')} />
+        </WebPageLayout>
         <Toast />
       </div>
     )
   }
 
   return (
-    <div className="relative max-w-[500px] mx-auto min-h-screen">
+    <div className="relative min-h-screen">
       <Blobs />
-      <div style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom, 0px))' }}>
-        <GroupBar
-          group={serverState?.group}
-          wsOk={wsOk}
-          currentEvent={currentEvent}
-          onBack={backToGroups}
-        />
-        <div key={slideKey} className={slideDir === 'r' ? 'tab-in-r' : 'tab-in-l'}
-          style={{ overflow: 'hidden' }}>
-          {tab === 'list'    && <ListScreen />}
-          {tab === 'summary' && <SummaryScreen />}
-          {tab === 'my'      && <MyScreen />}
-          {tab === 'members' && <MembersScreen />}
-        </div>
-      </div>
-      <TopNav active={tab} onChange={handleTabChange} />
+      <AppShell
+        group={serverState?.group}
+        wsOk={wsOk}
+        currentEvent={currentEvent}
+        tab={tab}
+        slideKey={slideKey}
+        slideClass={slideDir === 'r' ? 'tab-in-r' : 'tab-in-l'}
+        onTabChange={handleTabChange}
+        onBack={backToGroups}
+      >
+        {tab === 'list' && <ListScreen />}
+        {tab === 'summary' && <SummaryScreen />}
+        {tab === 'my' && <MyScreen />}
+        {tab === 'members' && <MembersScreen />}
+      </AppShell>
       <EventSheet />
       <Toast />
     </div>

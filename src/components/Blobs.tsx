@@ -2,7 +2,7 @@ export function Blobs() {
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       {/* тёплый оранжевый — костёр сверху */}
-      <div className="absolute rounded-full"
+      <div className="absolute rounded-full blob-glow-tl"
         style={{ width: 420, height: 420, top: -140, left: -100,
           background: 'radial-gradient(circle,rgba(249,115,22,0.28),transparent 65%)' }} />
       {/* янтарный — снизу-справа */}

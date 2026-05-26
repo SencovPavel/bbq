@@ -40,3 +40,23 @@ export async function authMe(): Promise<WebUser | null> {
 export async function authLogout(): Promise<void> {
   await fetch('/auth/logout', { method: 'POST', credentials: 'include' })
 }
+
+/**
+ * Dev-only: создаёт/находит тестового пользователя и выставляет cookie-сессию.
+ * Работает только при `npm run dev` и NODE_ENV !== production на бэкенде.
+ */
+export async function authDevLogin(): Promise<WebUser | null> {
+  if (!import.meta.env.DEV) return null
+  if (import.meta.env.VITE_DEV_AUTO_AUTH === 'false') return null
+
+  try {
+    const r = await fetch('/auth/dev-login', {
+      method:      'POST',
+      credentials: 'include',
+    })
+    if (!r.ok) return null
+    return r.json() as Promise<WebUser>
+  } catch {
+    return null
+  }
+}

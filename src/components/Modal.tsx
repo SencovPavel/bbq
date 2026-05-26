@@ -18,12 +18,12 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[200] flex items-end justify-center"
+      className="modal-overlay fixed inset-0 z-[200] flex items-end justify-center"
       style={{ background: 'rgba(0,0,0,.7)', backdropFilter: 'blur(6px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
-        className="w-full max-w-[500px] rounded-t-[28px] overflow-y-auto slide-up"
+        className="modal-panel w-full max-w-[500px] rounded-t-[28px] overflow-y-auto slide-up"
         style={{
           background: '#18140f',
           border: '1px solid var(--gb)',
@@ -33,7 +33,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-center mb-4 pt-1">
+        <div className="modal-drag-handle flex justify-center mb-4 pt-1">
           <div className="rounded-full" style={{ width: 36, height: 4, background: 'var(--gb)' }} />
         </div>
         {title && (

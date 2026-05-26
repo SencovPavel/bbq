@@ -25,13 +25,16 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
   }, [me?.id])
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 relative">
-      <div className="w-full max-w-[360px]">
-        <div className="flex items-center gap-[6px] text-[22px] font-black mb-1" style={{ color: 'var(--accent)', fontFamily: 'inherit' }}>
-          <IconFlame size={22} strokeWidth={1.4} /> Пикник
+    <div className="w-full">
+        <div className="flex items-center gap-[6px] text-[22px] font-black mb-1 lg:hidden" style={{ color: 'var(--accent)', fontFamily: 'inherit' }}>
+          <IconFlame size={22} strokeWidth={1.4} /> Котёл
         </div>
-        <div className="text-[13px] mb-6" style={{ color: 'var(--muted)' }}>
-          {me?.name ? `Привет, ${me.name}!` : 'Планируй пикник вместе с друзьями'}
+        <div className="text-[13px] mb-6 lg:hidden" style={{ color: 'var(--muted)' }}>
+          {me?.name ? `Привет, ${me.name}!` : 'Планируй закупки вместе с друзьями'}
+        </div>
+        <div className="hidden lg:block text-[20px] font-extrabold mb-1">Мои группы</div>
+        <div className="hidden lg:block text-[13px] mb-6" style={{ color: 'var(--muted)' }}>
+          {me?.name ? `Привет, ${me.name}!` : 'Выберите группу или создайте новую'}
         </div>
 
         <div className="flex-1 mb-4" style={{ minHeight: 80 }}>
@@ -79,7 +82,6 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
             Войти по коду
           </button>
         </div>
-      </div>
     </div>
   )
 }

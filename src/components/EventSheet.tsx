@@ -120,7 +120,7 @@ export function EventSheet() {
 
       {/* Sheet */}
       <div
-        className="fixed left-0 right-0 z-[160] mx-auto"
+        className="event-sheet-panel fixed left-0 right-0 z-[160] mx-auto"
         style={{
           bottom: 0,
           maxWidth: 500,
@@ -129,10 +129,13 @@ export function EventSheet() {
           borderRadius: '20px 20px 0 0',
           padding: '12px 16px',
           paddingBottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
+          overflowY: 'auto',
         }}
       >
-        {/* Handle */}
-        <div className="mx-auto mb-4" style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(255,255,255,.15)' }} />
+        <div
+          className="modal-drag-handle mx-auto mb-4"
+          style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(255,255,255,.15)' }}
+        />
 
         {!showCreate ? (
           <>

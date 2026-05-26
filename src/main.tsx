@@ -2,9 +2,10 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
-import { initTg } from './lib/tg'
+import { getPlatform, initTg } from './lib/tg'
 
 initTg()
+document.documentElement.dataset.platform = getPlatform()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

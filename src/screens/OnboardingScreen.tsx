@@ -52,15 +52,15 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 relative">
-      <div className="flex items-center gap-[8px] text-[28px] font-black mb-2" style={{ color: 'var(--accent)' }}>
-        <IconFlame size={28} strokeWidth={1.4} /> Пикник
+    <div className="w-full">
+      <div className="flex items-center gap-[8px] text-[28px] font-black mb-2 lg:hidden" style={{ color: 'var(--accent)' }}>
+        <IconFlame size={28} strokeWidth={1.4} /> Котёл
       </div>
-      <div className="text-[13px] mb-8 text-center" style={{ color: 'var(--muted)' }}>
-        Планируй пикник вместе с друзьями
+      <div className="text-[13px] mb-6 lg:mb-8 text-center lg:text-left" style={{ color: 'var(--muted)' }}>
+        Создайте группу или войдите по коду
       </div>
 
-      <div className="glass rounded-[20px] p-5 w-full max-w-[360px]">
+      <div className="lg:p-0 lg:bg-transparent lg:border-none rounded-[20px] p-5 w-full glass lg:shadow-none">
         {/* Tabs */}
         <div className="flex gap-[6px] mb-5">
           {(['create', 'join'] as const).map(t => (
