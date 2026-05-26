@@ -10,12 +10,55 @@ interface IconProps {
   className?: string
 }
 
-const base = (size: number, sw: number, children: React.ReactNode) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+const base = (
+  size: number,
+  sw: number,
+  children: React.ReactNode,
+  className?: string,
+) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={sw}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
     {children}
   </svg>
 )
+
+const icon = (
+  { size = 16, strokeWidth = 1.8, className }: IconProps,
+  children: React.ReactNode,
+) => base(size, strokeWidth, children, className)
+
+export function IconChevronLeft(props: IconProps) {
+  return icon(props, <path d="M15 18l-6-6 6-6" />)
+}
+
+export function IconChevronDown(props: IconProps) {
+  return icon(props, <path d="M6 9l6 6 6-6" />)
+}
+
+export function IconDots({ size = 14, strokeWidth = 1.8, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+    >
+      <circle cx="5" cy="12" r="1.6" />
+      <circle cx="12" cy="12" r="1.6" />
+      <circle cx="19" cy="12" r="1.6" />
+    </svg>
+  )
+}
 
 export function IconTrash({ size = 16, strokeWidth = 1.8 }: IconProps) {
   return base(size, strokeWidth,

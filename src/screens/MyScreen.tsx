@@ -4,14 +4,22 @@ import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
 import { PriceCell } from '../components/PriceCell'
-import { IconCalendar, IconCart, IconCheck } from '../components/Icon'
+import { useState } from 'react'
+
+import { EmptyState } from '../components/states/EmptyState'
+import { OfflineBanner } from '../components/states/OfflineBanner'
+import { ReceiptFAB } from '../components/receipt/ReceiptFAB'
+import { ReceiptScanner } from '../components/receipt/ReceiptScanner'
+import { IconCart, IconCheck } from '../components/Icon'
 
 export function MyScreen() {
   const serverState    = useWsStore(s => s.serverState)
+  const wsOk           = useWsStore(s => s.wsOk)
   const send           = useWsStore(s => s.send)
   const me             = useSessionStore(s => s.me)
   const showToast      = useToastStore(s => s.show)
   const currentEventId = useAppStore(s => s.currentEventId)
+  const [scanOpen, setScanOpen] = useState(false)
 
   const allItems    = serverState?.items ?? []
   const items       = currentEventId ? allItems.filter(i => i.event_id === currentEventId) : allItems
@@ -36,7 +44,9 @@ export function MyScreen() {
   }
 
   return (
-    <div className="px-[14px] pt-2 pb-8 relative">
+    <>
+    <div className="px-3.5 pt-2 pb-24 relative">
+      {!wsOk && <OfflineBanner />}
       {/* Hero */}
       <div className="glass rounded-[20px] p-[18px] mb-3">
         <div className="text-base font-extrabold mb-[3px]">Привет, {me?.name}!</div>
@@ -53,13 +63,11 @@ export function MyScreen() {
       </div>
 
       {myItems.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-10">
-          <div style={{ color: 'var(--muted)', opacity: 0.35, marginBottom: 14 }}><IconCart size={48} /></div>
-          <div className="text-[15px] font-extrabold mb-[6px]">Тебе ничего не назначено</div>
-          <div className="text-[13px] text-center leading-relaxed" style={{ color: 'var(--muted)', maxWidth: 220 }}>
-            Перейди в «Список» и нажми «Кто купит?»
-          </div>
-        </div>
+        <EmptyState
+          icon={<IconCart size={48} strokeWidth={1.4} />}
+          title="Тебе ничего не назначено"
+          body="Перейди в «Список» и нажми «+ покупатель» рядом с позицией"
+        />
       )}
 
       {sorted.map(it => {
@@ -117,5 +125,8 @@ export function MyScreen() {
         </div>
       )}
     </div>
+    <ReceiptFAB onClick={() => setScanOpen(true)} />
+    <ReceiptScanner open={scanOpen} onClose={() => setScanOpen(false)} eventId={currentEventId} />
+    </>
   )
 }

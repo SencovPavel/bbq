@@ -43,7 +43,6 @@ export function AppShell({
         <header className="app-shell__header lg:hidden">
           <GroupBar
             group={group}
-            wsOk={wsOk}
             currentEvent={currentEvent}
             onBack={onBack}
           />

@@ -7,11 +7,13 @@ import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
-import { IconShare, IconCalendar, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle, IconReceipt } from '../components/Icon'
+import { OfflineBanner } from '../components/states/OfflineBanner'
+import { IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle, IconReceipt } from '../components/Icon'
 import type { AnalysisResult } from '../types'
 
 export function SummaryScreen() {
   const serverState    = useWsStore(s => s.serverState)
+  const wsOk           = useWsStore(s => s.wsOk)
   const groupId        = useSessionStore(s => s.groupId)
   const showToast      = useToastStore(s => s.show)
   const currentEventId = useAppStore(s => s.currentEventId)
@@ -73,7 +75,8 @@ export function SummaryScreen() {
   }
 
   return (
-    <div className="px-[14px] pt-2 pb-8 relative">
+    <div className="px-3.5 pt-2 pb-8 relative">
+      {!wsOk && <OfflineBanner />}
       {/* Hero */}
       <div className="rounded-[20px] p-[22px] mb-3 grid grid-cols-2 gap-[14px]"
         style={{ background: 'linear-gradient(135deg,rgba(249,115,22,.22),rgba(251,191,36,.12))',
@@ -138,9 +141,15 @@ export function SummaryScreen() {
 
       {/* Agent */}
       <button onClick={runAnalysis} disabled={loading}
-        className="w-full py-[14px] rounded-[14px] text-[14px] font-extrabold flex items-center justify-center gap-2 cursor-pointer border-none mb-3"
-        style={{ background: 'var(--g)', border: '1px solid var(--gb)', color: 'var(--text)',
-                 opacity: loading ? .6 : 1, fontFamily: 'inherit' }}>
+        className="w-full py-3.5 rounded-md text-sm font-extrabold flex items-center justify-center gap-2 cursor-pointer mb-3"
+        style={{
+          background: 'linear-gradient(90deg, rgba(96,165,250,.1), rgba(167,139,250,.08))',
+          border: '1px solid rgba(96,165,250,.25)',
+          color: 'var(--text)',
+          opacity: loading ? 0.6 : 1,
+          fontFamily: 'inherit',
+        }}
+      >
         <IconRobot size={15} />
         {loading ? 'Анализирую...' : 'Проверить с агентом'}
       </button>

@@ -2,16 +2,19 @@ import { useState, useRef, useEffect } from 'react'
 import { GlassCard, Divider } from '../components/GlassCard'
 import { Modal, ModalButtons, GlassInput, GlassSelect } from '../components/Modal'
 import { ConfirmModal } from '../components/ConfirmModal'
-import { PriceCell } from '../components/PriceCell'
 import { fmt } from '../lib/session'
 import { loadOpenCats, saveOpenCats } from '../lib/ui-persist'
+import { stepForUnit, fmtQty } from '../lib/item-unit'
 import { haptic } from '../lib/tg'
 import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
-import { IconTrash, IconPerson, IconCalendar, IconCart } from '../components/Icon'
-import type { Item, Member } from '../types'
+import { EmptyState } from '../components/states/EmptyState'
+import { OfflineBanner } from '../components/states/OfflineBanner'
+import { ItemActionsSheet } from '../components/list/ItemActionsSheet'
+import { IconDots, IconPerson, IconCart, IconTrash } from '../components/Icon'
+import type { Item } from '../types'
 
 const UNITS  = ['шт','кг','л','г','мл','упак','наб','пуч','банк','меш','рул']
 const EMOJIS = ['🏡','🥩','🔥','🥗','🧃','🍽️','🍕','🍺','🥤','🍰','🫙','🌽','🥚','🧀','🥖','🧂','🫒','🍉','🍦','🎉','📦']
@@ -38,10 +41,10 @@ function SourceBadge({ source }: { source: Source }) {
 
 interface ItemRowProps {
   item: Item
-  members: Member[]
   onUpdate: (id: string, field: string, value: unknown) => void
-  onDeleteRequest: (id: string) => void
   onBuyerOpen: (id: string) => void
+  onOpenActions: (id: string) => void
+  renameTrigger: number
 }
 
 const toBool = (value: unknown): boolean => {
@@ -51,7 +54,7 @@ const toBool = (value: unknown): boolean => {
   return Boolean(value)
 }
 
-function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps) {
+function ItemRow({ item, onUpdate, onBuyerOpen, onOpenActions, renameTrigger }: ItemRowProps) {
   // ── enabled: optimistic toggle ──
   const [localEnabled, setLocalEnabled] = useState(() => toBool(item.enabled))
   const pendingEnabled = useRef<boolean | null>(null)
@@ -109,18 +112,6 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
     if (qtyTimer.current) clearTimeout(qtyTimer.current)
   }, [])
 
-  function changeQty(delta: number) {
-    haptic()
-    const next = Math.max(0, +(Number(localQty) + delta).toFixed(2))
-    setLocalQty(next)
-    pendingQty.current = next
-    if (qtyTimer.current) clearTimeout(qtyTimer.current)
-    qtyTimer.current = setTimeout(() => {
-      onUpdate(item.id, 'qty', next)
-      qtyTimer.current = null
-    }, 400)
-  }
-
   // ── name: inline edit ──
   const [editing,  setEditing] = useState(false)
   const [editName, setEditName] = useState(item.name)
@@ -129,6 +120,10 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
   useEffect(() => {
     if (!editing) setEditName(item.name)
   }, [item.name, editing])
+
+  useEffect(() => {
+    if (renameTrigger > 0) startEdit()
+  }, [renameTrigger]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function startEdit() {
     setEditing(true)
@@ -147,12 +142,27 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
     setEditing(false)
   }
 
-  return (
-    <div className="px-[15px] py-[12px]" style={{ opacity: localEnabled ? 1 : 0.4, transition: 'opacity .2s' }}>
+  const step = stepForUnit(item.unit)
+  const lineTotal = item.price * localQty
 
-      {/* Строка 1: название + тогл */}
-      <div className="flex items-center justify-between gap-3 mb-[8px]">
-        <div className="flex-1 min-w-0 flex items-center gap-1 flex-wrap">
+  const changeQtyByStep = (delta: number) => {
+    haptic()
+    const next = Math.max(0, +(Number(localQty) + delta).toFixed(2))
+    setLocalQty(next)
+    pendingQty.current = next
+    if (qtyTimer.current) clearTimeout(qtyTimer.current)
+    qtyTimer.current = setTimeout(() => {
+      onUpdate(item.id, 'qty', next)
+      qtyTimer.current = null
+    }, 400)
+  }
+
+  return (
+    <div
+      className={`px-3.5 py-2.5 transition-opacity ${!localEnabled ? 'opacity-40' : ''}`}
+    >
+      <div className="flex items-center justify-between gap-2.5 mb-1.5">
+        <div className="flex-1 min-w-0 flex items-center gap-1.5 flex-wrap">
           {editing ? (
             <input
               ref={nameRef}
@@ -163,16 +173,20 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
                 if (e.key === 'Enter') { e.preventDefault(); commitEdit() }
                 if (e.key === 'Escape') cancelEdit()
               }}
-              className="glass-input text-[14px] font-bold rounded-[8px] flex-1"
-              style={{ minWidth: 0, padding: '2px 8px',
-                border: '1px solid var(--accent)', background: 'rgba(249,115,22,.08)', color: 'var(--text)' }}
+              className="glass-input text-md font-extrabold rounded-sm flex-1"
+              style={{
+                minWidth: 0,
+                padding: '2px 8px',
+                border: '1px solid var(--accent)',
+                background: 'rgba(249,115,22,.08)',
+                color: 'var(--text)',
+              }}
             />
           ) : (
             <span
-              className="text-[14px] font-bold leading-tight cursor-text"
-              style={{ textDecoration: localEnabled ? 'none' : 'line-through', color: 'var(--text)' }}
+              className="text-md font-extrabold leading-tight tracking-tight cursor-text"
+              style={{ textDecoration: localEnabled ? 'none' : 'line-through' }}
               onClick={startEdit}
-              title="Нажмите чтобы изменить"
             >
               {item.name}
             </span>
@@ -188,55 +202,75 @@ function ItemRow({ item, onUpdate, onDeleteRequest, onBuyerOpen }: ItemRowProps)
         />
       </div>
 
-      {/* Строка 2: степпер + цена + удалить */}
-      <div className="flex items-center gap-[8px]">
-        <button onClick={() => changeQty(-0.5)}
-          className="flex items-center justify-center cursor-pointer border-none flex-shrink-0"
-          style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--g)', border: '1px solid var(--gbs)', color: 'var(--text)', fontSize: 15 }}>
-          −
-        </button>
-        <span className="text-[13px] font-bold" style={{ minWidth: 40, textAlign: 'center' }}>
-          {localQty} {item.unit}
-        </span>
-        <button onClick={() => changeQty(+0.5)}
-          className="flex items-center justify-center cursor-pointer border-none flex-shrink-0"
-          style={{ width: 24, height: 24, borderRadius: 7, background: 'var(--g)', border: '1px solid var(--gbs)', color: 'var(--text)', fontSize: 15 }}>
-          +
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onBuyerOpen(item.id)}
+          className="inline-flex items-center gap-1 rounded-pill text-xs font-extrabold cursor-pointer shrink-0 border"
+          style={{
+            padding: '4px 9px',
+            background: item.buyer_name ? 'rgba(249,115,22,.13)' : 'transparent',
+            borderColor: item.buyer_name ? 'rgba(249,115,22,.28)' : 'var(--gb)',
+            color: item.buyer_name ? 'var(--accent)' : 'var(--muted)',
+            fontFamily: 'inherit',
+          }}
+        >
+          {item.buyer_name
+            ? <><IconPerson size={10} strokeWidth={2} /> {item.buyer_name}</>
+            : '+ покупатель'}
         </button>
 
-        {/* Цена прямо в строке */}
-        <div className="flex items-center gap-[4px] ml-auto">
-          <PriceCell item={item} onChange={(id, price) => onUpdate(id, 'price', price)} />
-          <span className="text-[10px]" style={{ color: 'var(--muted)' }}>₽/{item.unit}</span>
+        <div
+          className="flex items-center shrink-0 rounded-sm p-px"
+          style={{ background: 'rgba(255,240,200,.04)', border: '1px solid var(--gb)' }}
+        >
+          <button
+            type="button"
+            onClick={() => changeQtyByStep(-step)}
+            className="size-[22px] border-none bg-transparent cursor-pointer text-sm flex items-center justify-center"
+            style={{ color: 'var(--text)', fontFamily: 'inherit' }}
+          >
+            −
+          </button>
+          <span className="text-sm font-extrabold px-2 min-w-[50px] text-center tabular-nums">
+            {fmtQty(localQty, item.unit)}{' '}
+            <span className="font-semibold text-xs" style={{ color: 'var(--muted)' }}>
+              {item.unit}
+            </span>
+          </span>
+          <button
+            type="button"
+            onClick={() => changeQtyByStep(step)}
+            className="size-[22px] border-none bg-transparent cursor-pointer text-sm flex items-center justify-center"
+            style={{ color: 'var(--text)', fontFamily: 'inherit' }}
+          >
+            +
+          </button>
         </div>
 
-        <button onClick={() => { haptic('medium'); onDeleteRequest(item.id) }}
-          className="cursor-pointer border-none bg-transparent p-[3px] flex-shrink-0 flex items-center"
-          style={{ color: 'var(--muted)' }}>
-          <IconTrash size={14} />
+        <div
+          className="ml-auto text-sm font-black tabular-nums shrink-0"
+          style={{ color: item.price > 0 ? 'var(--accent)' : 'var(--muted)' }}
+        >
+          {item.price > 0 ? fmt(lineTotal) : '—'}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onOpenActions(item.id)}
+          className="size-6 rounded-sm border-none bg-transparent cursor-pointer flex items-center justify-center shrink-0"
+          style={{ color: 'var(--muted)' }}
+          title="Ещё"
+        >
+          <IconDots />
         </button>
       </div>
-
-      {/* Строка 3: покупатель */}
-      <button onClick={() => onBuyerOpen(item.id)}
-        className="inline-flex items-center gap-1 rounded-full text-[11px] font-bold cursor-pointer border-none mt-[8px]"
-        style={{
-          background: item.buyer_name ? 'rgba(249,115,22,.15)' : 'transparent',
-          border: `1px solid ${item.buyer_name ? 'rgba(249,115,22,.3)' : 'var(--gb)'}`,
-          color: item.buyer_name ? 'var(--accent)' : 'var(--muted)',
-          padding: '3px 10px', fontFamily: 'inherit',
-        }}>
-        {item.buyer_name
-          ? <><IconPerson size={11} strokeWidth={2} /> {item.buyer_name}</>
-          : '+ Кто купит?'
-        }
-      </button>
     </div>
   )
 }
 
 export function ListScreen() {
-  const { serverState, send } = useWsStore()
+  const { serverState, send, wsOk } = useWsStore()
   const meId           = useSessionStore(s => s.me?.id)
   const groupId        = useSessionStore(s => s.groupId)
   const showToast      = useToastStore(s => s.show)
@@ -251,6 +285,9 @@ export function ListScreen() {
   const [newCat,      setNewCat]      = useState({ title: '' })
   const [customBuyer, setCustomBuyer] = useState('')
   const [confirmCat,  setConfirmCat]  = useState<{ id: string; title: string } | null>(null)
+  const [actionItemId, setActionItemId] = useState<string | null>(null)
+  const [renamingId, setRenamingId] = useState<string | null>(null)
+  const [renameTick, setRenameTick] = useState(0)
 
   // Undo-удаление позиций: id → таймер реального send
   const [pendingDeletes, setPendingDeletes] = useState<Map<string, ReturnType<typeof setTimeout>>>(new Map())
@@ -329,25 +366,20 @@ export function ListScreen() {
     setBuyerModal(null)
   }
 
-  return (
-    <div className="px-[14px] pt-2 pb-8 relative">
+  const actionItem = actionItemId ? visibleItems.find(i => i.id === actionItemId) ?? null : null
 
-      {/* Empty state */}
+  return (
+    <div className="px-3.5 pt-2 pb-8 relative">
+      {!wsOk && <OfflineBanner />}
+
       {categories.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="mb-4" style={{ color: 'var(--muted)', opacity: 0.45 }}><IconCart size={56} /></div>
-          <div className="text-[17px] font-extrabold mb-2">Список пустой</div>
-          <div className="text-[13px] leading-relaxed mb-6" style={{ color: 'var(--muted)', maxWidth: 260 }}>
-            Добавь категорию — например «Мясо» или «Напитки», и начни собирать список
-          </div>
-          <button
-            onClick={() => { setEmoji('📦'); setCatModal(true) }}
-            className="px-6 py-[13px] rounded-[14px] text-[14px] font-extrabold cursor-pointer border-none"
-            style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}
-          >
-            ＋ Первая категория
-          </button>
-        </div>
+        <EmptyState
+          icon={<IconCart size={56} strokeWidth={1.4} />}
+          title="Список пустой"
+          body="Добавь категорию — например «Мясо» или «Напитки», и начни собирать список"
+          ctaLabel="＋ Первая категория"
+          onCta={() => { setEmoji('📦'); setCatModal(true) }}
+        />
       )}
 
       {categories.map(cat => {
@@ -384,8 +416,13 @@ export function ListScreen() {
                 {catItems.map(it => (
                   <div key={it.id}>
                     <Divider />
-                    <ItemRow item={it} members={members}
-                      onUpdate={onUpdate} onDeleteRequest={requestDeleteItem} onBuyerOpen={openBuyer} />
+                    <ItemRow
+                      item={it}
+                      onUpdate={onUpdate}
+                      onBuyerOpen={openBuyer}
+                      onOpenActions={setActionItemId}
+                      renameTrigger={it.id === renamingId ? renameTick : 0}
+                    />
                   </div>
                 ))}
                 <Divider />
@@ -452,6 +489,25 @@ export function ListScreen() {
         confirmText="Удалить"
         onConfirm={() => { if (confirmCat) send({ type: 'cat:delete', id: confirmCat.id }); setConfirmCat(null) }}
         onCancel={() => setConfirmCat(null)}
+      />
+
+      <ItemActionsSheet
+        item={actionItem}
+        onClose={() => setActionItemId(null)}
+        onRename={() => {
+          if (actionItem) {
+            setRenamingId(actionItem.id)
+            setRenameTick(t => t + 1)
+            setActionItemId(null)
+          }
+        }}
+        onSetPrice={() => showToast('Нажми на сумму в строке позиции', 'var(--muted)')}
+        onDelete={requestDeleteItem}
+        onShare={(it) => {
+          const text = `${it.name} — ${it.qty} ${it.unit}`
+          if (navigator.share) navigator.share({ text }).catch(() => {})
+          else navigator.clipboard?.writeText(text).then(() => showToast('Скопировано'))
+        }}
       />
 
       {/* Buyer modal */}

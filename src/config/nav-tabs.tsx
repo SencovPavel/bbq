@@ -35,14 +35,12 @@ function IconMy({ active }: { active: boolean }) {
   )
 }
 
-function IconMembers({ active }: { active: boolean }) {
+function IconMapPin({ active }: { active: boolean }) {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth={active ? 2.2 : 1.7} strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="9" cy="8" r="3.2" />
-      <path d="M2 20c0-3.3 3-5.8 7-5.8s7 2.5 7 5.8" />
-      <circle cx="17.5" cy="8.5" r="2.5" />
-      <path d="M22 20c0-2.6-2-4.7-4.5-5.2" />
+      <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z" />
+      <circle cx="12" cy="10" r="3" />
     </svg>
   )
 }
@@ -51,7 +49,7 @@ export const NAV_TABS: Array<{ id: Tab; label: string; Icon: FC<{ active: boolea
   { id: 'list', label: 'Список', Icon: IconList },
   { id: 'summary', label: 'Итог', Icon: IconSummary },
   { id: 'my', label: 'Моё', Icon: IconMy },
-  { id: 'members', label: 'Участники', Icon: IconMembers },
+  { id: 'members', label: 'Событие', Icon: IconMapPin },
 ]
 
 export const NAV_TAB_COUNT = NAV_TABS.length

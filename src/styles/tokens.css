@@ -22,4 +22,33 @@
 
   /* Совпадает с Tailwind `lg` */
   --bp-desktop: 1024px;
+
+  /* Type scale */
+  --t-xs: 11px;
+  --t-sm: 13px;
+  --t-md: 15px;
+  --t-lg: 17px;
+  --t-xl: 22px;
+  --t-display: 30px;
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.35;
+  --lh-base: 1.55;
+
+  /* Radius scale */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-pill: 999px;
+
+  /* Spacing */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 28px;
+
+  --accent-2: var(--accent2);
+  --muted-2: rgba(245, 240, 234, 0.65);
 }

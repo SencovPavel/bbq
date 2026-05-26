@@ -8,7 +8,7 @@ import { Toast } from './components/Toast'
 import { ListScreen } from './screens/ListScreen'
 import { SummaryScreen } from './screens/SummaryScreen'
 import { MyScreen } from './screens/MyScreen'
-import { MembersScreen } from './screens/MembersScreen'
+import { EventScreen } from './screens/EventScreen'
 import { GroupsScreen } from './screens/GroupsScreen'
 import { OnboardingScreen } from './screens/OnboardingScreen'
 import { AuthScreen } from './screens/AuthScreen'
@@ -230,7 +230,7 @@ export default function App() {
         {tab === 'list' && <ListScreen />}
         {tab === 'summary' && <SummaryScreen />}
         {tab === 'my' && <MyScreen />}
-        {tab === 'members' && <MembersScreen />}
+        {tab === 'members' && <EventScreen />}
       </AppShell>
       <EventSheet />
       <Toast />

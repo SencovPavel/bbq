@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getUserGroups } from '../lib/api'
 import { IconFlame, IconUsers } from '../components/Icon'
+import { groupTint, TINT_STYLES } from '../lib/group-icon'
 import { useSessionStore } from '../stores/sessionStore'
 import type { GroupSummary } from '../types'
 
@@ -49,14 +50,20 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
               </div>
             </div>
           )}
-          {groups.map(g => (
+          {groups.map(g => {
+            const tint = TINT_STYLES[groupTint(g.id)]
+            return (
             <div key={g.id}
               onClick={() => onEnter(g.id)}
               className="glass rounded-[16px] p-4 mb-[10px] flex items-center gap-3 cursor-pointer active:opacity-80 transition-opacity">
               <div className="flex items-center justify-center rounded-[12px] flex-shrink-0"
-                style={{ width: 46, height: 46, color: 'var(--accent)',
-                  background: 'linear-gradient(135deg,rgba(249,115,22,.25),rgba(251,191,36,.15))',
-                  border: '1px solid rgba(249,115,22,.25)' }}>
+                style={{
+                  width: 46,
+                  height: 46,
+                  color: 'var(--accent)',
+                  background: `linear-gradient(135deg, ${tint.from}, ${tint.to})`,
+                  border: `1px solid ${tint.border}`,
+                }}>
                 <IconFlame size={22} strokeWidth={1.5} />
               </div>
               <div className="flex-1 min-w-0">
@@ -67,7 +74,8 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
               </div>
               <div className="text-[18px]" style={{ color: 'var(--muted)' }}>›</div>
             </div>
-          ))}
+            )
+          })}
         </div>
 
         <div className="grid grid-cols-2 gap-[10px]">
