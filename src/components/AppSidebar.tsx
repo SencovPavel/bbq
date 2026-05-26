@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { NAV_TABS } from '../config/nav-tabs'
+import { NAV_TABS, NAV_TAB_COUNT } from '../config/nav-tabs'
 import { useAppStore } from '../stores/appStore'
 import { IconCheck, IconFlame } from './Icon'
 
@@ -30,7 +30,7 @@ export function AppSidebar({
 }: AppSidebarProps) {
   const [copied, setCopied] = useState(false)
   const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
-  const activeIndex = NAV_TABS.findIndex(t => t.id === activeTab)
+  const activeIndex = Math.max(0, NAV_TABS.findIndex(t => t.id === activeTab))
 
   const eventLabel = currentEvent
     ? currentEvent.name + (currentEvent.event_date ? ` · ${shortDate(currentEvent.event_date)}` : '')
@@ -92,12 +92,15 @@ export function AppSidebar({
         </button>
       </div>
 
-      <nav className="app-sidebar__nav" aria-label="Разделы">
-        <div
-          aria-hidden
-          className="app-sidebar__nav-indicator"
-          style={{ transform: `translateY(${activeIndex * 100}%)` }}
-        />
+      <nav
+        className="app-sidebar__nav"
+        aria-label="Разделы"
+        style={{
+          ['--nav-tab-count' as string]: NAV_TAB_COUNT,
+          ['--nav-active-index' as string]: activeIndex,
+        }}
+      >
+        <div aria-hidden className="app-sidebar__nav-indicator" />
         {NAV_TABS.map(({ id, label, Icon }) => {
           const isActive = activeTab === id
           return (

@@ -274,8 +274,9 @@ html, body, #root {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex: 1;
+  gap: var(--nav-gap, 4px);
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .app-sidebar__nav-indicator {
@@ -283,13 +284,18 @@ html, body, #root {
   left: 0;
   right: 0;
   top: 0;
-  height: calc((100% - 12px) / 4);
-  margin: 2px 0;
+  height: calc(
+    (100% - (var(--nav-tab-count, 4) - 1) * var(--nav-gap, 4px)) / var(--nav-tab-count, 4)
+  );
   border-radius: 12px;
   background: rgba(249, 115, 22, 0.13);
   box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.22);
+  transform: translateY(
+    calc(var(--nav-active-index, 0) * (100% + var(--nav-gap, 4px)))
+  );
   transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
+  will-change: transform;
 }
 
 .app-sidebar__nav-item {
@@ -299,7 +305,9 @@ html, body, #root {
   align-items: center;
   gap: 12px;
   width: 100%;
+  min-height: 44px;
   padding: 12px 14px;
+  box-sizing: border-box;
   border: none;
   border-radius: 12px;
   background: transparent;
