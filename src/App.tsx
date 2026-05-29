@@ -117,13 +117,13 @@ export default function App() {
     if (!exists) exitEvent()
   }, [serverState?.events, currentEventId, screen, exitEvent])
 
-  // Автовыбор ближайшего события когда загрузился state
+  // Автовыбор активного события когда загрузился state
   useEffect(() => {
     if (screen !== 'app' || currentEventId) return
     const events = serverState?.events ?? []
     if (!events.length) return
-    const upcoming = events.find(e => !e.event_date || new Date(e.event_date + 'T23:59:59') >= new Date())
-    const pick = upcoming ?? events[0]
+    const active = events.find(e => e.status === 'active')
+    const pick = active ?? events[0]
     if (pick) enterEvent(pick.id)
   }, [serverState?.events, screen, currentEventId, enterEvent])
 

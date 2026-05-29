@@ -39,6 +39,7 @@ export interface PicnicEvent {
   event_time: string | null   // "HH:MM:SS"
   location: string | null
   description: string | null
+  status: 'active' | 'completed'
   created_at: string
 }
 
