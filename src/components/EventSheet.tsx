@@ -77,7 +77,6 @@ export function EventSheet() {
   const currentEventId  = useAppStore(s => s.currentEventId)
   const showEventSheet  = useAppStore(s => s.showEventSheet)
   const enterEvent      = useAppStore(s => s.enterEvent)
-  const exitEvent       = useAppStore(s => s.exitEvent)
   const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
   const me              = useSessionStore(s => s.me)
 
@@ -118,11 +117,6 @@ export function EventSheet() {
   function closeSheet() {
     setShowEventSheet(false)
     setShowCreate(false)
-  }
-
-  function handleComplete(e: PicnicEvent) {
-    send({ type: 'event:complete', id: e.id })
-    if (currentEventId === e.id) exitEvent()
   }
 
   return (
@@ -187,10 +181,10 @@ export function EventSheet() {
             {active.length > 0 && (
               <div className="flex flex-col gap-[6px]">
                 {active.map(e => (
-                  <div key={e.id} className="flex items-stretch gap-2">
+                  <div key={e.id}>
                     <button
                       onClick={() => { enterEvent(e.id); setShowEventSheet(false) }}
-                      className="flex items-center gap-3 flex-1 text-left rounded-[12px] border-none cursor-pointer transition-all duration-150 active:opacity-80"
+                      className="flex items-center gap-3 w-full text-left rounded-[12px] border-none cursor-pointer transition-all duration-150 active:opacity-80"
                       style={{
                         padding: '11px 13px',
                         background: currentEventId === e.id ? 'rgba(249,115,22,.12)' : 'rgba(255,255,255,.04)',
@@ -217,23 +211,6 @@ export function EventSheet() {
                         )}
                       </div>
                     </button>
-                    {isAdmin && (
-                      <button
-                        onClick={() => handleComplete(e)}
-                        className="rounded-[12px] border-none cursor-pointer text-[10px] font-bold flex-shrink-0"
-                        style={{
-                          padding: '0 12px',
-                          background: 'rgba(255,255,255,.05)',
-                          border: '1px solid rgba(255,255,255,.08)',
-                          color: 'var(--muted)',
-                          fontFamily: 'inherit',
-                          lineHeight: 1,
-                        }}
-                        title="Завершить событие"
-                      >
-                        Завершить
-                      </button>
-                    )}
                   </div>
                 ))}
               </div>

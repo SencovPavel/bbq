@@ -40,10 +40,20 @@ export function EventScreen() {
   const [confirmDemote, setConfirmDemote] = useState<{ userId: string; name: string } | null>(null)
   const [confirmLeave, setConfirmLeave] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [confirmComplete, setConfirmComplete] = useState(false)
 
   const { members = [], items = [], group, events = [] } = serverState ?? {}
   const currentEvent = currentEventId ? events.find(e => e.id === currentEventId) : undefined
   const amIAdmin = members.find(m => m.user_id === me?.id)?.is_admin ?? false
+  const canCompleteEvent = amIAdmin && currentEvent?.status === 'active'
+
+  const handleCompleteEvent = () => {
+    if (!currentEvent) return
+    send({ type: 'event:complete', id: currentEvent.id })
+    exitEvent()
+    showToast(`Событие «${currentEvent.name}» завершено`)
+    setConfirmComplete(false)
+  }
 
   const copyCode = () => {
     const code = group?.invite_code
@@ -154,6 +164,21 @@ export function EventScreen() {
                 </div>
               )}
             </div>
+          )}
+          {canCompleteEvent && (
+            <button
+              type="button"
+              onClick={() => setConfirmComplete(true)}
+              className="mt-4 w-full py-2.5 rounded-md border text-sm font-extrabold cursor-pointer"
+              style={{
+                background: 'rgba(255,255,255,.06)',
+                borderColor: 'rgba(255,255,255,.12)',
+                color: 'var(--muted)',
+                fontFamily: 'inherit',
+              }}
+            >
+              Завершить событие
+            </button>
           )}
           <button
             type="button"
@@ -382,6 +407,18 @@ export function EventScreen() {
         )}
       </div>
 
+      <ConfirmModal
+        open={confirmComplete}
+        message={
+          currentEvent
+            ? `Завершить «${currentEvent.name}»? Список сохранится, событие перейдёт в завершённые.`
+            : ''
+        }
+        confirmText="Завершить"
+        danger={false}
+        onConfirm={handleCompleteEvent}
+        onCancel={() => setConfirmComplete(false)}
+      />
       <ConfirmModal
         open={!!confirmKick}
         message={confirmKick ? `Исключить ${confirmKick.name} из группы?` : ''}
