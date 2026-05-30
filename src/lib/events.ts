@@ -1,3 +1,5 @@
+import { isEventActive } from './event-status'
+
 import type { PicnicEvent } from '../types'
 
 /** Сравнение для выбора самого нового события (дата → created_at). */
@@ -14,7 +16,7 @@ const compareEventsNewestFirst = (a: PicnicEvent, b: PicnicEvent): number => {
  */
 export const pickEventOnEntry = (events: PicnicEvent[]): PicnicEvent | undefined => {
   if (!events.length) return undefined
-  const active = events.find(e => e.status === 'active')
+  const active = events.find(e => isEventActive(e.status))
   if (active) return active
   return [...events].sort(compareEventsNewestFirst)[0]
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useWsStore } from '../stores/wsStore'
 import { useAppStore } from '../stores/appStore'
+import { sendEventUpdates } from '../lib/event-update'
 import { IconX, IconPencil, IconCalendar, IconMapPin } from '../components/Icon'
 import type { PicnicEvent } from '../types'
 
@@ -215,15 +216,7 @@ export function EventsScreen() {
 
   function handleSave(data: Partial<PicnicEvent>) {
     if (editEvent) {
-      // update fields one by one
-      const fields: Array<[string, string | null]> = [
-        ['name',        data.name        ?? null],
-        ['event_date',  data.event_date  ?? null],
-        ['event_time',  data.event_time  ?? null],
-        ['location',    data.location    ?? null],
-        ['description', data.description ?? null],
-      ]
-      fields.forEach(([field, value]) => send({ type: 'event:update', id: editEvent.id, field, value }))
+      sendEventUpdates(send, editEvent.id, data)
     } else {
       send({ type: 'event:add', name: data.name, date: data.event_date, time: data.event_time, location: data.location, description: data.description })
     }

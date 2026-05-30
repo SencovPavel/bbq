@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { isEventActive } from '../lib/event-status'
 import { pickEventOnEntry } from '../lib/events'
 import { useWsStore } from '../stores/wsStore'
 import { useAppStore } from '../stores/appStore'
@@ -98,8 +99,8 @@ export function EventSheet() {
 
   if (!showEventSheet) return null
 
-  const active    = events.filter(e => e.status === 'active')
-  const completed = events.filter(e => e.status === 'completed')
+  const active    = events.filter(e => isEventActive(e.status))
+  const completed = events.filter(e => !isEventActive(e.status))
 
   function itemCount(eventId: string) {
     return items.filter(i => i.event_id === eventId).length

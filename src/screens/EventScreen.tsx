@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { GlassCard, Divider } from '../components/GlassCard'
 import { ConfirmModal } from '../components/ConfirmModal'
+import { EventDescriptionModal } from '../components/EventDescriptionModal'
 import { NoEventsPrompt } from '../components/NoEventsPrompt'
 import { OfflineBanner } from '../components/states/OfflineBanner'
 import {
@@ -17,6 +18,8 @@ import {
 } from '../components/Icon'
 import { fmt, clearGroupSession } from '../lib/session'
 import { formatEventDate } from '../lib/format'
+import { canAdminCompleteEvent, isEventActive } from '../lib/event-status'
+import { sendEventUpdates } from '../lib/event-update'
 import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
@@ -41,11 +44,13 @@ export function EventScreen() {
   const [confirmLeave, setConfirmLeave] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [confirmComplete, setConfirmComplete] = useState(false)
+  const [showDescriptionEdit, setShowDescriptionEdit] = useState(false)
 
   const { members = [], items = [], group, events = [] } = serverState ?? {}
   const currentEvent = currentEventId ? events.find(e => e.id === currentEventId) : undefined
   const amIAdmin = members.find(m => m.user_id === me?.id)?.is_admin ?? false
-  const canCompleteEvent = amIAdmin && currentEvent?.status === 'active'
+  const canCompleteEvent = canAdminCompleteEvent(amIAdmin, currentEvent)
+  const eventIsActive = currentEvent ? isEventActive(currentEvent.status) : false
 
   const handleCompleteEvent = () => {
     if (!currentEvent) return
@@ -53,6 +58,13 @@ export function EventScreen() {
     exitEvent()
     showToast(`Событие «${currentEvent.name}» завершено`)
     setConfirmComplete(false)
+  }
+
+  const handleSaveDescription = (description: string | null) => {
+    if (!currentEvent) return
+    sendEventUpdates(send, currentEvent.id, { description })
+    showToast('Заметки сохранены')
+    setShowDescriptionEdit(false)
   }
 
   const copyCode = () => {
@@ -116,15 +128,55 @@ export function EventScreen() {
           style={{ background: 'radial-gradient(circle, rgba(251,191,36,.18), transparent 65%)' }}
         />
         <div className="relative">
-          <div
-            className="inline-flex items-center gap-1 text-[10.5px] font-extrabold uppercase tracking-wider mb-2 px-2 py-0.5 rounded-pill"
-            style={{
-              color: 'var(--accent-2)',
-              background: 'rgba(251,191,36,.1)',
-              border: '1px solid rgba(251,191,36,.22)',
-            }}
-          >
-            Текущее событие
+          <div className="flex items-start justify-between gap-2 mb-2 pr-0">
+            <div
+              className="inline-flex items-center gap-1 text-[10.5px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-pill"
+              style={
+                eventIsActive
+                  ? {
+                      color: 'var(--accent-2)',
+                      background: 'rgba(251,191,36,.1)',
+                      border: '1px solid rgba(251,191,36,.22)',
+                    }
+                  : {
+                      color: 'var(--muted)',
+                      background: 'rgba(255,255,255,.06)',
+                      border: '1px solid rgba(255,255,255,.12)',
+                    }
+              }
+            >
+              {eventIsActive ? 'Текущее событие' : 'Завершённое событие'}
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              {canCompleteEvent && (
+                <button
+                  type="button"
+                  onClick={() => setConfirmComplete(true)}
+                  className="px-2.5 py-1.5 rounded-sm border text-[11px] font-extrabold cursor-pointer whitespace-nowrap"
+                  style={{
+                    background: 'rgba(249,115,22,.14)',
+                    borderColor: 'rgba(249,115,22,.45)',
+                    color: 'var(--accent-2)',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  Завершить
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setShowEventSheet(true)}
+                className="size-8 rounded-sm flex items-center justify-center border cursor-pointer"
+                style={{
+                  background: 'rgba(255,255,255,.06)',
+                  borderColor: 'var(--gb)',
+                  color: 'var(--muted)',
+                }}
+                title="Сменить событие"
+              >
+                <IconPencil size={13} />
+              </button>
+            </div>
           </div>
           <div className="text-xl font-black tracking-tight mb-1">
             {currentEvent?.name ?? 'Событие не выбрано'}
@@ -165,47 +217,47 @@ export function EventScreen() {
               )}
             </div>
           )}
-          {canCompleteEvent && (
-            <button
-              type="button"
-              onClick={() => setConfirmComplete(true)}
-              className="mt-4 w-full py-2.5 rounded-md border text-sm font-extrabold cursor-pointer"
-              style={{
-                background: 'rgba(255,255,255,.06)',
-                borderColor: 'rgba(255,255,255,.12)',
-                color: 'var(--muted)',
-                fontFamily: 'inherit',
-              }}
-            >
-              Завершить событие
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={() => setShowEventSheet(true)}
-            className="absolute top-0 right-0 size-8 rounded-sm flex items-center justify-center border cursor-pointer"
-            style={{
-              background: 'rgba(255,255,255,.06)',
-              borderColor: 'var(--gb)',
-              color: 'var(--muted)',
-            }}
-            title="Сменить событие"
-          >
-            <IconPencil size={13} />
-          </button>
         </div>
       </div>
 
-      {currentEvent?.description && (
+      {currentEvent && (
         <div className="glass rounded-md p-4 mb-3.5">
-          <div
-            className="text-[10.5px] font-extrabold uppercase tracking-wider mb-1.5"
-            style={{ color: 'var(--muted)' }}
-          >
-            Заметки
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <div
+              className="text-[10.5px] font-extrabold uppercase tracking-wider"
+              style={{ color: 'var(--muted)' }}
+            >
+              Заметки
+            </div>
+            {amIAdmin && (
+              <button
+                type="button"
+                onClick={() => setShowDescriptionEdit(true)}
+                className="inline-flex items-center gap-1 text-[11px] font-bold border-none bg-transparent cursor-pointer"
+                style={{ color: 'var(--accent)', fontFamily: 'inherit' }}
+              >
+                <IconPencil size={12} />
+                {currentEvent.description ? 'Изменить' : 'Добавить'}
+              </button>
+            )}
           </div>
-          <p className="text-sm leading-relaxed">{currentEvent.description}</p>
+          {currentEvent.description ? (
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">{currentEvent.description}</p>
+          ) : (
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--muted)' }}>
+              {amIAdmin ? 'Добавьте заметки — место, что взять с собой, договорённости…' : 'Заметок пока нет'}
+            </p>
+          )}
         </div>
+      )}
+
+      {currentEvent && (
+        <EventDescriptionModal
+          open={showDescriptionEdit}
+          initialDescription={currentEvent.description ?? ''}
+          onClose={() => setShowDescriptionEdit(false)}
+          onSave={handleSaveDescription}
+        />
       )}
 
       {/* Группа + код */}
