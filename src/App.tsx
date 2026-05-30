@@ -14,6 +14,7 @@ import { OnboardingScreen } from './screens/OnboardingScreen'
 import { AuthScreen } from './screens/AuthScreen'
 import { useWebSocket } from './hooks/useWebSocket'
 import { joinGroupById } from './lib/api'
+import { pickEventOnEntry } from './lib/events'
 import { getTgUser, getStartParam, getPlatform } from './lib/tg'
 import { loadSession, saveSession, clearGroupSession } from './lib/session'
 import { uid } from './lib/session'
@@ -120,10 +121,7 @@ export default function App() {
   // Автовыбор активного события когда загрузился state
   useEffect(() => {
     if (screen !== 'app' || currentEventId) return
-    const events = serverState?.events ?? []
-    if (!events.length) return
-    const active = events.find(e => e.status === 'active')
-    const pick = active ?? events[0]
+    const pick = pickEventOnEntry(serverState?.events ?? [])
     if (pick) enterEvent(pick.id)
   }, [serverState?.events, screen, currentEventId, enterEvent])
 
