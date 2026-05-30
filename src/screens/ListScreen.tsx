@@ -282,7 +282,7 @@ export function ListScreen() {
   const listLocked = isEventItemsLocked(currentEvent?.status)
 
   const showLockedToast = () => {
-    showToast('Событие завершено — список только для просмотра', 'var(--muted)')
+    showToast('Событие завершено — список только для просмотра', 'muted')
   }
 
   useEffect(() => {
@@ -320,7 +320,7 @@ export function ListScreen() {
 
     setPendingDeletes(m => new Map(m).set(id, timer))
 
-    showToast('Позиция удалена', 'var(--red)', {
+    showToast('Позиция удалена', 'error', {
       label: 'Отмена',
       fn: () => {
         clearTimeout(timer)

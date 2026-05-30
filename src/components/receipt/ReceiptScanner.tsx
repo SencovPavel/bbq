@@ -19,10 +19,10 @@ export function ReceiptScanner({ open, onClose }: ReceiptScannerProps) {
 
   const handleSubmit = () => {
     if (!raw.trim()) {
-      showToast('Вставьте строку QR с чека', 'var(--muted)')
+      showToast('Вставьте строку QR с чека', 'muted')
       return
     }
-    showToast('Распознавание чека скоро будет доступно', 'var(--accent)')
+    showToast('Распознавание чека скоро будет доступно', 'info')
     onClose()
     setRaw('')
   }

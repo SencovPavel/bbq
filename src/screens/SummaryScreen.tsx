@@ -69,7 +69,7 @@ export function SummaryScreen() {
       setAnalysis(r)
       setPanelOpen(true)
     } catch {
-      showToast('Ошибка агента', 'var(--red)')
+      showToast('Ошибка агента', 'error')
     } finally {
       setLoading(false)
     }

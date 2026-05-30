@@ -40,7 +40,7 @@ export function MyScreen() {
   const sorted      = [...myItems].sort((a, b) => a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' }))
 
   const showLockedToast = () => {
-    showToast('Событие завершено — список только для просмотра', 'var(--muted)')
+    showToast('Событие завершено — список только для просмотра', 'muted')
   }
 
   const toggleBought = (id: string, val: boolean) => {

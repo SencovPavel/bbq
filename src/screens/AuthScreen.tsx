@@ -43,7 +43,7 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
   // Show error if redirected back from OAuth with error
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get('auth_error')) {
-      showToast('Ошибка входа через соцсеть', 'var(--red)')
+      showToast('Ошибка входа через соцсеть', 'error')
       window.history.replaceState({}, '', window.location.pathname)
     }
   }, [showToast])
@@ -62,7 +62,7 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
         : await authLogin(email.trim(), password)
       onDone({ id: user.id, name: user.name })
     } catch (err: unknown) {
-      showToast(err instanceof Error ? err.message : 'Ошибка', 'var(--red)')
+      showToast(err instanceof Error ? err.message : 'Ошибка', 'error')
     } finally {
       setLoading(false)
     }

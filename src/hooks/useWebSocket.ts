@@ -66,10 +66,10 @@ export function useWebSocket(groupId: string | null): void {
         setServerState(msg.state)
         setWsOk(true)
       }
-      if (msg.type === 'agent_notify' && msg.message) showToast(msg.message, 'var(--blue)')
+      if (msg.type === 'agent_notify' && msg.message) showToast(msg.message, 'info')
       if (msg.type === 'error') {
         if (msg.code === 'forbidden') {
-          showToast('Недостаточно прав для этого действия', 'var(--red)')
+          showToast('Недостаточно прав для этого действия', 'error')
           return
         }
         if (msg.code === 'auth_required') {

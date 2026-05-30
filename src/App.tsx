@@ -120,7 +120,7 @@ export default function App() {
     const timeoutId = window.setTimeout(() => {
       showToast(
         'Не удалось подключиться. Запустите бэкенд (npm start) и выполните migrate.',
-        'var(--red)',
+        'error',
       )
       clearGroupSession()
       setGroupId(null)

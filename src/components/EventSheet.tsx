@@ -165,7 +165,7 @@ export function EventSheet() {
       pendingNameRef.current = null
       setCreating(false)
       setShowCreate(true)
-      showToast('Не удалось создать событие. Проверьте подключение и права администратора', 'var(--red)')
+      showToast('Не удалось создать событие. Проверьте подключение и права администратора', 'error')
     }, 8000)
     return () => clearTimeout(timeoutId)
   }, [creating, showToast])
@@ -182,11 +182,11 @@ export function EventSheet() {
   function handleCreate(data: Partial<PicnicEvent>) {
     const name = data.name?.trim()
     if (!name) {
-      showToast('Укажите название события', 'var(--muted)')
+      showToast('Укажите название события', 'muted')
       return
     }
     if (!wsOk) {
-      showToast('Нет подключения к серверу', 'var(--red)')
+      showToast('Нет подключения к серверу', 'error')
       return
     }
     const sent = send({
@@ -197,7 +197,7 @@ export function EventSheet() {
       location: data.location ?? null,
     })
     if (!sent) {
-      showToast('Не удалось отправить — нет подключения', 'var(--red)')
+      showToast('Не удалось отправить — нет подключения', 'error')
       return
     }
     pendingNameRef.current = name
