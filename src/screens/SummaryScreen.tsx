@@ -8,6 +8,7 @@ import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
+import { NoEventsPrompt } from '../components/NoEventsPrompt'
 import { OfflineBanner } from '../components/states/OfflineBanner'
 import {
   IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle,
@@ -22,7 +23,8 @@ export function SummaryScreen() {
   const wsOk           = useWsStore(s => s.wsOk)
   const groupId        = useSessionStore(s => s.groupId)
   const showToast      = useToastStore(s => s.show)
-  const currentEventId = useAppStore(s => s.currentEventId)
+  const currentEventId    = useAppStore(s => s.currentEventId)
+  const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
 
   const [analysis,  setAnalysis]  = useState<AnalysisResult | null>(null)
   const [loading,   setLoading]   = useState(false)
@@ -40,7 +42,8 @@ export function SummaryScreen() {
 
   const me = useSessionStore(s => s.me)
 
-  const { categories = [], items = [], members = [], activity = [] } = serverState ?? {}
+  const { categories = [], items = [], members = [], events = [], activity = [] } = serverState ?? {}
+  const amIAdmin = members.some(m => m.user_id === me?.id && m.is_admin)
   const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson } = calcSummary(items, members, currentEventId)
   const { transfers } = calcSettlement(items, members, currentEventId)
   const enabled = currentEventId ? items.filter(i => i.event_id === currentEventId && i.enabled) : items.filter(i => i.enabled)
@@ -88,6 +91,15 @@ export function SummaryScreen() {
     text += `💰 Куплено: ${fmt(actualTotal)}\n👤 На человека (${ppl} чел.): ${fmt(perPerson ?? 0)}`
     if (navigator.share) navigator.share({ text }).catch(() => {})
     else navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
+  }
+
+  if (!events.length) {
+    return (
+      <div className="px-3.5 pt-2 pb-8 relative">
+        {!wsOk && <OfflineBanner />}
+        <NoEventsPrompt isAdmin={amIAdmin} onCreate={() => setShowEventSheet(true)} />
+      </div>
+    )
   }
 
   return (

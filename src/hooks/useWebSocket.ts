@@ -35,23 +35,36 @@ export function useWebSocket(groupId: string | null, userId: string | undefined)
       ws.send(JSON.stringify({ type: 'join', groupId, userId, userName }))
     }
 
+    const leaveGroup = (toastMessage: string) => {
+      clearGroupSession()
+      useSessionStore.getState().setGroupId(null)
+      useWsStore.getState().reset()
+      useAppStore.getState().exitEvent()
+      useAppStore.getState().setShowEventSheet(false)
+      useAppStore.getState().setScreen('groups')
+      showToast(toastMessage)
+      ws.close()
+    }
+
     ws.onmessage = (e: MessageEvent) => {
-      const msg = JSON.parse(e.data as string) as {
-        type: string
-        state?: ServerState
-        message?: string
+      let msg: { type: string; state?: ServerState; message?: string; code?: string }
+      try {
+        msg = JSON.parse(e.data as string) as typeof msg
+      } catch {
+        return
       }
       if (msg.type === 'state' && msg.state) setServerState(msg.state)
       if (msg.type === 'agent_notify' && msg.message) showToast(msg.message, 'var(--blue)')
+      if (msg.type === 'error') {
+        if (msg.code === 'group_not_found') {
+          leaveGroup('Группа не найдена')
+        } else {
+          leaveGroup('Не удалось загрузить данные группы')
+        }
+        return
+      }
       if (msg.type === 'group:deleted') {
-        clearGroupSession()
-        useSessionStore.getState().setGroupId(null)
-        useWsStore.getState().reset()
-        useAppStore.getState().exitEvent()
-        useAppStore.getState().setShowEventSheet(false)
-        useAppStore.getState().setScreen('groups')
-        showToast('Группа была удалена')
-        ws.close()
+        leaveGroup('Группа была удалена')
       }
     }
 

@@ -1,10 +1,20 @@
 import type { PicnicEvent } from '../types'
 
+/** Сравнение для выбора самого нового события (дата → created_at). */
+const compareEventsNewestFirst = (a: PicnicEvent, b: PicnicEvent): number => {
+  const dateA = a.event_date ?? ''
+  const dateB = b.event_date ?? ''
+  if (dateA !== dateB) return dateB.localeCompare(dateA)
+  return b.created_at.localeCompare(a.created_at)
+}
+
 /**
  * Выбирает событие для автоматического открытия при входе в группу.
- * Приоритет: активное (status='active') → первое в списке → undefined.
+ * Приоритет: активное (status='active') → последнее по дате/созданию → undefined.
  */
-export function pickEventOnEntry(events: PicnicEvent[]): PicnicEvent | undefined {
+export const pickEventOnEntry = (events: PicnicEvent[]): PicnicEvent | undefined => {
   if (!events.length) return undefined
-  return events.find(e => e.status === 'active') ?? events[0]
+  const active = events.find(e => e.status === 'active')
+  if (active) return active
+  return [...events].sort(compareEventsNewestFirst)[0]
 }

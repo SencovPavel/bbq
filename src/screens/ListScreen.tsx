@@ -10,6 +10,7 @@ import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
+import { NoEventsPrompt } from '../components/NoEventsPrompt'
 import { EmptyState } from '../components/states/EmptyState'
 import { OfflineBanner } from '../components/states/OfflineBanner'
 import { ItemActionsSheet } from '../components/list/ItemActionsSheet'
@@ -244,7 +245,8 @@ export function ListScreen() {
   const me             = useSessionStore(s => s.me)
   const groupId        = useSessionStore(s => s.groupId)
   const showToast      = useToastStore(s => s.show)
-  const currentEventId = useAppStore(s => s.currentEventId)
+  const currentEventId    = useAppStore(s => s.currentEventId)
+  const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
 
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({})
   const [addModal,    setAddModal]    = useState<string | null>(null)
@@ -262,7 +264,8 @@ export function ListScreen() {
   // Undo-удаление позиций: id → таймер реального send
   const [pendingDeletes, setPendingDeletes] = useState<Map<string, ReturnType<typeof setTimeout>>>(new Map())
 
-  const { categories = [], items = [], members = [] } = serverState ?? {}
+  const { categories = [], items = [], members = [], events = [] } = serverState ?? {}
+  const amIAdmin = members.find(m => m.user_id === me?.id)?.is_admin ?? false
 
   useEffect(() => {
     if (!groupId) return
@@ -357,6 +360,18 @@ export function ListScreen() {
   const actionItem = actionItemId ? visibleItems.find(i => i.id === actionItemId) ?? null : null
 
   const listTotal = visibleItems.reduce((s, i) => s + i.price * i.qty, 0)
+
+  if (!events.length) {
+    return (
+      <div className="px-3.5 pt-2 pb-8 relative">
+        {!wsOk && <OfflineBanner />}
+        <NoEventsPrompt
+          isAdmin={amIAdmin}
+          onCreate={() => setShowEventSheet(true)}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="px-3.5 pt-2 pb-8 relative">

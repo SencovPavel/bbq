@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { pickEventOnEntry } from '../lib/events'
 import { useWsStore } from '../stores/wsStore'
 import { useAppStore } from '../stores/appStore'
 import { useSessionStore } from '../stores/sessionStore'
@@ -84,10 +85,19 @@ export function EventSheet() {
 
   const [showCreate, setShowCreate] = useState(false)
 
-  if (!showEventSheet) return null
+  const events    = serverState?.events ?? []
+  const hasEvents = events.length > 0
+  const items     = serverState?.items ?? []
 
-  const events = serverState?.events ?? []
-  const items  = serverState?.items  ?? []
+  useEffect(() => {
+    if (!showEventSheet) {
+      setShowCreate(false)
+      return
+    }
+    if (!hasEvents && isAdmin) setShowCreate(true)
+  }, [showEventSheet, hasEvents, isAdmin])
+
+  if (!showEventSheet) return null
 
   const active    = events.filter(e => e.status === 'active')
   const completed = events.filter(e => e.status === 'completed')
@@ -100,11 +110,14 @@ export function EventSheet() {
     send({ type: 'event:add', name: data.name, date: data.event_date, time: data.event_time, location: data.location })
     setShowCreate(false)
     setTimeout(() => {
-      const newEvents = useWsStore.getState().serverState?.events ?? []
-      const newest = newEvents.find(e => e.status === 'active')
-        ?? [...newEvents].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
+      const newest = pickEventOnEntry(useWsStore.getState().serverState?.events ?? [])
       if (newest) enterEvent(newest.id)
     }, 400)
+  }
+
+  function closeSheet() {
+    setShowEventSheet(false)
+    setShowCreate(false)
   }
 
   function handleComplete(e: PicnicEvent) {
@@ -118,7 +131,7 @@ export function EventSheet() {
       <div
         className="fixed inset-0 z-[150]"
         style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
-        onClick={() => { setShowEventSheet(false); setShowCreate(false) }}
+        onClick={closeSheet}
       />
 
       {/* Sheet */}
@@ -146,10 +159,27 @@ export function EventSheet() {
               Событие
             </div>
 
-            {events.length === 0 && (
-              <div className="text-center py-6" style={{ color: 'var(--muted)' }}>
-                <div style={{ opacity: 0.4 }}><IconCalendar size={36} /></div>
-                <div className="text-[13px] mt-2">Нет событий</div>
+            {!hasEvents && (
+              <div className="text-center py-4 mb-2">
+                <div className="mb-3" style={{ color: 'var(--muted)', opacity: 0.4 }}>
+                  <IconCalendar size={36} />
+                </div>
+                <div className="text-[14px] font-extrabold mb-1">Нет событий</div>
+                <p className="text-[12px] leading-relaxed px-2 mb-4" style={{ color: 'var(--muted)' }}>
+                  {isAdmin
+                    ? 'Создайте первое событие для списка покупок'
+                    : 'Организатор группы ещё не создал событие'}
+                </p>
+                {isAdmin && (
+                  <button
+                    type="button"
+                    onClick={() => setShowCreate(true)}
+                    className="w-full py-3 rounded-md border-none cursor-pointer text-sm font-extrabold"
+                    style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}
+                  >
+                    ＋ Создать событие
+                  </button>
+                )}
               </div>
             )}
 
@@ -242,8 +272,8 @@ export function EventSheet() {
               </div>
             )}
 
-            {/* Create button — только для админов */}
-            {isAdmin && (
+            {/* Create button — только для админов, когда уже есть события */}
+            {isAdmin && hasEvents && (
               <button
                 onClick={() => setShowCreate(true)}
                 className="w-full mt-3 py-[12px] rounded-[12px] border-none cursor-pointer font-bold text-[13px] flex items-center justify-center gap-2"

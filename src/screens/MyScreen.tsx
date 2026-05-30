@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { NoEventsPrompt } from '../components/NoEventsPrompt'
 import { EmptyState } from '../components/states/EmptyState'
 import { OfflineBanner } from '../components/states/OfflineBanner'
 import { UserAvatar } from '../components/UserAvatar'
@@ -18,11 +19,13 @@ export function MyScreen() {
   const send           = useWsStore(s => s.send)
   const me             = useSessionStore(s => s.me)
   const showToast      = useToastStore(s => s.show)
-  const currentEventId = useAppStore(s => s.currentEventId)
+  const currentEventId    = useAppStore(s => s.currentEventId)
+  const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
   const [scanOpen, setScanOpen] = useState(false)
 
   const allItems    = serverState?.items ?? []
   const members     = serverState?.members ?? []
+  const events      = serverState?.events ?? []
   const items       = currentEventId ? allItems.filter(i => i.event_id === currentEventId) : allItems
   const myItems     = items.filter(i => i.buyer_id === me?.id)
   const boughtItems = myItems.filter(i => i.bought && i.price > 0)
@@ -43,6 +46,15 @@ export function MyScreen() {
 
   const changeQty = (id: string, cur: number, d: number) => {
     send({ type: 'item:update', id, field: 'qty', value: Math.max(0, +(Number(cur) + d).toFixed(2)) })
+  }
+
+  if (!events.length) {
+    return (
+      <div className="px-3.5 pt-2 pb-8 relative">
+        {!wsOk && <OfflineBanner />}
+        <NoEventsPrompt isAdmin={amIAdmin} onCreate={() => setShowEventSheet(true)} />
+      </div>
+    )
   }
 
   return (

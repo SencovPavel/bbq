@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { GlassCard, Divider } from '../components/GlassCard'
 import { ConfirmModal } from '../components/ConfirmModal'
+import { NoEventsPrompt } from '../components/NoEventsPrompt'
 import { OfflineBanner } from '../components/states/OfflineBanner'
 import {
   IconCalendar,
@@ -77,6 +78,15 @@ export function EventScreen() {
   const eventItems = currentEventId
     ? items.filter(i => i.event_id === currentEventId)
     : items
+
+  if (!events.length) {
+    return (
+      <div className="px-3.5 pt-2 pb-8 relative">
+        {!wsOk && <OfflineBanner />}
+        <NoEventsPrompt isAdmin={amIAdmin} onCreate={() => setShowEventSheet(true)} />
+      </div>
+    )
+  }
 
   return (
     <div className="px-3.5 pt-2 pb-8 relative">

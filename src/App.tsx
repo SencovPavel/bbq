@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AppLoader } from './components/AppLoader'
 import { Blobs } from './components/Blobs'
 import { AppShell } from './components/AppShell'
@@ -22,6 +22,7 @@ import { authDevLogin, authMe } from './lib/auth'
 import { useAppStore } from './stores/appStore'
 import { useSessionStore } from './stores/sessionStore'
 import { useWsStore } from './stores/wsStore'
+import { useToastStore } from './stores/toastStore'
 import type { User, Tab } from './types'
 
 const TAB_ORDER: Tab[] = ['list', 'my', 'summary', 'members']
@@ -66,6 +67,9 @@ export default function App() {
   const serverState = useWsStore(s => s.serverState)
   const wsOk        = useWsStore(s => s.wsOk)
   const resetWs     = useWsStore(s => s.reset)
+  const showToast   = useToastStore(s => s.show)
+
+  const noEventsSheetOpenedRef = useRef<string | null>(null)
 
   useWebSocket(screen === 'app' ? groupId : null, me?.id)
 
@@ -111,6 +115,24 @@ export default function App() {
 
   const isAppDataLoading = screen === 'app' && Boolean(groupId) && !serverState
 
+  // Таймаут подключения — не зависать на «Подключаемся...» бесконечно
+  useEffect(() => {
+    if (!isAppDataLoading) return
+    const timeoutId = window.setTimeout(() => {
+      showToast(
+        'Не удалось подключиться. Запустите бэкенд (npm start) и выполните migrate.',
+        'var(--red)',
+      )
+      clearGroupSession()
+      setGroupId(null)
+      resetWs()
+      exitEvent()
+      setShowEventSheet(false)
+      setScreen('groups')
+    }, 12_000)
+    return () => clearTimeout(timeoutId)
+  }, [isAppDataLoading, showToast, setGroupId, resetWs, exitEvent, setShowEventSheet, setScreen])
+
   // Сброс события, если оно удалено на сервере
   useEffect(() => {
     if (screen !== 'app' || !currentEventId || !serverState?.events) return
@@ -124,6 +146,21 @@ export default function App() {
     const pick = pickEventOnEntry(serverState?.events ?? [])
     if (pick) enterEvent(pick.id)
   }, [serverState?.events, screen, currentEventId, enterEvent])
+
+  // Нет событий — админу сразу предлагаем создать (один раз на группу за сессию)
+  useEffect(() => {
+    if (screen !== 'app' || !groupId || !serverState) return
+    if (serverState.events.length > 0) return
+    if (noEventsSheetOpenedRef.current === groupId) return
+    const isAdmin = serverState.members.some(m => m.user_id === me?.id && m.is_admin)
+    if (!isAdmin) return
+    noEventsSheetOpenedRef.current = groupId
+    setShowEventSheet(true)
+  }, [screen, groupId, serverState, me?.id, setShowEventSheet])
+
+  useEffect(() => {
+    if (!groupId) noEventsSheetOpenedRef.current = null
+  }, [groupId])
 
   // Deep link
   useEffect(() => {

@@ -65,7 +65,7 @@ export interface ServerState {
   items: Item[]
   members: Member[]
   events: PicnicEvent[]
-  activity: ActivityEntry[]
+  activity?: ActivityEntry[]
 }
 
 export interface GroupSummary {

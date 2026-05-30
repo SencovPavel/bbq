@@ -1,5 +1,7 @@
 import { NAV_TABS } from '../config/nav-tabs'
 import { useAppStore } from '../stores/appStore'
+import { useSessionStore } from '../stores/sessionStore'
+import { useWsStore } from '../stores/wsStore'
 import { IconFlame } from './Icon'
 
 import type { Group, PicnicEvent, Tab } from '../types'
@@ -25,9 +27,17 @@ export function AppSidebar({
   onBack,
 }: AppSidebarProps) {
   const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
+  const events     = useWsStore(s => s.serverState?.events ?? [])
+  const me         = useSessionStore(s => s.me)
+  const members    = useWsStore(s => s.serverState?.members ?? [])
+  const hasEvents  = events.length > 0
+  const isAdmin    = members.some(m => m.user_id === me?.id && m.is_admin)
+
   const eventLabel = currentEvent
     ? currentEvent.name + (currentEvent.event_date ? ` · ${shortDate(currentEvent.event_date)}` : '')
-    : 'Выбрать событие'
+    : !hasEvents && isAdmin
+      ? 'Создать событие'
+      : 'Выбрать событие'
 
   return (
     <aside className="app-sidebar hidden lg:flex">

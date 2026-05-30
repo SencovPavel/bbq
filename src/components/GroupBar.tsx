@@ -1,4 +1,6 @@
 import { useAppStore } from '../stores/appStore'
+import { useWsStore } from '../stores/wsStore'
+import { useSessionStore } from '../stores/sessionStore'
 import { dateTileMonth } from '../lib/format'
 import { IconCalendar, IconChevronDown, IconChevronLeft } from './Icon'
 
@@ -39,6 +41,16 @@ function DateTile({ event }: { event: PicnicEvent | undefined }) {
 
 export function GroupBar({ group, currentEvent, onBack }: GroupBarProps) {
   const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
+  const me                = useSessionStore(s => s.me)
+  const events            = useWsStore(s => s.serverState?.events ?? [])
+  const members           = useWsStore(s => s.serverState?.members ?? [])
+  const hasEvents         = events.length > 0
+  const isAdmin           = members.some(m => m.user_id === me?.id && m.is_admin)
+  const eventLabel        = currentEvent
+    ? currentEvent.name
+    : !hasEvents && isAdmin
+      ? 'Создать событие'
+      : 'Выбрать событие'
 
   return (
     <div
@@ -64,16 +76,18 @@ export function GroupBar({ group, currentEvent, onBack }: GroupBarProps) {
                     cursor-pointer text-left transition border
                     ${currentEvent
             ? 'bg-gradient-to-r from-[rgba(249,115,22,0.16)] to-[rgba(251,191,36,0.06)] border-[rgba(249,115,22,0.28)]'
-            : 'bg-[rgba(255,255,255,0.04)] border-[rgba(255,255,255,0.1)]'}`}
+            : !hasEvents && isAdmin
+              ? 'bg-gradient-to-r from-[rgba(249,115,22,0.12)] to-[rgba(251,191,36,0.04)] border-[rgba(249,115,22,0.22)]'
+              : 'bg-[rgba(255,255,255,0.04)] border-[rgba(255,255,255,0.1)]'}`}
         style={{ fontFamily: 'inherit' }}
       >
         <DateTile event={currentEvent} />
         <div className="flex-1 min-w-0">
           <div
             className="text-sm font-extrabold tracking-tight truncate"
-            style={{ color: currentEvent ? 'var(--text)' : 'var(--muted)' }}
+            style={{ color: currentEvent || (!hasEvents && isAdmin) ? 'var(--text)' : 'var(--muted)' }}
           >
-            {currentEvent ? currentEvent.name : 'Выбрать событие'}
+            {eventLabel}
           </div>
           <div className="text-xs font-bold mt-0.5 truncate" style={{ color: 'var(--muted)' }}>
             {group?.name}
