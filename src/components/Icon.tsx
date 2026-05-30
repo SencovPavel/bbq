@@ -40,12 +40,34 @@ export function IconChevronLeft(props: IconProps) {
   return icon(props, <path d="M15 18l-6-6 6-6" />)
 }
 
+export function IconChevronRight(props: IconProps) {
+  return icon(props, <path d="M9 18l6-6-6-6" />)
+}
+
 export function IconChevronDown(props: IconProps) {
   return icon(props, <path d="M6 9l6 6 6-6" />)
 }
 
 export function IconChevronUp(props: IconProps) {
   return icon(props, <path d="M18 15l-6-6-6 6" />)
+}
+
+export function IconFlag(props: IconProps) {
+  return icon(props,
+    <>
+      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+      <line x1="4" y1="22" x2="4" y2="15" />
+    </>
+  )
+}
+
+export function IconClock(props: IconProps) {
+  return icon(props,
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <polyline points="12 7 12 12 15.5 14" />
+    </>
+  )
 }
 
 export function IconQrScan({ size = 15, strokeWidth = 2 }: IconProps) {
