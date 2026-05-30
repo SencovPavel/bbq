@@ -80,6 +80,11 @@
   --page-pad-x: var(--s-9);
   --card-pad: var(--s-6);
 
+  /* Поля ввода и кнопки форм */
+  --control-height: 48px;
+  --control-pad-x: 14px;
+  --control-radius: var(--r-md);
+
   /* ── Тени ────────────────────────────────────────────────────────────────── */
   --shadow-brand-sm: 0 6px 20px color-mix(in srgb, var(--color-fire) 28%, transparent);
   --shadow-brand-md: 0 8px 24px color-mix(in srgb, var(--color-fire) 35%, transparent);

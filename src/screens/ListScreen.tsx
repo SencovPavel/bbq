@@ -515,7 +515,7 @@ export function ListScreen() {
         <GlassInput label="Название" value={newItem.name}
           onChange={e => setNewItem(p => ({ ...p, name: e.target.value }))}
           placeholder="Шашлык из курицы" autoFocus />
-        <div className="grid grid-cols-2 gap-[10px]">
+        <div className="form-field-row">
           <GlassInput label="Кол-во" type="number" min="0" step="0.5"
             value={newItem.qty} onChange={e => setNewItem(p => ({ ...p, qty: e.target.value }))} />
           <GlassSelect label="Единица" value={newItem.unit}

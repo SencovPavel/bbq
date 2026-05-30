@@ -94,18 +94,29 @@
 }
 
 .floating-overlay--offline:not(.floating-overlay--compact) {
-  max-width: var(--overlay-max-width);
+  align-items: flex-start;
+  max-width: var(--overlay-offline-max-width);
   padding: var(--overlay-pad-y) var(--overlay-pad-x);
   font-size: var(--overlay-font-size);
 }
 
+.floating-overlay--offline:not(.floating-overlay--compact) .floating-overlay__dot--offline {
+  margin-top: var(--overlay-dot-offset-top);
+}
+
+.floating-overlay--offline:not(.floating-overlay--compact) .floating-overlay__message {
+  white-space: normal;
+  text-wrap: pretty;
+}
+
 .floating-overlay--offline.floating-overlay--compact {
+  align-items: center;
   max-width: var(--overlay-compact-max-width);
   padding: var(--overlay-pad-y-compact) var(--overlay-pad-x-compact);
   font-size: var(--overlay-font-size-compact);
 }
 
-.floating-overlay--offline .floating-overlay__message {
+.floating-overlay--offline.floating-overlay--compact .floating-overlay__message {
   white-space: nowrap;
 }
 

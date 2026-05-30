@@ -136,6 +136,7 @@
   --overlay-blur: 12px;
   --overlay-top: max(var(--s-3), env(safe-area-inset-top, 0px));
   --overlay-max-width: min(92vw, 360px);
+  --overlay-offline-max-width: min(92vw, 380px);
   --overlay-compact-max-width: 124px;
   --overlay-z-toast: 300;
   --overlay-z-offline: 290;

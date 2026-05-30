@@ -5,7 +5,7 @@ import { useWsStore } from '../../stores/wsStore'
 const EXPANDED_MS = 2800
 const LEAVE_MS = 280
 
-const FULL_MESSAGE = 'Нет связи. Можно отмечать купленное — синхронизируем позже'
+const FULL_MESSAGE = 'Нет связи. Покупки можно отмечать — синхронизируем позже'
 const SHORT_MESSAGE = 'Нет связи'
 
 type OfflinePhase = 'hidden' | 'expanded' | 'compact' | 'leaving'

@@ -73,38 +73,39 @@ export function ModalButtons({ onCancel, onConfirm, cancelText = 'Отмена',
 
 interface GlassInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
+  className?: string
 }
 
-export function GlassInput({ label, ...props }: GlassInputProps) {
+export function GlassInput({ label, className = '', ...props }: GlassInputProps) {
   return (
-    <div className="mb-3">
+    <div className="form-field">
       {label && (
         <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider"
           style={{ color: 'var(--muted)' }}>
           {label}
         </label>
       )}
-      <input className="glass-input w-full px-[14px] py-3 rounded-xl text-sm font-semibold" {...props} />
+      <input className={['glass-input', 'w-full', className].filter(Boolean).join(' ')} {...props} />
     </div>
   )
 }
 
 interface GlassSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string
+  className?: string
   children: ReactNode
 }
 
-export function GlassSelect({ label, children, ...props }: GlassSelectProps) {
+export function GlassSelect({ label, className = '', children, ...props }: GlassSelectProps) {
   return (
-    <div className="mb-3">
+    <div className="form-field">
       {label && (
         <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider"
           style={{ color: 'var(--muted)' }}>
           {label}
         </label>
       )}
-      <select className="glass-input w-full px-[14px] py-3 rounded-xl text-sm font-semibold" {...props}
-        style={{ background: 'var(--surface-input)', border: '1px solid var(--gb)', color: 'var(--text)' }}>
+      <select className={['glass-input', 'w-full', className].filter(Boolean).join(' ')} {...props}>
         {children}
       </select>
     </div>
