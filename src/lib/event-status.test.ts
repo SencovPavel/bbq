@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { canAdminCompleteEvent, isEventActive } from './event-status'
+import { canAdminCompleteEvent, isEventActive, isEventItemsLocked } from './event-status'
 import type { PicnicEvent } from '../types'
 
 const baseEvent: PicnicEvent = {
@@ -45,5 +45,15 @@ describe('canAdminCompleteEvent', () => {
 
   it('без события', () => {
     expect(canAdminCompleteEvent(true, undefined)).toBe(false)
+  })
+})
+
+describe('isEventItemsLocked', () => {
+  it('completed — список закрыт', () => {
+    expect(isEventItemsLocked('completed')).toBe(true)
+  })
+
+  it('active — можно редактировать', () => {
+    expect(isEventItemsLocked('active')).toBe(false)
   })
 })

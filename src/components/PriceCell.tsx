@@ -4,6 +4,7 @@ import type { Item } from '../types'
 
 interface PriceCellProps {
   item: Item
+  readOnly?: boolean
   onChange: (id: string, price: number) => void
 }
 
@@ -13,13 +14,24 @@ const formatPriceValue = (price: number): string => {
   return String(n)
 }
 
-export function PriceCell({ item, onChange }: PriceCellProps) {
+export function PriceCell({ item, readOnly = false, onChange }: PriceCellProps) {
   const [val, setVal] = useState(() => formatPriceValue(item.price))
   const [focused, setFocused] = useState(false)
 
   useEffect(() => {
     if (!focused) setVal(formatPriceValue(item.price))
   }, [item.price, focused])
+
+  if (readOnly) {
+    return (
+      <span
+        className="text-right rounded-[8px] text-[12px] font-bold tabular-nums inline-block"
+        style={{ width: 76, minWidth: 76, padding: '4px 10px', color: 'var(--muted)' }}
+      >
+        {item.price > 0 ? formatPriceValue(item.price) : '0'}
+      </span>
+    )
+  }
 
   return (
     <input

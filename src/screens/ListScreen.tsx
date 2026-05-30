@@ -13,6 +13,8 @@ import { useToastStore } from '../stores/toastStore'
 import { NoEventsPrompt } from '../components/NoEventsPrompt'
 import { EmptyState } from '../components/states/EmptyState'
 import { OfflineBanner } from '../components/states/OfflineBanner'
+import { CompletedEventBanner } from '../components/states/CompletedEventBanner'
+import { isEventItemsLocked } from '../lib/event-status'
 import { ItemActionsSheet } from '../components/list/ItemActionsSheet'
 import { IconDots, IconPerson, IconCart, IconTrash } from '../components/Icon'
 import type { Item } from '../types'
@@ -43,6 +45,7 @@ function SourceBadge({ source }: { source: Source }) {
 interface ItemRowProps {
   item: Item
   meId?: string
+  readOnly?: boolean
   onUpdate: (id: string, field: string, value: unknown) => void
   onBuyerTap: (id: string) => void
   onOpenActions: (id: string) => void
@@ -56,7 +59,7 @@ const toBool = (value: unknown): boolean => {
   return Boolean(value)
 }
 
-function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigger }: ItemRowProps) {
+function ItemRow({ item, meId, readOnly = false, onUpdate, onBuyerTap, onOpenActions, renameTrigger }: ItemRowProps) {
   // ── qty: local optimistic state + debounce ──
   const [localQty, setLocalQty] = useState(() => Number(item.qty) || 0)
   const qtyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -99,6 +102,7 @@ function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigge
   }, [renameTrigger]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function startEdit() {
+    if (readOnly) return
     setEditing(true)
     setTimeout(() => nameRef.current?.focus(), 0)
   }
@@ -119,6 +123,7 @@ function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigge
   const lineTotal = item.price * localQty
 
   const changeQtyByStep = (delta: number) => {
+    if (readOnly) return
     haptic()
     const next = Math.max(0, +(Number(localQty) + delta).toFixed(2))
     setLocalQty(next)
@@ -159,7 +164,7 @@ function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigge
             />
           ) : (
             <span
-              className="text-md font-extrabold leading-tight tracking-tight cursor-text"
+              className={`text-md font-extrabold leading-tight tracking-tight ${readOnly ? '' : 'cursor-text'}`}
               onClick={startEdit}
             >
               {item.name}
@@ -170,14 +175,17 @@ function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigge
 
         <button
           type="button"
-          onClick={() => onBuyerTap(item.id)}
-          className="inline-flex items-center gap-1 rounded-pill text-xs font-extrabold cursor-pointer shrink-0 border"
+          onClick={() => { if (!readOnly) onBuyerTap(item.id) }}
+          disabled={readOnly}
+          className="inline-flex items-center gap-1 rounded-pill text-xs font-extrabold shrink-0 border"
           style={{
             padding: '3px 8px',
             background: isMe ? 'rgba(249,115,22,.15)' : 'transparent',
             borderColor: isMe ? 'rgba(249,115,22,.4)' : 'var(--gb)',
             color: isMe ? 'var(--accent)' : 'var(--muted)',
             fontFamily: 'inherit',
+            cursor: readOnly ? 'default' : 'pointer',
+            opacity: readOnly ? 0.7 : 1,
           }}
         >
           {isMe
@@ -198,8 +206,9 @@ function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigge
           <button
             type="button"
             onClick={() => changeQtyByStep(-step)}
-            className="size-[22px] border-none bg-transparent cursor-pointer text-sm flex items-center justify-center"
-            style={{ color: 'var(--text)', fontFamily: 'inherit' }}
+            disabled={readOnly}
+            className="size-[22px] border-none bg-transparent text-sm flex items-center justify-center"
+            style={{ color: 'var(--text)', fontFamily: 'inherit', cursor: readOnly ? 'default' : 'pointer', opacity: readOnly ? 0.5 : 1 }}
           >
             −
           </button>
@@ -212,8 +221,9 @@ function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigge
           <button
             type="button"
             onClick={() => changeQtyByStep(step)}
-            className="size-[22px] border-none bg-transparent cursor-pointer text-sm flex items-center justify-center"
-            style={{ color: 'var(--text)', fontFamily: 'inherit' }}
+            disabled={readOnly}
+            className="size-[22px] border-none bg-transparent text-sm flex items-center justify-center"
+            style={{ color: 'var(--text)', fontFamily: 'inherit', cursor: readOnly ? 'default' : 'pointer', opacity: readOnly ? 0.5 : 1 }}
           >
             +
           </button>
@@ -226,15 +236,17 @@ function ItemRow({ item, meId, onUpdate, onBuyerTap, onOpenActions, renameTrigge
           {item.price > 0 ? fmt(lineTotal) : '—'}
         </div>
 
-        <button
-          type="button"
-          onClick={() => onOpenActions(item.id)}
-          className="size-6 rounded-sm border-none bg-transparent cursor-pointer flex items-center justify-center shrink-0"
-          style={{ color: 'var(--muted)' }}
-          title="Ещё"
-        >
-          <IconDots />
-        </button>
+        {!readOnly && (
+          <button
+            type="button"
+            onClick={() => onOpenActions(item.id)}
+            className="size-6 rounded-sm border-none bg-transparent cursor-pointer flex items-center justify-center shrink-0"
+            style={{ color: 'var(--muted)' }}
+            title="Ещё"
+          >
+            <IconDots />
+          </button>
+        )}
       </div>
     </div>
   )
@@ -266,6 +278,12 @@ export function ListScreen() {
 
   const { categories = [], items = [], members = [], events = [] } = serverState ?? {}
   const amIAdmin = members.find(m => m.user_id === me?.id)?.is_admin ?? false
+  const currentEvent = currentEventId ? events.find(e => e.id === currentEventId) : undefined
+  const listLocked = isEventItemsLocked(currentEvent?.status)
+
+  const showLockedToast = () => {
+    showToast('Событие завершено — список только для просмотра', 'var(--muted)')
+  }
 
   useEffect(() => {
     if (!groupId) return
@@ -288,10 +306,12 @@ export function ListScreen() {
   function toggleCat(id: string) { setOpenCats(p => ({ ...p, [id]: !p[id] })) }
 
   function onUpdate(id: string, field: string, value: unknown) {
+    if (listLocked) { showLockedToast(); return }
     send({ type: 'item:update', id, field, value })
   }
 
   function requestDeleteItem(id: string) {
+    if (listLocked) { showLockedToast(); return }
     // Оптимистично скрываем, запускаем таймер
     const timer = setTimeout(() => {
       send({ type: 'item:delete', id })
@@ -310,6 +330,7 @@ export function ListScreen() {
   }
 
   function saveItem() {
+    if (listLocked) { showLockedToast(); return }
     if (!newItem.name.trim()) return
     send({ type: 'item:add', catId: addModal!, name: newItem.name.trim(),
            qty: parseFloat(newItem.qty) || 1, price: 0, unit: newItem.unit,
@@ -334,6 +355,7 @@ export function ListScreen() {
   }
 
   function handleBuyerTap(itemId: string) {
+    if (listLocked) { showLockedToast(); return }
     const item = visibleItems.find(i => i.id === itemId)
     if (!item) return
     haptic()
@@ -352,6 +374,7 @@ export function ListScreen() {
   }
 
   function assignBuyer(userId: string | null, name: string | null) {
+    if (listLocked) { showLockedToast(); return }
     send({ type: 'item:update', id: buyerModal!, field: 'buyer_id',   value: userId })
     send({ type: 'item:update', id: buyerModal!, field: 'buyer_name', value: name   })
     setBuyerModal(null)
@@ -376,6 +399,7 @@ export function ListScreen() {
   return (
     <div className="px-3.5 pt-2 pb-8 relative">
       {!wsOk && <OfflineBanner />}
+      {listLocked && <CompletedEventBanner />}
 
       {categories.length > 0 && (
         <div
@@ -397,7 +421,7 @@ export function ListScreen() {
         </div>
       )}
 
-      {categories.length === 0 && (
+      {categories.length === 0 && !listLocked && (
         <EmptyState
           icon={<IconCart size={56} strokeWidth={1.4} />}
           title="Список пустой"
@@ -421,9 +445,9 @@ export function ListScreen() {
               </div>
               <div className="text-[14px] font-extrabold flex-1">{cat.title}</div>
               <button
-                onClick={e => { e.stopPropagation(); setConfirmCat({ id: cat.id, title: cat.title }) }}
+                onClick={e => { e.stopPropagation(); if (!listLocked) setConfirmCat({ id: cat.id, title: cat.title }) }}
                 className="cursor-pointer border-none bg-transparent px-1 rounded flex items-center"
-                style={{ color: 'var(--muted)' }}>
+                style={{ color: 'var(--muted)', visibility: listLocked ? 'hidden' : 'visible' }}>
                 <IconTrash size={14} />
               </button>
               <span style={{ color: 'var(--muted)', fontSize: 11, transform: isOpen ? 'rotate(90deg)' : 'none', transition: 'transform .25s' }}>▶</span>
@@ -442,6 +466,7 @@ export function ListScreen() {
                     <ItemRow
                       item={it}
                       meId={me?.id}
+                      readOnly={listLocked}
                       onUpdate={onUpdate}
                       onBuyerTap={handleBuyerTap}
                       onOpenActions={setActionItemId}
@@ -449,19 +474,23 @@ export function ListScreen() {
                     />
                   </div>
                 ))}
-                <Divider />
-                <button onClick={() => setAddModal(cat.id)}
-                  className="w-full py-[10px] border-none bg-transparent text-[12px] font-bold flex items-center justify-center gap-[5px] cursor-pointer"
-                  style={{ borderTop: '1px dashed rgba(255,255,255,.1)', color: 'var(--muted)', fontFamily: 'inherit' }}>
-                  ＋ Добавить в «{cat.title}»
-                </button>
+                {!listLocked && (
+                  <>
+                    <Divider />
+                    <button onClick={() => setAddModal(cat.id)}
+                      className="w-full py-[10px] border-none bg-transparent text-[12px] font-bold flex items-center justify-center gap-[5px] cursor-pointer"
+                      style={{ borderTop: '1px dashed rgba(255,255,255,.1)', color: 'var(--muted)', fontFamily: 'inherit' }}>
+                      ＋ Добавить в «{cat.title}»
+                    </button>
+                  </>
+                )}
               </>
             )}
           </GlassCard>
         )
       })}
 
-      {categories.length > 0 && (
+      {categories.length > 0 && !listLocked && (
         <button onClick={() => { setEmoji('📦'); setCatModal(true) }}
           className="w-full py-[13px] rounded-[14px] border-none text-[13px] font-bold flex items-center justify-center gap-[6px] cursor-pointer mb-[10px]"
           style={{ background: 'var(--g)', border: '1px dashed var(--gb)', color: 'var(--muted)', fontFamily: 'inherit' }}>
