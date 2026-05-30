@@ -17,7 +17,6 @@ import { joinGroupById } from './lib/api'
 import { pickEventOnEntry } from './lib/events'
 import { getTgUser, getStartParam, getPlatform } from './lib/tg'
 import { loadSession, saveSession, clearGroupSession } from './lib/session'
-import { uid } from './lib/session'
 import { authDevLogin, authMe } from './lib/auth'
 import { useAppStore } from './stores/appStore'
 import { useSessionStore } from './stores/sessionStore'
@@ -71,7 +70,7 @@ export default function App() {
 
   const noEventsSheetOpenedRef = useRef<string | null>(null)
 
-  useWebSocket(screen === 'app' ? groupId : null, me?.id)
+  useWebSocket(screen === 'app' ? groupId : null)
 
   // Стартовая маршрутизация (без deep link)
   useEffect(() => {
@@ -165,8 +164,12 @@ export default function App() {
   // Deep link
   useEffect(() => {
     if (!startParam) return
-    const user: User = tgUser ?? session?.me ?? { id: uid(), name: 'Гость' }
-    joinGroupById({ groupId: startParam, userId: user.id, userName: user.name })
+    const user: User | null = tgUser ?? session?.me ?? null
+    if (!user) {
+      setScreen('auth')
+      return
+    }
+    joinGroupById({ groupId: startParam })
       .then(d => {
         if (d.id) {
           setMe(user)
@@ -175,10 +178,10 @@ export default function App() {
           hydrateGroupUi(d.id)
           setScreen('app')
         } else {
-          setScreen(tgUser || session ? 'groups' : 'onboarding')
+          setScreen(tgUser || session ? 'groups' : 'auth')
         }
       })
-      .catch(() => setScreen(tgUser || session ? 'groups' : 'onboarding'))
+      .catch(() => setScreen(tgUser || session ? 'groups' : 'auth'))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function enterGroup(gId: string) {

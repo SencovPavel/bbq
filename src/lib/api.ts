@@ -1,43 +1,56 @@
+import { getTelegramInitData } from './tg'
+
 import type { GroupSummary, AnalysisResult } from '../types'
 
 const base = ''
 
-export async function createGroup(opts: { name: string; userId: string; userName: string }) {
-  const r = await fetch(`${base}/groups`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(opts),
-  })
-  return r.json() as Promise<{ id?: string; error?: string }>
+const authHeaders = (): Record<string, string> => {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  const initData = getTelegramInitData()
+  if (initData) headers['X-Telegram-Init-Data'] = initData
+  return headers
 }
 
-export async function joinGroup(opts: { inviteCode: string; userId: string; userName: string }) {
-  const r = await fetch(`${base}/groups/join`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(opts),
+const authFetch = (path: string, init: RequestInit = {}) =>
+  fetch(`${base}${path}`, {
+    ...init,
+    credentials: 'include',
+    headers: { ...authHeaders(), ...(init.headers as Record<string, string> | undefined) },
   })
-  return r.json() as Promise<{ id?: string; error?: string }>
+
+export async function createGroup(opts: { name: string }) {
+  const r = await authFetch('/groups', {
+    method: 'POST',
+    body: JSON.stringify({ name: opts.name }),
+  })
+  return r.json() as Promise<{ id?: string; inviteCode?: string; error?: string }>
 }
 
-export async function joinGroupById(opts: { groupId: string; userId: string; userName: string }) {
-  const r = await fetch(`${base}/groups/join-by-id`, {
+export async function joinGroup(opts: { inviteCode: string }) {
+  const r = await authFetch('/groups/join', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(opts),
+    body: JSON.stringify({ inviteCode: opts.inviteCode }),
   })
-  return r.json() as Promise<{ id?: string; error?: string }>
+  return r.json() as Promise<{ id?: string; name?: string; error?: string }>
+}
+
+export async function joinGroupById(opts: { groupId: string }) {
+  const r = await authFetch('/groups/join-by-id', {
+    method: 'POST',
+    body: JSON.stringify({ groupId: opts.groupId }),
+  })
+  return r.json() as Promise<{ id?: string; name?: string; error?: string }>
 }
 
 export async function getUserGroups(userId: string) {
-  const r = await fetch(`${base}/users/${userId}/groups`)
+  const r = await authFetch(`/users/${userId}/groups`)
+  if (!r.ok) return []
   return r.json() as Promise<GroupSummary[]>
 }
 
 export async function analyzeWithAgent(groupId: string) {
-  const r = await fetch(`${base}/agent/analyze`, {
+  const r = await authFetch('/agent/analyze', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ groupId }),
   })
   return r.json() as Promise<AnalysisResult>

@@ -1,7 +1,7 @@
 import { useState, type CSSProperties } from 'react'
 import { createGroup, joinGroup } from '../lib/api'
 import { IconFlame, IconPerson } from '../components/Icon'
-import { uid } from '../lib/session'
+import { getTelegramInitData } from '../lib/tg'
 import { useSessionStore } from '../stores/sessionStore'
 import type { User } from '../types'
 
@@ -14,33 +14,39 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
 
   const [tab,       setTab]       = useState<'create' | 'join'>('create')
   const [err,       setErr]       = useState('')
-  const [name,      setName]      = useState('')
   const [groupName, setGroupName] = useState('')
   const [code,      setCode]      = useState('')
 
   const hasTg = !!me?.id
+  const canAuth = hasTg || !!getTelegramInitData()
 
   async function doCreate() {
+    if (!canAuth) {
+      setErr('Войдите на сайте или откройте приложение в Telegram')
+      return
+    }
     if (!groupName.trim()) { setErr('Введите название группы'); return }
-    const user = hasTg ? me! : (name.trim() ? { id: uid(), name: name.trim() } : null)
-    if (!user) { setErr('Введите своё имя'); return }
+    if (!hasTg) { setErr('Войдите на сайте или откройте приложение в Telegram'); return }
     setErr('')
     try {
-      const d = await createGroup({ name: groupName.trim(), userId: user.id, userName: user.name })
+      const d = await createGroup({ name: groupName.trim() })
       if (d.error) { setErr(d.error); return }
-      onDone(user, d.id!)
+      onDone(me!, d.id!)
     } catch { setErr('Нет соединения с сервером') }
   }
 
   async function doJoin() {
+    if (!canAuth) {
+      setErr('Войдите на сайте или откройте приложение в Telegram')
+      return
+    }
     if (!code.trim()) { setErr('Введите код'); return }
-    const user = hasTg ? me! : (name.trim() ? { id: uid(), name: name.trim() } : null)
-    if (!user) { setErr('Введите своё имя'); return }
+    if (!hasTg) { setErr('Войдите на сайте или откройте приложение в Telegram'); return }
     setErr('')
     try {
-      const d = await joinGroup({ inviteCode: code.trim(), userId: user.id, userName: user.name })
+      const d = await joinGroup({ inviteCode: code.trim() })
       if (d.error) { setErr(d.error); return }
-      onDone(user, d.id!)
+      onDone(me!, d.id!)
     } catch { setErr('Нет соединения с сервером') }
   }
 
@@ -86,10 +92,10 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
           </div>
         )}
 
-        {!hasTg && (
-          <div className="mb-3">
-            <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>Ваше имя</label>
-            <input style={inputStyle} value={name} onChange={e => setName(e.target.value)} placeholder="Как вас зовут?" />
+        {!canAuth && (
+          <div className="mb-3 rounded-xl px-3 py-[10px] text-[12px]"
+            style={{ background: 'rgba(255,80,80,.08)', border: '1px solid var(--gb)', color: 'var(--muted)' }}>
+            Для создания или входа в группу нужен аккаунт на сайте или Telegram Mini App.
           </div>
         )}
 
