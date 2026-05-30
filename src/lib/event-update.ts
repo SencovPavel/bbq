@@ -1,6 +1,6 @@
 import type { PicnicEvent } from '../types'
 
-type SendFn = (msg: Record<string, unknown>) => void
+type SendFn = (msg: Record<string, unknown>) => boolean
 
 type EventUpdateField = 'name' | 'event_date' | 'event_time' | 'location' | 'description'
 

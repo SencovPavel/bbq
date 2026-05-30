@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { ServerState } from '../types'
 
-type SendFn = (msg: Record<string, unknown>) => void
+type SendFn = (msg: Record<string, unknown>) => boolean
 
 interface WsStore {
   serverState: ServerState | null
@@ -16,7 +16,7 @@ interface WsStore {
 export const useWsStore = create<WsStore>((set) => ({
   serverState: null,
   wsOk: false,
-  send: () => {},
+  send: () => false,
   setServerState: (serverState) => set({ serverState, wsOk: true }),
   setWsOk: (wsOk) => set({ wsOk }),
   setSend: (send) => set({ send }),

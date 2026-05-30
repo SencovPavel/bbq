@@ -22,7 +22,9 @@ export function useWebSocket(groupId: string | null): void {
     setSend((msg) => {
       if (wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify(msg))
+        return true
       }
+      return false
     })
   }, [setSend])
 
@@ -66,6 +68,10 @@ export function useWebSocket(groupId: string | null): void {
       }
       if (msg.type === 'agent_notify' && msg.message) showToast(msg.message, 'var(--blue)')
       if (msg.type === 'error') {
+        if (msg.code === 'forbidden') {
+          showToast('Недостаточно прав для этого действия', 'var(--red)')
+          return
+        }
         if (msg.code === 'auth_required') {
           leaveGroup('Войдите в аккаунт или откройте приложение в Telegram', 'auth')
           return
