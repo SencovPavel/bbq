@@ -14,8 +14,8 @@ export function ReceiptFAB({ onClick }: ReceiptFABProps) {
         width: 54,
         height: 54,
         borderRadius: 16,
-        background: 'linear-gradient(135deg, var(--accent), #ea580c)',
-        boxShadow: '0 8px 28px rgba(249,115,22,.45)',
+        background: 'var(--gradient-brand)',
+        boxShadow: '0 8px 28px var(--shadow-brand-md)',
         fontFamily: 'inherit',
       }}
     >

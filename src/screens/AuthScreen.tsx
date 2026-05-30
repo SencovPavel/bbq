@@ -14,7 +14,7 @@ const inputStyle: React.CSSProperties = {
   padding: '11px 14px',
   borderRadius: 10,
   border: '1px solid var(--gb)',
-  background: 'rgba(255,255,255,.06)',
+  background: 'var(--surface-white-6)',
   color: 'var(--text)',
   fontSize: 14,
   fontFamily: 'inherit',
@@ -101,9 +101,9 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
               cursor: 'pointer',
               transition: 'all .18s',
               background: mode === m
-                ? 'linear-gradient(90deg,var(--accent),var(--accent2))'
+                ? 'var(--gradient-cta)'
                 : 'transparent',
-              color: mode === m ? '#fff' : 'var(--muted)',
+              color: mode === m ? 'var(--text-on-accent)' : 'var(--muted)',
             }}>
             {m === 'login' ? 'Войти' : 'Регистрация'}
           </button>
@@ -174,8 +174,8 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
               fontWeight: 800,
               fontFamily: 'inherit',
               cursor: loading ? 'default' : 'pointer',
-              background: 'linear-gradient(90deg,var(--accent),var(--accent2))',
-              color: '#fff',
+              background: 'var(--gradient-cta)',
+              color: 'var(--text-on-accent)',
               opacity: loading ? .65 : 1,
               transition: 'opacity .15s',
             }}>
@@ -200,7 +200,7 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
               width: '100%', padding: '12px 0',
               borderRadius: 12, border: '1px solid var(--gb)',
-              background: 'rgba(255,255,255,.05)',
+              background: 'var(--surface-subtle)',
               color: 'var(--text)', fontSize: 14, fontWeight: 700,
               fontFamily: 'inherit', cursor: 'pointer',
             }}>
@@ -218,7 +218,7 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
               width: '100%', padding: '12px 0',
               borderRadius: 12, border: '1px solid var(--gb)',
-              background: 'rgba(255,255,255,.05)',
+              background: 'var(--surface-subtle)',
               color: 'var(--text)', fontSize: 14, fontWeight: 700,
               fontFamily: 'inherit', cursor: 'pointer',
             }}>

@@ -2,7 +2,8 @@
  * Точка входа стилей.
  *
  * src/styles/
- *   tokens.css      — CSS-переменные
+ *   tokens.css      — импорт brand-tokens + surfaces (семантика)
+ *   brand-tokens    — public/brand-tokens.css (источник палитры)
  *   base.css        — html/body, скролл
  *   components/     — переиспользуемые классы (.glass, .btn-*)
  *   layout/         — shell, sidebar, web-page
@@ -16,6 +17,8 @@
  */
 @import './styles/tokens.css';
 @import './styles/base.css';
+@import './styles/floating-overlay.css';
+@import './styles/patterns.css';
 @import './styles/components/glass.css';
 @import './styles/layout/app-shell.css';
 @import './styles/layout/app-sidebar.css';

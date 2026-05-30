@@ -1,0 +1,142 @@
+/* Общая оболочка плавающих уведомлений (toast, offline) */
+
+.floating-overlay {
+  position: fixed;
+  left: 50%;
+  display: flex;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  top: var(--overlay-top);
+  color: var(--text);
+  background: var(--overlay-bg);
+  box-shadow: var(--overlay-shadow);
+  backdrop-filter: blur(var(--overlay-blur));
+  -webkit-backdrop-filter: blur(var(--overlay-blur));
+  transform: translateX(-50%);
+}
+
+.floating-overlay__dot {
+  flex-shrink: 0;
+  width: var(--overlay-dot-size);
+  height: var(--overlay-dot-size);
+  border-radius: var(--r-pill);
+  background: var(--overlay-dot-color, var(--green));
+}
+
+.floating-overlay__message {
+  min-width: 0;
+}
+
+/* ── Toast ─────────────────────────────────────────────────────────────────── */
+
+.floating-overlay--toast {
+  z-index: var(--overlay-z-toast);
+  align-items: flex-start;
+  gap: var(--overlay-gap-loose);
+  max-width: var(--overlay-max-width);
+  padding: var(--overlay-pad-y) var(--overlay-pad-x);
+  font-size: var(--overlay-font-size);
+  border: 1px solid var(--card-b);
+  transition:
+    transform var(--overlay-transition-enter),
+    opacity var(--overlay-transition-enter);
+}
+
+.floating-overlay--toast .floating-overlay__dot {
+  margin-top: var(--overlay-dot-offset-top);
+}
+
+.floating-overlay--toast.floating-overlay--hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(var(--overlay-enter-offset-y));
+  pointer-events: none;
+}
+
+.floating-overlay--toast:not(.floating-overlay--hidden) {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.floating-overlay--toast:not(.floating-overlay--hidden):not(:has(.floating-overlay__action)) {
+  pointer-events: none;
+}
+
+.floating-overlay__action {
+  flex-shrink: 0;
+  border-radius: var(--r-pill);
+  font-size: var(--toast-action-font-size);
+  font-weight: 700;
+  padding: var(--toast-action-pad-y) var(--toast-action-pad-x);
+  cursor: pointer;
+  background: var(--toast-action-bg);
+  border: 1px solid var(--gb);
+  color: var(--text);
+  font-family: inherit;
+}
+
+/* ── Offline banner ────────────────────────────────────────────────────────── */
+
+.floating-overlay--offline {
+  z-index: var(--overlay-z-offline);
+  align-items: center;
+  gap: var(--overlay-gap);
+  border: 1px solid var(--offline-banner-border);
+  pointer-events: none;
+  transition:
+    max-width var(--overlay-transition-size),
+    padding var(--overlay-transition-size),
+    font-size var(--overlay-transition-font),
+    transform var(--overlay-transition-enter),
+    opacity var(--overlay-transition-enter);
+}
+
+.floating-overlay--offline:not(.floating-overlay--compact) {
+  max-width: var(--overlay-max-width);
+  padding: var(--overlay-pad-y) var(--overlay-pad-x);
+  font-size: var(--overlay-font-size);
+}
+
+.floating-overlay--offline.floating-overlay--compact {
+  max-width: var(--overlay-compact-max-width);
+  padding: var(--overlay-pad-y-compact) var(--overlay-pad-x-compact);
+  font-size: var(--overlay-font-size-compact);
+}
+
+.floating-overlay--offline .floating-overlay__message {
+  white-space: nowrap;
+}
+
+.floating-overlay--offline.floating-overlay--leaving {
+  opacity: 0;
+  transform: translateX(-50%) translateY(var(--overlay-leave-offset-y))
+    scale(var(--overlay-leave-scale));
+}
+
+.floating-overlay--offline:not(.floating-overlay--leaving) {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.floating-overlay--offline .floating-overlay__dot--offline {
+  background: var(--accent-2);
+}
+
+.offline-banner__dot--pulse {
+  animation: offline-pulse 2s ease-in-out infinite;
+}
+
+@keyframes offline-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: var(--offline-pulse-opacity);
+    transform: scale(var(--offline-pulse-scale));
+  }
+}

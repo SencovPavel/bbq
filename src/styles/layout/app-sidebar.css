@@ -4,9 +4,9 @@
   width: var(--shell-sidebar);
   flex-shrink: 0;
   flex-direction: column;
-  padding: 24px 16px;
+  padding: var(--s-6) var(--s-4);
   border-right: 1px solid var(--gb);
-  background: rgba(16, 14, 11, 0.72);
+  background: var(--surface-sidebar);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   position: sticky;
@@ -18,33 +18,33 @@
 .app-sidebar__brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: var(--s-3);
+  margin-bottom: var(--s-5);
 }
 
 .app-sidebar__logo {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  background: linear-gradient(135deg, var(--accent), #dc2626);
-  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.35);
+  color: var(--text-on-accent);
+  background: var(--gradient-brand);
+  box-shadow: var(--shadow-brand-md);
 }
 
 .app-sidebar__title {
-  font-size: 20px;
-  font-weight: 900;
+  font-size: var(--s-5);
+  font-weight: var(--fw-black);
   letter-spacing: -0.02em;
-  line-height: 1.1;
+  line-height: var(--lh-tight);
 }
 
 .app-sidebar__subtitle {
-  font-size: 11px;
+  font-size: var(--t-xs);
   color: var(--muted);
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   margin-top: 2px;
 }
 
@@ -53,15 +53,15 @@
   align-items: center;
   gap: 6px;
   width: 100%;
-  padding: 8px 0 0;
-  margin-top: 4px;
+  padding: var(--s-2) 0 0;
+  margin-top: var(--s-1);
   border: none;
-  border-top: 1px solid rgba(255, 220, 150, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--color-cream) 10%, transparent);
   background: transparent;
   color: var(--muted);
   font-family: inherit;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--t-xs);
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: color 0.15s;
 }
@@ -73,10 +73,10 @@
 .app-sidebar__footer {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(249, 115, 22, 0.06);
+  gap: var(--s-1);
+  padding: 10px var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--surface-fire-6);
 }
 
 .app-sidebar__group {
@@ -84,15 +84,14 @@
 }
 
 .app-sidebar__group-name {
-  font-size: 12px;
-  font-weight: 800;
+  font-size: var(--t-xs);
+  font-weight: var(--fw-extrabold);
   margin-bottom: 6px;
   line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 
 .app-sidebar__event {
   display: flex;
@@ -105,8 +104,8 @@
   background: transparent;
   color: var(--accent);
   font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--t-xs);
+  font-weight: var(--fw-bold);
   cursor: pointer;
   text-align: left;
   opacity: 0.85;
@@ -128,7 +127,7 @@
   flex-direction: column;
   gap: 2px;
   flex: 1;
-  padding: 4px 0;
+  padding: var(--s-1) 0;
 }
 
 .app-sidebar__nav-item {
@@ -139,12 +138,12 @@
   padding: 11px 14px;
   box-sizing: border-box;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: transparent;
   color: var(--muted);
   font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--t-sm);
+  font-weight: var(--fw-semibold);
   line-height: 1.2;
   cursor: pointer;
   transition: color 0.15s, background 0.15s;
@@ -155,18 +154,18 @@
 }
 
 .app-sidebar__nav-item:focus-visible {
-  outline: 2px solid rgba(249, 115, 22, 0.45);
+  outline: 2px solid color-mix(in srgb, var(--color-fire) 45%, transparent);
   outline-offset: 1px;
 }
 
 .app-sidebar__nav-item.is-active {
   color: var(--accent);
-  font-weight: 800;
-  background: rgba(249, 115, 22, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(249, 115, 22, 0.2);
+  font-weight: var(--fw-extrabold);
+  background: var(--surface-fire-12);
+  box-shadow: inset 0 0 0 1px var(--surface-fire-20);
 }
 
 .app-sidebar__nav-item:hover:not(.is-active) {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-subtle);
 }

@@ -33,7 +33,7 @@ function EventCreateModal({ onSave, onClose }: CreateModalProps) {
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '11px 13px', borderRadius: 12,
-    background: 'rgba(255,240,200,.06)', border: '1px solid rgba(255,220,150,0.15)',
+    background: 'var(--surface-input)', border: '1px solid var(--card-b)',
     color: 'var(--text)', fontFamily: 'inherit', fontSize: 14, fontWeight: 600,
     outline: 'none', boxSizing: 'border-box',
   }
@@ -89,7 +89,7 @@ function EventCreateModal({ onSave, onClose }: CreateModalProps) {
           type="button"
           onClick={onClose}
           className="flex-1 py-[12px] rounded-[12px] border-none cursor-pointer font-bold text-[13px]"
-          style={{ background: 'rgba(255,255,255,.06)', color: 'var(--muted)', fontFamily: 'inherit' }}
+          style={{ background: 'var(--surface-white-6)', color: 'var(--muted)', fontFamily: 'inherit' }}
         >
           Отмена
         </button>
@@ -98,8 +98,8 @@ function EventCreateModal({ onSave, onClose }: CreateModalProps) {
           disabled={!canSubmit}
           className="flex-1 py-[12px] rounded-[12px] border-none cursor-pointer font-extrabold text-[14px]"
           style={{
-            background: canSubmit ? 'var(--accent)' : 'rgba(249,115,22,.3)',
-            color: '#fff',
+            background: canSubmit ? 'var(--accent)' : 'var(--surface-fire-30)',
+            color: 'var(--text-on-accent)',
             fontFamily: 'inherit',
             opacity: canSubmit ? 1 : 0.6,
             cursor: canSubmit ? 'pointer' : 'not-allowed',
@@ -216,7 +216,7 @@ export function EventSheet() {
     <>
       <div
         className="fixed inset-0 z-[150]"
-        style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
+        style={{ background: 'var(--surface-scrim-light)', backdropFilter: 'blur(4px)' }}
         onClick={closeSheet}
       />
 
@@ -225,8 +225,8 @@ export function EventSheet() {
         style={{
           bottom: 0,
           maxWidth: 500,
-          background: '#1e1912',
-          border: '1px solid rgba(255,220,150,0.12)',
+          background: 'var(--surface-sheet)',
+          border: '1px solid var(--card-b)',
           borderRadius: '20px 20px 0 0',
           padding: '12px 16px',
           paddingBottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
@@ -236,7 +236,7 @@ export function EventSheet() {
       >
         <div
           className="modal-drag-handle mx-auto mb-4"
-          style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(255,255,255,.15)' }}
+          style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--surface-white-15)' }}
         />
 
         {creating && (
@@ -267,7 +267,7 @@ export function EventSheet() {
                     type="button"
                     onClick={() => setShowCreate(true)}
                     className="w-full py-3 rounded-md border-none cursor-pointer text-sm font-extrabold"
-                    style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}
+                    style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}
                   >
                     ＋ Создать событие
                   </button>
@@ -285,8 +285,8 @@ export function EventSheet() {
                       className="flex items-center gap-3 w-full text-left rounded-[12px] border-none cursor-pointer transition-all duration-150 active:opacity-80"
                       style={{
                         padding: '11px 13px',
-                        background: currentEventId === e.id ? 'rgba(249,115,22,.12)' : 'rgba(255,255,255,.04)',
-                        border: `1px solid ${currentEventId === e.id ? 'rgba(249,115,22,.25)' : 'rgba(255,255,255,.08)'}`,
+                        background: currentEventId === e.id ? 'var(--surface-fire-12)' : 'var(--surface-subtle)',
+                        border: `1px solid ${currentEventId === e.id ? 'var(--surface-fire-25)' : 'var(--surface-white-8)'}`,
                         fontFamily: 'inherit',
                       }}
                     >
@@ -296,7 +296,7 @@ export function EventSheet() {
                           {formatDate(e.event_date, e.event_time)}
                         </div>
                         {e.location && (
-                          <div className="flex items-center gap-[3px] text-[11px] mt-[2px]" style={{ color: 'rgba(251,191,36,.65)' }}>
+                          <div className="flex items-center gap-[3px] text-[11px] mt-[2px]" style={{ color: 'var(--surface-amber-65)' }}>
                             <IconMapPin size={10} strokeWidth={2} /> {e.location}
                           </div>
                         )}
@@ -317,7 +317,7 @@ export function EventSheet() {
 
             {completed.length > 0 && (
               <div className="mt-3">
-                <div className="text-[10px] font-extrabold uppercase tracking-wider mb-2" style={{ color: 'rgba(245,240,234,.25)' }}>
+                <div className="text-[10px] font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--text-faint)' }}>
                   Завершённые
                 </div>
                 <div className="flex flex-col gap-[6px]">
@@ -329,8 +329,8 @@ export function EventSheet() {
                       className="flex items-center gap-3 w-full text-left rounded-[12px] border-none cursor-pointer"
                       style={{
                         padding: '10px 13px', opacity: 0.5,
-                        background: currentEventId === e.id ? 'rgba(249,115,22,.08)' : 'rgba(255,255,255,.03)',
-                        border: '1px solid rgba(255,255,255,.06)',
+                        background: currentEventId === e.id ? 'var(--surface-fire-8)' : 'var(--surface-subtle)',
+                        border: '1px solid var(--surface-white-6)',
                         fontFamily: 'inherit',
                       }}
                     >
@@ -357,7 +357,7 @@ export function EventSheet() {
                 className="w-full mt-3 py-[12px] rounded-[12px] border-none cursor-pointer font-bold text-[13px] flex items-center justify-center gap-2"
                 style={{
                   background: 'transparent',
-                  border: '1px dashed rgba(255,255,255,.15)',
+                  border: '1px dashed var(--surface-white-15)',
                   color: 'rgba(245,240,234,.4)',
                   fontFamily: 'inherit',
                 }}

@@ -71,8 +71,8 @@ export function ActivityFeed({ activity }: Props) {
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-[15px] py-[11px] rounded-[14px] border-none cursor-pointer"
         style={{
-          background: 'rgba(255,255,255,.04)',
-          border: '1px solid rgba(255,255,255,.08)',
+          background: 'var(--surface-subtle)',
+          border: '1px solid var(--surface-white-8)',
           fontFamily: 'inherit',
         }}
       >
@@ -88,13 +88,13 @@ export function ActivityFeed({ activity }: Props) {
       {open && (
         <div
           className="mt-2 rounded-[14px] overflow-hidden"
-          style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.06)' }}
+          style={{ background: 'var(--surface-subtle)', border: '1px solid var(--surface-white-6)' }}
         >
           {activity.slice(0, 40).map(e => (
             <div
               key={e.id}
               className="flex items-start gap-3 px-[14px] py-[9px] border-b last:border-none"
-              style={{ borderColor: 'rgba(255,255,255,.05)' }}
+              style={{ borderColor: 'var(--surface-subtle)' }}
             >
               <span className="text-[15px] flex-shrink-0 mt-[2px] leading-none">
                 {ICONS[e.type] ?? '•'}

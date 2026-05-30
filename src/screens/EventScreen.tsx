@@ -123,35 +123,14 @@ export function EventScreen() {
     <div className="px-3.5 pt-2 pb-8 relative">
 
       {/* Hero события */}
-      <div
-        className="rounded-lg p-5 mb-3.5 relative overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, rgba(249,115,22,.18), rgba(251,191,36,.06))',
-          border: '1px solid rgba(249,115,22,.25)',
-          backdropFilter: 'blur(24px)',
-        }}
-      >
-        <div
-          className="pointer-events-none absolute -top-8 -right-8 size-36 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(251,191,36,.18), transparent 65%)' }}
-        />
+      <div className="hero-card hero-card--event rounded-lg p-5 mb-3.5 relative overflow-hidden">
+        <div className="pointer-events-none absolute -top-8 -right-8 size-36 rounded-full hero-glow" />
         <div className="relative">
           <div className="flex items-start justify-between gap-2 mb-2 pr-0">
             <div
-              className="inline-flex items-center gap-1 text-[10.5px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-pill"
-              style={
-                eventIsActive
-                  ? {
-                      color: 'var(--accent-2)',
-                      background: 'rgba(251,191,36,.1)',
-                      border: '1px solid rgba(251,191,36,.22)',
-                    }
-                  : {
-                      color: 'var(--muted)',
-                      background: 'rgba(255,255,255,.06)',
-                      border: '1px solid rgba(255,255,255,.12)',
-                    }
-              }
+              className={`inline-flex items-center gap-1 text-[10.5px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-pill ${
+                eventIsActive ? 'badge-pill--active' : 'badge-pill--muted'
+              }`}
             >
               {!eventIsActive && <IconCheckCircle size={11} strokeWidth={2.2} />}
               {eventIsActive ? 'Текущее событие' : 'Завершено'}
@@ -164,13 +143,7 @@ export function EventScreen() {
                     onClick={() => setConfirmComplete(true)}
                     aria-label="Завершить событие"
                     title="Завершить событие"
-                    className="size-8 rounded-sm flex items-center justify-center border cursor-pointer"
-                    style={{
-                      background: 'rgba(34,197,94,.12)',
-                      borderColor: 'rgba(34,197,94,.35)',
-                      color: '#4ade80',
-                      fontFamily: 'inherit',
-                    }}
+                    className="size-8 rounded-sm flex items-center justify-center border cursor-pointer btn-icon-success"
                   >
                     <IconCheckCircle size={15} strokeWidth={2} />
                   </button>
@@ -180,12 +153,8 @@ export function EventScreen() {
                   onClick={() => setShowEventEdit(true)}
                   aria-label="Редактировать событие"
                   title="Редактировать событие"
-                  className="size-8 rounded-sm flex items-center justify-center border cursor-pointer"
-                  style={{
-                    background: 'rgba(255,255,255,.06)',
-                    borderColor: 'var(--gb)',
-                    color: 'var(--muted)',
-                  }}
+                  className="size-8 rounded-sm flex items-center justify-center border cursor-pointer btn-icon-surface"
+                  style={{ fontFamily: 'inherit' }}
                 >
                   <IconPencil size={13} />
                 </button>
@@ -199,20 +168,14 @@ export function EventScreen() {
             <div className="flex flex-col gap-1.5 mt-3">
               <div className="flex items-center gap-2 text-sm font-bold">
                 <span
-                  className="size-6 rounded-sm flex items-center justify-center shrink-0"
-                  style={{ background: 'rgba(249,115,22,.14)', color: 'var(--accent)' }}
+                  className="size-6 rounded-sm flex items-center justify-center shrink-0 icon-chip--fire"
                 >
                   <IconCalendar size={12} strokeWidth={2} />
                 </span>
                 {formatEventDate(currentEvent.event_date)}
                 {currentEvent.event_time && (
                   <span
-                    className="text-[11.5px] font-extrabold px-1.5 py-px rounded-pill"
-                    style={{
-                      color: 'var(--accent-2)',
-                      background: 'rgba(251,191,36,.1)',
-                      border: '1px solid rgba(251,191,36,.2)',
-                    }}
+                    className="text-[11.5px] font-extrabold px-1.5 py-px rounded-pill badge-pill--amber"
                   >
                     {currentEvent.event_time.slice(0, 5)}
                   </span>
@@ -222,7 +185,7 @@ export function EventScreen() {
                 <div className="flex items-center gap-2 text-sm font-bold">
                   <span
                     className="size-6 rounded-sm flex items-center justify-center shrink-0"
-                    style={{ background: 'rgba(249,115,22,.14)', color: 'var(--accent)' }}
+                    style={{ background: 'var(--surface-fire-14)', color: 'var(--accent)' }}
                   >
                     <IconMapPin size={12} strokeWidth={2} />
                   </span>
@@ -287,7 +250,7 @@ export function EventScreen() {
       <div
         className="rounded-md p-4 mb-3.5"
         style={{
-          background: 'rgba(255,240,200,0.04)',
+          background: 'var(--surface-subtle)',
           border: '1px solid var(--gb)',
           backdropFilter: 'blur(20px)',
         }}
@@ -303,8 +266,8 @@ export function EventScreen() {
         <div
           className="flex items-center gap-2.5 p-2.5 rounded-md mb-2.5"
           style={{
-            background: 'rgba(251,191,36,.06)',
-            border: '1px dashed rgba(251,191,36,.28)',
+            background: 'var(--surface-amber-6)',
+            border: '1px dashed var(--surface-amber-28)',
           }}
         >
           <span
@@ -324,7 +287,7 @@ export function EventScreen() {
             onClick={copyCode}
             className="px-3 py-1.5 rounded-pill text-xs font-bold border-none cursor-pointer"
             style={{
-              background: 'rgba(255,255,255,.08)',
+              background: 'var(--surface-white-8)',
               border: '1px solid var(--gb)',
               color: 'var(--text)',
               fontFamily: 'inherit',
@@ -340,7 +303,7 @@ export function EventScreen() {
           className="w-full py-2.5 rounded-md border-none text-sm font-extrabold cursor-pointer flex items-center justify-center gap-2"
           style={{
             background: 'linear-gradient(90deg, var(--accent), var(--accent-2))',
-            color: '#fff',
+            color: 'var(--text-on-accent)',
             fontFamily: 'inherit',
           }}
         >
@@ -370,9 +333,9 @@ export function EventScreen() {
                   className="flex items-center justify-center rounded-full text-sm font-extrabold shrink-0 size-9"
                   style={{
                     background: m.is_admin
-                      ? 'linear-gradient(135deg,rgba(251,191,36,.35),rgba(249,115,22,.2))'
-                      : 'linear-gradient(135deg,rgba(249,115,22,.2),rgba(251,191,36,.1))',
-                    border: m.is_admin ? '1px solid rgba(251,191,36,.4)' : '1px solid var(--gbs)',
+                      ? 'linear-gradient(135deg,var(--surface-amber-35),rgba(249,115,22,.2))'
+                      : 'linear-gradient(135deg,rgba(249,115,22,.2),var(--surface-amber-10))',
+                    border: m.is_admin ? '1px solid var(--surface-amber-40)' : '1px solid var(--gbs)',
                     color: m.is_admin ? 'var(--accent-2)' : 'var(--accent)',
                   }}
                 >
@@ -386,7 +349,7 @@ export function EventScreen() {
                         className="inline-flex items-center gap-0.5 text-[10px] font-bold rounded-pill px-1.5 py-px"
                         style={{
                           background: 'rgba(251,191,36,.15)',
-                          border: '1px solid rgba(251,191,36,.3)',
+                          border: '1px solid var(--surface-amber-30)',
                           color: 'var(--accent-2)',
                         }}
                       >
@@ -397,8 +360,8 @@ export function EventScreen() {
                       <span
                         className="text-[10px] font-bold rounded-pill px-1.5 py-px"
                         style={{
-                          background: 'rgba(255,107,53,.15)',
-                          border: '1px solid rgba(255,107,53,.3)',
+                          background: 'var(--surface-fire-15)',
+                          border: '1px solid var(--surface-fire-30)',
                           color: 'var(--accent)',
                         }}
                       >
@@ -426,8 +389,8 @@ export function EventScreen() {
                       }}
                       className="flex items-center justify-center size-7 rounded-md border cursor-pointer"
                       style={{
-                        background: m.is_admin ? 'rgba(251,191,36,.12)' : 'rgba(255,255,255,.06)',
-                        borderColor: m.is_admin ? 'rgba(251,191,36,.3)' : 'var(--gb)',
+                        background: m.is_admin ? 'var(--surface-amber-12)' : 'var(--surface-white-6)',
+                        borderColor: m.is_admin ? 'var(--surface-amber-30)' : 'var(--gb)',
                         color: m.is_admin ? 'var(--accent-2)' : 'var(--muted)',
                       }}
                     >
@@ -455,8 +418,8 @@ export function EventScreen() {
           onClick={() => setConfirmLeave(true)}
           className="w-full py-3 rounded-md border text-sm font-extrabold cursor-pointer flex items-center justify-center gap-2"
           style={{
-            background: 'rgba(255,255,255,.05)',
-            borderColor: 'rgba(255,255,255,.1)',
+            background: 'var(--surface-subtle)',
+            borderColor: 'var(--surface-white-10)',
             color: 'var(--muted)',
             fontFamily: 'inherit',
           }}
@@ -470,8 +433,8 @@ export function EventScreen() {
             onClick={() => setConfirmDelete(true)}
             className="w-full py-3 rounded-md border text-sm font-extrabold cursor-pointer flex items-center justify-center gap-2"
             style={{
-              background: 'rgba(248,113,113,.08)',
-              borderColor: 'rgba(248,113,113,.25)',
+              background: 'var(--surface-danger-8)',
+              borderColor: 'var(--surface-danger-25)',
               color: 'var(--red)',
               fontFamily: 'inherit',
             }}

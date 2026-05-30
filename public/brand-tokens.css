@@ -1,0 +1,94 @@
+/**
+ * Котёл — дизайн-токены (единый источник правды)
+ * Подключение: приложение (src/styles/tokens.css), brandbook.html
+ */
+
+:root {
+  /* ── Палитра (брендбук) ─────────────────────────────────────────────────── */
+  --color-fire: #f97316; /* Огонь */
+  --color-flame: #dc2626; /* Пламя */
+  --color-amber: #f59e0b; /* Янтарь */
+  --color-gold: #fcd34d; /* акцент warm-gradient */
+  --color-coal: #1c1917; /* Уголь */
+  --color-stone-700: #292524;
+  --color-ash: #78716c; /* Зола */
+  --color-stone-400: #a8a29e; /* подзаголовки */
+  --color-cream: #fff7ed; /* Сливки */
+  --color-bg-base: #0c0a09;
+  --color-white: #ffffff;
+
+  /* Статусы UI (расширение палитры для приложения) */
+  --color-success: #4ade80;
+  --color-info: #60a5fa;
+  --color-danger: var(--color-flame);
+
+  /* ── Градиенты ─────────────────────────────────────────────────────────── */
+  --gradient-brand: linear-gradient(135deg, var(--color-fire), var(--color-flame));
+  --gradient-warm: linear-gradient(
+    135deg,
+    var(--color-gold),
+    var(--color-fire) 50%,
+    var(--color-flame)
+  );
+  --gradient-surface: linear-gradient(135deg, var(--color-stone-700), var(--color-coal));
+  --gradient-hero: linear-gradient(135deg, var(--color-coal), var(--color-bg-base));
+  --gradient-progress: linear-gradient(90deg, var(--color-fire), var(--color-success));
+  --gradient-cta: linear-gradient(90deg, var(--color-fire), var(--color-amber));
+
+  /* ── Типографика ─────────────────────────────────────────────────────────── */
+  --font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --t-xs: 11px;
+  --t-sm: 13px;
+  --t-md: 15px;
+  --t-lg: 17px;
+  --t-xl: 22px;
+  --t-2xl: 24px;
+  --t-display: 30px;
+  --t-hero: 40px;
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.35;
+  --lh-base: 1.55;
+
+  --fw-regular: 400;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+  --fw-black: 900;
+
+  /* ── Радиусы ─────────────────────────────────────────────────────────────── */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-xl: 22px;
+  --r-pill: 999px;
+
+  /* ── Отступы ─────────────────────────────────────────────────────────────── */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 28px;
+  --s-8: 32px;
+  --s-9: 36px;
+
+  --page-pad-y: var(--s-8);
+  --page-pad-x: var(--s-9);
+  --card-pad: var(--s-6);
+
+  /* ── Тени ────────────────────────────────────────────────────────────────── */
+  --shadow-brand-sm: 0 6px 20px color-mix(in srgb, var(--color-fire) 28%, transparent);
+  --shadow-brand-md: 0 8px 24px color-mix(in srgb, var(--color-fire) 35%, transparent);
+  --shadow-brand-lg: 0 16px 48px color-mix(in srgb, var(--color-fire) 40%, transparent);
+  --shadow-panel: 0 20px 60px color-mix(in srgb, var(--color-bg-base) 35%, transparent);
+  --shadow-overlay: 0 8px 32px color-mix(in srgb, var(--color-bg-base) 35%, transparent);
+
+  /* ── Layout (приложение) ─────────────────────────────────────────────────── */
+  --shell-sidebar: 272px;
+  --content-max: 920px;
+  --bp-desktop: 1024px;
+}

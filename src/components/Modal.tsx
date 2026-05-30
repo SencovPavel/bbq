@@ -19,13 +19,13 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
   return createPortal(
     <div
       className="modal-overlay fixed inset-0 z-[200] flex items-end justify-center"
-      style={{ background: 'rgba(0,0,0,.7)', backdropFilter: 'blur(6px)' }}
+      style={{ background: 'var(--surface-scrim-heavy)', backdropFilter: 'blur(6px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
         className="modal-panel w-full max-w-[500px] rounded-t-[28px] overflow-y-auto slide-up"
         style={{
-          background: '#18140f',
+          background: 'var(--surface-modal-deep)',
           border: '1px solid var(--gb)',
           borderBottom: 'none',
           padding: '8px 20px calc(24px + env(safe-area-inset-bottom,0))',
@@ -59,12 +59,12 @@ export function ModalButtons({ onCancel, onConfirm, cancelText = 'Отмена',
     <div className="grid grid-cols-2 gap-[10px] mt-4">
       <button onClick={onCancel}
         className="p-[13px] rounded-xl border-none cursor-pointer text-sm font-extrabold"
-        style={{ background: 'rgba(255,240,200,.07)', border: '1px solid var(--gb)', color: 'var(--muted)', fontFamily: 'inherit' }}>
+        style={{ background: 'var(--surface-strong)', border: '1px solid var(--gb)', color: 'var(--muted)', fontFamily: 'inherit' }}>
         {cancelText}
       </button>
       <button onClick={onConfirm}
         className="p-[13px] rounded-xl border-none cursor-pointer text-sm font-extrabold"
-        style={{ background: danger ? 'var(--red)' : 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
+        style={{ background: danger ? 'var(--red)' : 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}>
         {confirmText}
       </button>
     </div>
@@ -104,7 +104,7 @@ export function GlassSelect({ label, children, ...props }: GlassSelectProps) {
         </label>
       )}
       <select className="glass-input w-full px-[14px] py-3 rounded-xl text-sm font-semibold" {...props}
-        style={{ background: 'rgba(255,240,200,.06)', border: '1px solid var(--gb)', color: 'var(--text)' }}>
+        style={{ background: 'var(--surface-input)', border: '1px solid var(--gb)', color: 'var(--text)' }}>
         {children}
       </select>
     </div>

@@ -25,7 +25,7 @@ export function EmptyState({ icon, title, body, ctaLabel, onCta }: EmptyStatePro
           type="button"
           onClick={onCta}
           className="px-6 py-3 rounded-md text-sm font-extrabold border-none cursor-pointer"
-          style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}
+          style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}
         >
           {ctaLabel}
         </button>

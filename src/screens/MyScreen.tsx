@@ -92,8 +92,8 @@ export function MyScreen() {
               className="h-[38px] px-3 pl-[11px] rounded-pill shrink-0 inline-flex items-center gap-1.5
                          text-xs font-extrabold border active:scale-95 transition"
               style={{
-                background: 'linear-gradient(135deg, rgba(249,115,22,.18), rgba(251,191,36,.08))',
-                borderColor: 'rgba(249,115,22,.32)',
+                background: 'var(--gradient-hero-my)',
+                borderColor: 'var(--surface-fire-32)',
                 color: 'var(--accent)',
                 fontFamily: 'inherit',
                 cursor: listLocked ? 'default' : 'pointer',
@@ -119,13 +119,13 @@ export function MyScreen() {
           </div>
           <div
             className="h-[5px] rounded-full mt-2.5 overflow-hidden"
-            style={{ background: 'rgba(255,255,255,.1)' }}
+            style={{ background: 'var(--surface-white-10)' }}
           >
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{
                 width: `${pct}%`,
-                background: 'linear-gradient(90deg, var(--accent), var(--green))',
+                background: 'var(--gradient-progress)',
               }}
             />
           </div>
@@ -147,7 +147,7 @@ export function MyScreen() {
               key={it.id}
               className="glass rounded-md p-3 flex items-start gap-3 mb-2 transition-all duration-200"
               style={{
-                borderColor: it.bought ? 'rgba(74,222,128,.3)' : 'var(--gb)',
+                borderColor: it.bought ? 'var(--surface-success-30)' : 'var(--gb)',
                 opacity: it.bought ? 0.65 : 1,
               }}
             >
@@ -159,7 +159,7 @@ export function MyScreen() {
                   height: 28,
                   border: it.bought ? '2px solid var(--green)' : '2px solid var(--gbs)',
                   background: it.bought ? 'var(--green)' : 'transparent',
-                  color: it.bought ? '#100e0b' : 'transparent',
+                  color: it.bought ? 'var(--text-on-success)' : 'transparent',
                   cursor: listLocked ? 'default' : 'pointer',
                   opacity: listLocked ? 0.7 : 1,
                 }}
@@ -175,7 +175,7 @@ export function MyScreen() {
                     disabled={listLocked}
                     className="flex items-center justify-center rounded-sm text-sm border size-[22px]"
                     style={{
-                      background: 'rgba(255,240,200,.06)',
+                      background: 'var(--surface-input)',
                       borderColor: 'var(--gbs)',
                       color: 'var(--text)',
                       cursor: listLocked ? 'default' : 'pointer',
@@ -191,7 +191,7 @@ export function MyScreen() {
                     disabled={listLocked}
                     className="flex items-center justify-center rounded-sm text-sm border size-[22px]"
                     style={{
-                      background: 'rgba(255,240,200,.06)',
+                      background: 'var(--surface-input)',
                       borderColor: 'var(--gbs)',
                       color: 'var(--text)',
                       cursor: listLocked ? 'default' : 'pointer',

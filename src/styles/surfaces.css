@@ -1,0 +1,175 @@
+/**
+ * Семантические поверхности и алиасы приложения (на базе brand-tokens)
+ */
+
+:root {
+  --bg: var(--color-bg-base);
+  --text: var(--color-cream);
+  --muted: color-mix(in srgb, var(--color-cream) 45%, transparent);
+  --muted-2: color-mix(in srgb, var(--color-cream) 65%, transparent);
+
+  --accent: var(--color-fire);
+  --accent2: var(--color-amber);
+  --accent-2: var(--color-amber);
+  --green: var(--color-success);
+  --red: var(--color-danger);
+  --blue: var(--color-info);
+
+  --card: color-mix(in srgb, var(--color-cream) 5%, transparent);
+  --card-b: color-mix(in srgb, var(--color-cream) 12%, transparent);
+  --g: var(--card);
+  --gb: var(--card-b);
+  --gbs: color-mix(in srgb, var(--color-cream) 22%, transparent);
+
+  /* Поверхности */
+  --surface-sidebar: color-mix(in srgb, var(--color-bg-base) 72%, transparent);
+  --surface-elevated: var(--color-coal);
+  --surface-muted: var(--color-stone-700);
+  --surface-input: color-mix(in srgb, var(--color-cream) 6%, transparent);
+  --surface-strong: color-mix(in srgb, var(--color-cream) 8%, transparent);
+  --surface-subtle: color-mix(in srgb, var(--color-cream) 4%, transparent);
+  --surface-white-6: color-mix(in srgb, var(--color-white) 6%, transparent);
+  --surface-white-8: color-mix(in srgb, var(--color-white) 8%, transparent);
+  --surface-white-10: color-mix(in srgb, var(--color-white) 10%, transparent);
+  --surface-white-12: color-mix(in srgb, var(--color-white) 12%, transparent);
+  --surface-white-15: color-mix(in srgb, var(--color-white) 15%, transparent);
+
+  --surface-fire-6: color-mix(in srgb, var(--color-fire) 6%, transparent);
+  --surface-fire-8: color-mix(in srgb, var(--color-fire) 8%, transparent);
+  --surface-fire-14: color-mix(in srgb, var(--color-fire) 14%, transparent);
+  --surface-fire-15: color-mix(in srgb, var(--color-fire) 15%, transparent);
+  --surface-fire-18: color-mix(in srgb, var(--color-fire) 18%, transparent);
+  --surface-fire-20: color-mix(in srgb, var(--color-fire) 20%, transparent);
+  --surface-fire-22: color-mix(in srgb, var(--color-fire) 22%, transparent);
+  --surface-fire-25: color-mix(in srgb, var(--color-fire) 25%, transparent);
+  --surface-fire-28: color-mix(in srgb, var(--color-fire) 28%, transparent);
+  --surface-fire-30: color-mix(in srgb, var(--color-fire) 30%, transparent);
+  --surface-fire-32: color-mix(in srgb, var(--color-fire) 32%, transparent);
+  --surface-fire-40: color-mix(in srgb, var(--color-fire) 40%, transparent);
+
+  --surface-amber-6: color-mix(in srgb, var(--color-amber) 6%, transparent);
+  --surface-amber-8: color-mix(in srgb, var(--color-amber) 8%, transparent);
+  --surface-amber-10: color-mix(in srgb, var(--color-amber) 10%, transparent);
+  --surface-amber-14: color-mix(in srgb, var(--color-amber) 14%, transparent);
+  --surface-amber-65: color-mix(in srgb, var(--color-amber) 65%, transparent);
+  --surface-amber-70: color-mix(in srgb, var(--color-amber) 70%, transparent);
+  --surface-amber-15: color-mix(in srgb, var(--color-amber) 15%, transparent);
+  --surface-amber-18: color-mix(in srgb, var(--color-amber) 18%, transparent);
+  --surface-amber-20: color-mix(in srgb, var(--color-amber) 20%, transparent);
+  --surface-amber-22: color-mix(in srgb, var(--color-amber) 22%, transparent);
+  --surface-amber-28: color-mix(in srgb, var(--color-amber) 28%, transparent);
+  --surface-amber-30: color-mix(in srgb, var(--color-amber) 30%, transparent);
+  --surface-amber-35: color-mix(in srgb, var(--color-amber) 35%, transparent);
+
+  --surface-success-12: color-mix(in srgb, var(--color-success) 12%, transparent);
+  --surface-success-20: color-mix(in srgb, var(--color-success) 20%, transparent);
+  --surface-success-30: color-mix(in srgb, var(--color-success) 30%, transparent);
+  --surface-success-35: color-mix(in srgb, var(--color-success) 35%, transparent);
+
+  --surface-danger-8: color-mix(in srgb, var(--color-danger) 8%, transparent);
+  --surface-danger-12: color-mix(in srgb, var(--color-danger) 12%, transparent);
+  --surface-danger-25: color-mix(in srgb, var(--color-danger) 25%, transparent);
+
+  --surface-scrim: color-mix(in srgb, var(--color-bg-base) 70%, transparent);
+  --surface-scrim-heavy: color-mix(in srgb, var(--color-bg-base) 85%, transparent);
+  --surface-scrim-light: color-mix(in srgb, var(--color-bg-base) 50%, transparent);
+  --surface-modal: var(--color-coal);
+  --surface-modal-deep: color-mix(in srgb, var(--color-bg-base) 88%, var(--color-coal));
+  --surface-sheet: color-mix(in srgb, var(--color-coal) 92%, var(--color-bg-base));
+  --surface-header: color-mix(in srgb, var(--color-bg-base) 78%, transparent);
+
+  --surface-info-10: color-mix(in srgb, var(--color-info) 10%, transparent);
+  --surface-info-12: color-mix(in srgb, var(--color-info) 12%, transparent);
+  --surface-info-25: color-mix(in srgb, var(--color-info) 25%, transparent);
+
+  --border-dashed-subtle: color-mix(in srgb, var(--color-white) 10%, transparent);
+  --border-info: var(--surface-info-25);
+  --border-success: var(--surface-success-35);
+
+  /* Свечения (blobs) */
+  --glow-fire: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-fire) 28%, transparent),
+    transparent 65%
+  );
+  --glow-amber: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-amber) 18%, transparent),
+    transparent 65%
+  );
+  --glow-ember: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-flame) 25%, transparent),
+    transparent 70%
+  );
+
+  /* Герои экранов */
+  --gradient-hero-event: linear-gradient(
+    135deg,
+    var(--surface-fire-18),
+    var(--surface-amber-6)
+  );
+  --gradient-hero-summary: linear-gradient(
+    135deg,
+    var(--surface-fire-22),
+    var(--surface-amber-12)
+  );
+  --gradient-hero-my: linear-gradient(
+    135deg,
+    var(--surface-fire-18),
+    var(--surface-amber-8)
+  );
+  --gradient-avatar-admin: linear-gradient(
+    135deg,
+    var(--surface-amber-35),
+    var(--surface-fire-20)
+  );
+  --gradient-avatar-member: linear-gradient(
+    135deg,
+    var(--surface-fire-20),
+    var(--surface-amber-10)
+  );
+
+  /* Плавающие оверлеи */
+  --overlay-bg: color-mix(in srgb, var(--color-bg-base) 92%, transparent);
+  --overlay-shadow: var(--shadow-overlay);
+  --overlay-blur: 12px;
+  --overlay-top: max(var(--s-3), env(safe-area-inset-top, 0px));
+  --overlay-max-width: min(92vw, 360px);
+  --overlay-compact-max-width: 124px;
+  --overlay-z-toast: 300;
+  --overlay-z-offline: 290;
+  --overlay-gap: var(--s-2);
+  --overlay-gap-loose: 10px;
+  --overlay-pad-y: 10px;
+  --overlay-pad-x: 14px;
+  --overlay-pad-y-compact: 6px;
+  --overlay-pad-x-compact: var(--s-3);
+  --overlay-font-size: var(--t-sm);
+  --overlay-font-size-compact: 12px;
+  --overlay-dot-size: 6px;
+  --overlay-dot-offset-top: 5px;
+  --offline-banner-border: color-mix(in srgb, var(--color-amber) 28%, transparent);
+  --overlay-enter-offset-y: -12px;
+  --overlay-leave-offset-y: -10px;
+  --overlay-leave-scale: 0.96;
+  --overlay-transition-enter: 0.28s ease;
+  --overlay-transition-size: 0.45s ease;
+  --overlay-transition-font: 0.35s ease;
+  --toast-action-bg: var(--surface-white-8);
+  --toast-action-font-size: 12px;
+  --toast-action-pad-y: 2px;
+  --toast-action-pad-x: 10px;
+  --offline-pulse-opacity: 0.55;
+  --offline-pulse-scale: 0.85;
+
+  --text-on-accent: var(--color-white);
+  --color-info-muted: color-mix(in srgb, var(--color-info) 75%, var(--color-cream));
+  --text-faint: color-mix(in srgb, var(--color-cream) 25%, transparent);
+
+  --gradient-agent-panel: linear-gradient(
+    90deg,
+    var(--surface-info-10),
+    color-mix(in srgb, #a78bfa 8%, transparent)
+  );
+}

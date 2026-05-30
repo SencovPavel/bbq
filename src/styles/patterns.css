@@ -1,0 +1,102 @@
+/* Паттерны UI на токенах брендбука */
+
+.hero-card {
+  border-radius: var(--r-lg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.hero-card--summary {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.hero-card--event {
+  background: var(--gradient-hero-event);
+  border: 1px solid var(--surface-fire-25);
+}
+
+.hero-card--summary {
+  background: var(--gradient-hero-summary);
+  border: 1px solid var(--surface-fire-28);
+}
+
+.hero-card--my {
+  background: var(--gradient-hero-my);
+  border-color: var(--surface-fire-32);
+}
+
+.btn-cta-gradient {
+  background: var(--gradient-cta);
+  color: var(--text-on-accent);
+  font-family: inherit;
+}
+
+.badge-source--chat {
+  background: var(--surface-info-12);
+  border: 1px solid var(--border-info);
+  color: color-mix(in srgb, var(--color-info) 75%, var(--color-cream));
+}
+
+.badge-source--agent {
+  background: var(--surface-fire-12);
+  border: 1px solid var(--surface-fire-25);
+  color: var(--accent2);
+}
+
+.badge-source--manual {
+  background: var(--surface-white-6);
+  border: 1px solid var(--surface-white-14);
+  color: var(--muted);
+}
+
+.badge-pill--amber {
+  color: var(--accent-2);
+  background: var(--surface-amber-10);
+  border: 1px solid var(--surface-amber-20);
+}
+
+.badge-pill--muted {
+  color: var(--muted);
+  background: var(--surface-white-6);
+  border: 1px solid var(--surface-white-12);
+}
+
+.badge-pill--active {
+  color: var(--accent-2);
+  background: var(--surface-amber-10);
+  border: 1px solid var(--surface-amber-22);
+}
+
+.btn-icon-surface {
+  background: var(--surface-white-6);
+  border-color: var(--gb);
+  color: var(--muted);
+}
+
+.btn-icon-success {
+  background: var(--surface-success-12);
+  border-color: var(--surface-success-35);
+  color: var(--green);
+}
+
+.icon-chip--fire {
+  background: var(--surface-fire-14);
+  color: var(--accent);
+}
+
+.progress-track {
+  background: var(--surface-white-15);
+}
+
+.progress-track--subtle {
+  background: var(--surface-white-10);
+}
+
+.progress-fill {
+  background: var(--gradient-progress);
+}
+
+.hero-glow {
+  background: radial-gradient(circle, var(--surface-amber-18), transparent 65%);
+}

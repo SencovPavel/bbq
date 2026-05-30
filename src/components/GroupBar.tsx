@@ -27,7 +27,7 @@ function DateTile({ event }: { event: PicnicEvent | undefined }) {
     <div
       className="size-7 rounded-sm shrink-0 flex flex-col items-center justify-center tabular-nums"
       style={{
-        background: 'linear-gradient(135deg, rgba(249,115,22,.32), rgba(251,191,36,.14))',
+        background: 'var(--gradient-hero-event)',
         color: 'var(--accent)',
       }}
     >
@@ -63,7 +63,7 @@ export function GroupBar({ group, currentEvent, onBack }: GroupBarProps) {
         onClick={onBack}
         aria-label="Все группы"
         className="size-9 rounded-full flex items-center justify-center shrink-0
-                   bg-[rgba(255,240,200,0.08)] border border-[rgba(255,220,150,0.12)]
+                   bg-[rgba(255,240,200,0.08)] border border-[var(--card-b)]
                    text-[var(--text)] active:scale-95 transition border-none cursor-pointer"
       >
         <IconChevronLeft size={15} />
@@ -75,9 +75,9 @@ export function GroupBar({ group, currentEvent, onBack }: GroupBarProps) {
         className={`flex-1 min-w-0 h-11 px-3 rounded-md flex items-center gap-2.5
                     cursor-pointer text-left transition border
                     ${currentEvent
-            ? 'bg-gradient-to-r from-[rgba(249,115,22,0.16)] to-[rgba(251,191,36,0.06)] border-[rgba(249,115,22,0.28)]'
+            ? 'bg-gradient-to-r from-[var(--surface-fire-18)] to-[rgba(251,191,36,0.06)] border-[var(--surface-fire-28)]'
             : !hasEvents && isAdmin
-              ? 'bg-gradient-to-r from-[rgba(249,115,22,0.12)] to-[rgba(251,191,36,0.04)] border-[rgba(249,115,22,0.22)]'
+              ? 'bg-gradient-to-r from-[var(--surface-fire-12)] to-[rgba(251,191,36,0.04)] border-[var(--surface-fire-22)]'
               : 'bg-[rgba(255,255,255,0.04)] border-[rgba(255,255,255,0.1)]'}`}
         style={{ fontFamily: 'inherit' }}
       >

@@ -27,8 +27,8 @@ export function TopNav({ active, onChange }: TopNavProps) {
         style={{
           background: 'rgba(22,18,13,0.88)',
           backdropFilter: 'blur(32px)',
-          border: '1px solid rgba(255,220,150,0.12)',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+          border: '1px solid var(--card-b)',
+          boxShadow: '0 4px 24px var(--surface-scrim-light)',
         }}
       >
         <div
@@ -41,8 +41,8 @@ export function TopNav({ active, onChange }: TopNavProps) {
             width: `calc((100% - ${NAV_PADDING_PX * 2}px) / ${NAV_TAB_COUNT})`,
             transform: `translateX(${activeIndex * 100}%)`,
             transition: 'transform 0.32s cubic-bezier(0.4, 0, 0.2, 1)',
-            background: 'rgba(249,115,22,0.13)',
-            boxShadow: '0 0 0 1px rgba(249,115,22,0.22)',
+            background: 'var(--surface-fire-14)',
+            boxShadow: '0 0 0 1px var(--surface-fire-22)',
           }}
         />
 
@@ -55,7 +55,7 @@ export function TopNav({ active, onChange }: TopNavProps) {
               onClick={() => onChange(id)}
               className="relative z-10 flex flex-1 flex-col items-center justify-center gap-[2px] rounded-[18px] border-none bg-transparent py-[7px] cursor-pointer transition-colors duration-200"
               style={{
-                color: isActive ? 'var(--accent)' : 'rgba(245,240,234,0.38)',
+                color: isActive ? 'var(--accent)' : 'var(--muted)',
                 fontFamily: 'inherit',
               }}
             >

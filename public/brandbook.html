@@ -4,107 +4,107 @@
 <meta charset="UTF-8">
 <title>Котёл — Брендбук</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/brand-tokens.css">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Nunito', sans-serif;
-  background: #0C0A09;
-  color: #FFF7ED;
-  padding: 32px 36px 40px;
+  font-family: var(--font-family);
+  background: var(--color-bg-base);
+  color: var(--color-cream);
+  padding: var(--page-pad-y) var(--page-pad-x) 40px;
   width: 1200px;
 }
 
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
 .card {
-  background: #1C1917;
-  border: 1px solid #292524;
-  border-radius: 20px;
-  padding: 24px;
+  background: var(--color-coal);
+  border: 1px solid var(--color-stone-700);
+  border-radius: var(--r-lg);
+  padding: var(--card-pad);
 }
 .label {
-  font-size: 10px; font-weight: 700; letter-spacing: .12em;
-  text-transform: uppercase; color: #78716C;
-  margin-bottom: 16px;
+  font-size: 10px; font-weight: var(--fw-bold); letter-spacing: .12em;
+  text-transform: uppercase; color: var(--color-ash);
+  margin-bottom: var(--s-4);
 }
 
-/* ── Icon SVG reused ── */
 .pot-sm { display:inline-flex; align-items:center; justify-content:center; }
 
-/* HERO row */
 .hero {
-  display: flex; align-items: center; gap: 20px;
-  background: linear-gradient(135deg,#1C1917,#0C0A09);
-  border: 1px solid #292524; border-radius: 20px;
-  padding: 28px 32px; margin-bottom: 16px;
+  display: flex; align-items: center; gap: var(--s-5);
+  background: var(--gradient-hero);
+  border: 1px solid var(--color-stone-700); border-radius: var(--r-lg);
+  padding: var(--s-7) var(--s-8); margin-bottom: var(--s-4);
 }
 .hero-icon {
-  width: 88px; height: 88px; border-radius: 22px; flex-shrink: 0;
-  background: linear-gradient(135deg,#F97316,#DC2626);
+  width: 88px; height: 88px; border-radius: var(--r-xl); flex-shrink: 0;
+  background: var(--gradient-brand);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 16px 48px rgba(249,115,22,.4);
+  box-shadow: var(--shadow-brand-lg);
 }
-.wordmark { font-size: 52px; font-weight: 900; letter-spacing: -.03em; }
-.tagline  { font-size: 14px; color: #A8A29E; margin-top: 4px; font-weight: 600; }
+.wordmark { font-size: 52px; font-weight: var(--fw-black); letter-spacing: -.03em; }
+.tagline  { font-size: var(--t-sm); color: var(--color-stone-400); margin-top: var(--s-1); font-weight: var(--fw-semibold); }
 
-/* Sizes row */
-.sizes { display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
-.sz { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.sz-lbl { font-size: 10px; color: #78716C; font-weight: 700; }
+.sizes { display: flex; align-items: flex-end; gap: var(--s-5); flex-wrap: wrap; }
+.sz { display: flex; flex-direction: column; align-items: center; gap: var(--s-2); }
+.sz-lbl { font-size: 10px; color: var(--color-ash); font-weight: var(--fw-bold); }
 .ibox {
-  border-radius: calc(var(--r)*1px);
-  background: linear-gradient(135deg,#F97316,#DC2626);
+  border-radius: calc(var(--r) * 1px);
+  background: var(--gradient-brand);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 6px 20px rgba(249,115,22,.28);
+  box-shadow: var(--shadow-brand-sm);
 }
 
-/* Variants */
-.vars { display: flex; gap: 12px; }
+.vars { display: flex; gap: var(--s-3); }
 .var {
-  flex: 1; border-radius: 16px; padding: 20px 16px;
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-  border: 1px solid #292524;
+  flex: 1; border-radius: var(--s-4); padding: var(--s-5) var(--s-4);
+  display: flex; flex-direction: column; align-items: center; gap: var(--s-3);
+  border: 1px solid var(--color-stone-700);
 }
-.var-lbl { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #78716C; }
+.var-lbl { font-size: 9px; font-weight: var(--fw-bold); letter-spacing: .1em; text-transform: uppercase; color: var(--color-ash); }
 
-/* Colors */
-.swatches { display: flex; gap: 8px; }
-.swatch { flex: 1; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.06); }
+.swatches { display: flex; gap: var(--s-2); }
+.swatch { flex: 1; border-radius: var(--r-md); overflow: hidden; border: 1px solid color-mix(in srgb, var(--color-white) 6%, transparent); }
 .sw-color { height: 56px; }
-.sw-info { padding: 8px 10px; background: #292524; }
-.sw-name { font-size: 11px; font-weight: 800; }
-.sw-hex  { font-size: 9px; color: #78716C; font-family: monospace; margin-top: 1px; }
+.sw-info { padding: var(--s-2) 10px; background: var(--color-stone-700); }
+.sw-name { font-size: var(--t-xs); font-weight: var(--fw-extrabold); }
+.sw-hex  { font-size: 9px; color: var(--color-ash); font-family: monospace; margin-top: 1px; }
+.sw-token { font-size: 8px; color: var(--color-stone-400); font-family: monospace; margin-top: 2px; }
 
-/* Gradients */
-.grads { display: flex; gap: 8px; margin-top: 10px; }
-.grad-box { flex:1; height: 48px; border-radius: 10px; border: 1px solid rgba(255,255,255,.06); }
+.grads { display: flex; gap: var(--s-2); margin-top: 10px; }
+.grad-box { flex:1; height: 48px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--color-white) 6%, transparent); }
+.grad-lbl { font-size: 8px; color: var(--color-ash); margin-top: 4px; text-align: center; }
 
-/* Type */
 .type-rows { display: flex; flex-direction: column; gap: 0; }
 .tr {
   display: flex; align-items: baseline; gap: 14px;
-  padding: 8px 0; border-bottom: 1px solid #292524;
+  padding: var(--s-2) 0; border-bottom: 1px solid var(--color-stone-700);
 }
 .tr:last-child { border-bottom: none; }
-.tr-meta { font-size: 9px; color: #78716C; font-weight: 700; width: 90px; flex-shrink: 0; }
+.tr-meta { font-size: 9px; color: var(--color-ash); font-weight: var(--fw-bold); width: 90px; flex-shrink: 0; }
 
-/* Mockups */
-.mockups { display: flex; gap: 12px; }
+.mockups { display: flex; gap: var(--s-3); }
 .mock {
-  flex: 1; background: #292524; border-radius: 14px; padding: 16px;
+  flex: 1; background: var(--color-stone-700); border-radius: 14px; padding: var(--s-4);
   display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
-.mock-lbl { font-size: 9px; color: #78716C; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.mock-lbl { font-size: 9px; color: var(--color-ash); font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: .08em; }
 
 .dl-btn {
   padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer;
-  font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
-  background: linear-gradient(135deg,#F97316,#DC2626); color: #fff;
+  font-family: var(--font-family); font-size: var(--t-sm); font-weight: var(--fw-extrabold);
+  background: var(--gradient-brand); color: var(--color-white);
   text-decoration: none; display: inline-flex; align-items: center;
   transition: opacity .15s;
 }
 .dl-btn:hover { opacity: .85; }
-.dl-sm  { padding: 10px 14px; background: #292524; color: #FFF7ED; }
-.dl-svg { background: #1C1917; border: 1px solid #F97316; color: #F97316; }
+.dl-sm  { padding: 10px 14px; background: var(--color-stone-700); color: var(--color-cream); }
+.dl-svg { background: var(--color-coal); border: 1px solid var(--color-fire); color: var(--color-fire); }
+
+.tokens-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: var(--s-3); }
+.tokens-table th, .tokens-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--color-stone-700); }
+.tokens-table th { color: var(--color-ash); font-weight: var(--fw-bold); font-size: 9px; text-transform: uppercase; letter-spacing: .08em; }
+.tokens-table code { font-family: monospace; color: var(--color-fire); font-size: 10px; }
 </style>
 </head>
 <body>
@@ -264,34 +264,34 @@ body {
     <div class="label">Цветовая палитра</div>
     <div class="swatches">
       <div class="swatch">
-        <div class="sw-color" style="background:#F97316;"></div>
-        <div class="sw-info"><div class="sw-name">Огонь</div><div class="sw-hex">#F97316</div></div>
+        <div class="sw-color" style="background:var(--color-fire);"></div>
+        <div class="sw-info"><div class="sw-name">Огонь</div><div class="sw-hex">#F97316</div><div class="sw-token">--color-fire</div></div>
       </div>
       <div class="swatch">
-        <div class="sw-color" style="background:#DC2626;"></div>
-        <div class="sw-info"><div class="sw-name">Пламя</div><div class="sw-hex">#DC2626</div></div>
+        <div class="sw-color" style="background:var(--color-flame);"></div>
+        <div class="sw-info"><div class="sw-name">Пламя</div><div class="sw-hex">#DC2626</div><div class="sw-token">--color-flame</div></div>
       </div>
       <div class="swatch">
-        <div class="sw-color" style="background:#F59E0B;"></div>
-        <div class="sw-info"><div class="sw-name">Янтарь</div><div class="sw-hex">#F59E0B</div></div>
+        <div class="sw-color" style="background:var(--color-amber);"></div>
+        <div class="sw-info"><div class="sw-name">Янтарь</div><div class="sw-hex">#F59E0B</div><div class="sw-token">--color-amber</div></div>
       </div>
       <div class="swatch">
-        <div class="sw-color" style="background:#1C1917;"></div>
-        <div class="sw-info"><div class="sw-name">Уголь</div><div class="sw-hex">#1C1917</div></div>
+        <div class="sw-color" style="background:var(--color-coal);"></div>
+        <div class="sw-info"><div class="sw-name">Уголь</div><div class="sw-hex">#1C1917</div><div class="sw-token">--color-coal</div></div>
       </div>
       <div class="swatch">
-        <div class="sw-color" style="background:#78716C;"></div>
-        <div class="sw-info"><div class="sw-name">Зола</div><div class="sw-hex">#78716C</div></div>
+        <div class="sw-color" style="background:var(--color-ash);"></div>
+        <div class="sw-info"><div class="sw-name">Зола</div><div class="sw-hex">#78716C</div><div class="sw-token">--color-ash</div></div>
       </div>
       <div class="swatch">
-        <div class="sw-color" style="background:#FFF7ED;"></div>
-        <div class="sw-info" style="background:#292524;"><div class="sw-name">Сливки</div><div class="sw-hex">#FFF7ED</div></div>
+        <div class="sw-color" style="background:var(--color-cream);"></div>
+        <div class="sw-info"><div class="sw-name">Сливки</div><div class="sw-hex">#FFF7ED</div><div class="sw-token">--color-cream</div></div>
       </div>
     </div>
     <div class="grads">
-      <div class="grad-box" style="background:linear-gradient(135deg,#F97316,#DC2626);"></div>
-      <div class="grad-box" style="background:linear-gradient(135deg,#FCD34D,#F97316 50%,#DC2626);"></div>
-      <div class="grad-box" style="background:linear-gradient(135deg,#292524,#1C1917);"></div>
+      <div style="flex:1"><div class="grad-box" style="background:var(--gradient-brand);"></div><div class="grad-lbl">--gradient-brand</div></div>
+      <div style="flex:1"><div class="grad-box" style="background:var(--gradient-warm);"></div><div class="grad-lbl">--gradient-warm</div></div>
+      <div style="flex:1"><div class="grad-box" style="background:var(--gradient-surface);"></div><div class="grad-lbl">--gradient-surface</div></div>
     </div>
   </div>
 
@@ -322,6 +322,29 @@ body {
     </div>
   </div>
 
+</div>
+
+<!-- ── TOKENS (приложение) ── -->
+<div class="card" style="margin-bottom:16px;">
+  <div class="label">CSS-токены приложения</div>
+  <p style="font-size:12px;color:var(--color-stone-400);margin-bottom:12px;line-height:1.5;">
+    Источник: <code style="color:var(--color-fire)">public/brand-tokens.css</code> →
+    <code style="color:var(--color-fire)">src/styles/surfaces.css</code> (семантика UI).
+    В коде используйте <code>var(--accent)</code>, <code>var(--g)</code>, <code>var(--gradient-brand)</code> и т.д.
+  </p>
+  <table class="tokens-table">
+    <thead><tr><th>Токен</th><th>Назначение</th></tr></thead>
+    <tbody>
+      <tr><td><code>--bg</code></td><td>Фон приложения</td></tr>
+      <tr><td><code>--text</code> / <code>--muted</code></td><td>Основной и приглушённый текст</td></tr>
+      <tr><td><code>--accent</code> / <code>--accent2</code></td><td>Огонь / янтарь (CTA, акценты)</td></tr>
+      <tr><td><code>--g</code> / <code>--gb</code></td><td>Glass-поверхность и граница</td></tr>
+      <tr><td><code>--gradient-brand</code></td><td>Иконка, кнопки, логотип</td></tr>
+      <tr><td><code>--s-1</code> … <code>--s-9</code></td><td>Шкала отступов (4–36px)</td></tr>
+      <tr><td><code>--r-sm</code> … <code>--r-lg</code></td><td>Радиусы скругления</td></tr>
+      <tr><td><code>--green</code> / <code>--red</code> / <code>--blue</code></td><td>Статусы (успех / ошибка / инфо)</td></tr>
+    </tbody>
+  </table>
 </div>
 
 <!-- ── DOWNLOAD ── -->

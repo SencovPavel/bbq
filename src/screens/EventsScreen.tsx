@@ -39,7 +39,7 @@ function EventModal({ event, onSave, onClose, onDelete }: EventModalProps) {
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '11px 13px', borderRadius: 12,
-    background: 'rgba(255,240,200,.06)', border: '1px solid rgba(255,220,150,0.15)',
+    background: 'var(--surface-input)', border: '1px solid var(--card-b)',
     color: 'var(--text)', fontFamily: 'inherit', fontSize: 14, fontWeight: 600,
     outline: 'none', boxSizing: 'border-box',
   }
@@ -47,12 +47,12 @@ function EventModal({ event, onSave, onClose, onDelete }: EventModalProps) {
   return (
     <div
       className="fixed inset-0 z-[200] flex items-end justify-center"
-      style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'var(--surface-scrim-heavy)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
       <div
         className="w-full max-w-[500px] rounded-t-[24px] p-5 pb-8"
-        style={{ background: '#1a1510', border: '1px solid rgba(255,220,150,0.12)' }}
+        style={{ background: 'var(--surface-modal-deep)', border: '1px solid var(--card-b)' }}
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">
@@ -115,7 +115,7 @@ function EventModal({ event, onSave, onClose, onDelete }: EventModalProps) {
           {onDelete && (
             <button onClick={onDelete}
               className="py-[13px] px-4 rounded-[12px] border-none cursor-pointer font-bold text-[13px]"
-              style={{ background: 'rgba(239,68,68,0.12)', color: 'var(--red)', fontFamily: 'inherit', border: '1px solid rgba(239,68,68,0.25)' }}>
+              style={{ background: 'var(--surface-danger-12)', color: 'var(--red)', fontFamily: 'inherit', border: '1px solid var(--surface-danger-25)' }}>
               Удалить
             </button>
           )}
@@ -125,7 +125,7 @@ function EventModal({ event, onSave, onClose, onDelete }: EventModalProps) {
               onSave({ name: name.trim(), event_date: date || null, event_time: time || null, location: location || null, description: description || null })
             }}
             className="flex-1 py-[13px] rounded-[12px] border-none cursor-pointer font-extrabold text-[15px]"
-            style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit', opacity: name.trim() ? 1 : 0.5 }}>
+            style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit', opacity: name.trim() ? 1 : 0.5 }}>
             {event ? 'Сохранить' : 'Создать'}
           </button>
         </div>
@@ -150,8 +150,8 @@ function EventCard({ event, itemCount, onEnter, onEdit }: EventCardProps) {
     <div
       className="rounded-[16px] p-4 cursor-pointer transition-all duration-150 active:scale-[.98]"
       style={{
-        background: past ? 'rgba(255,255,255,0.03)' : 'rgba(255,240,200,0.05)',
-        border: `1px solid ${past ? 'rgba(255,255,255,0.08)' : 'rgba(255,220,150,0.15)'}`,
+        background: past ? 'var(--surface-subtle)' : 'var(--card)',
+        border: `1px solid ${past ? 'var(--surface-white-8)' : 'var(--card-b)'}`,
         opacity: past ? 0.65 : 1,
       }}
       onClick={onEnter}
@@ -165,7 +165,7 @@ function EventCard({ event, itemCount, onEnter, onEdit }: EventCardProps) {
             {formatDate(event.event_date, event.event_time)}
           </div>
           {event.location && (
-            <div className="flex items-center gap-[4px] text-[12px] mt-[3px] truncate" style={{ color: 'rgba(251,191,36,0.7)' }}>
+            <div className="flex items-center gap-[4px] text-[12px] mt-[3px] truncate" style={{ color: 'var(--surface-amber-70)' }}>
               <IconMapPin size={11} strokeWidth={2} />
               {event.location}
             </div>
@@ -174,7 +174,7 @@ function EventCard({ event, itemCount, onEnter, onEdit }: EventCardProps) {
 
         <div className="flex items-center gap-2 flex-shrink-0">
           <div className="text-[11px] font-bold px-2 py-1 rounded-full"
-            style={{ background: 'rgba(249,115,22,0.12)', color: 'var(--accent)', border: '1px solid rgba(249,115,22,0.2)' }}>
+            style={{ background: 'var(--surface-fire-12)', color: 'var(--accent)', border: '1px solid var(--surface-fire-20)' }}>
             {itemCount} поз.
           </div>
           <button
@@ -186,7 +186,7 @@ function EventCard({ event, itemCount, onEnter, onEdit }: EventCardProps) {
       </div>
 
       {event.description && (
-        <div className="text-[12px] mt-2 leading-relaxed line-clamp-2" style={{ color: 'rgba(245,240,234,0.5)' }}>
+        <div className="text-[12px] mt-2 leading-relaxed line-clamp-2" style={{ color: 'var(--text-muted)' }}>
           {event.description}
         </div>
       )}
@@ -241,7 +241,7 @@ export function EventsScreen() {
         <button
           onClick={() => { setEditEvent(undefined); setShowModal(true) }}
           className="flex items-center gap-[6px] rounded-full border-none cursor-pointer font-bold text-[13px] transition-opacity active:opacity-70"
-          style={{ padding: '8px 14px', background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
+          style={{ padding: '8px 14px', background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}>
           + Создать
         </button>
       </div>

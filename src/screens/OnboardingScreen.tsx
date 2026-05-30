@@ -53,7 +53,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
   const inputStyle: CSSProperties = {
     width: '100%', padding: '12px 14px',
     border: '1px solid var(--gb)', borderRadius: 12,
-    background: 'rgba(255,240,200,.06)', color: 'var(--text)',
+    background: 'var(--surface-input)', color: 'var(--text)',
     fontFamily: 'inherit', fontSize: 14, fontWeight: 600, outline: 'none',
   }
 
@@ -73,9 +73,9 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
             <button key={t} onClick={() => { setTab(t); setErr('') }}
               className="flex-1 py-[9px] rounded-[10px] text-[13px] font-bold cursor-pointer border-none transition-all"
               style={{
-                background: tab === t ? 'var(--accent)' : 'rgba(255,255,255,.06)',
+                background: tab === t ? 'var(--accent)' : 'var(--surface-white-6)',
                 border:     tab === t ? '1px solid var(--accent)' : '1px solid var(--gb)',
-                color:      tab === t ? '#fff' : 'var(--muted)',
+                color:      tab === t ? 'var(--text-on-accent)' : 'var(--muted)',
                 fontFamily: 'inherit',
               }}>
               {t === 'create' ? '＋ Создать группу' : 'Войти по коду'}
@@ -85,7 +85,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
 
         {hasTg && (
           <div className="rounded-xl px-3 py-[10px] mb-3 text-[12px]"
-            style={{ background: 'rgba(255,255,255,.06)', border: '1px solid var(--gb)', color: 'var(--muted)' }}>
+            style={{ background: 'var(--surface-white-6)', border: '1px solid var(--gb)', color: 'var(--muted)' }}>
             <span className="inline-flex items-center gap-[5px]">
               <IconPerson size={12} strokeWidth={2} /> Войдёшь как <b style={{ color: 'var(--text)' }}>{me!.name}</b>
             </span>
@@ -109,7 +109,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
             </div>
             <button onClick={doCreate}
               className="w-full py-[14px] rounded-[12px] border-none text-[15px] font-extrabold cursor-pointer mt-1"
-              style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
+              style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}>
               Создать пикник
             </button>
           </div>
@@ -124,7 +124,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
             </div>
             <button onClick={doJoin}
               className="w-full py-[14px] rounded-[12px] border-none text-[15px] font-extrabold cursor-pointer mt-1"
-              style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
+              style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}>
               Присоединиться
             </button>
           </div>

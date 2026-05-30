@@ -103,14 +103,7 @@ export function SummaryScreen() {
     <div className="px-3.5 pt-2 pb-8 relative">
 
       {/* Hero */}
-      <div
-        className="rounded-[20px] p-[22px] mb-3"
-        style={{
-          background: 'linear-gradient(135deg,rgba(249,115,22,.22),rgba(251,191,36,.12))',
-          border: '1px solid rgba(249,115,22,.28)',
-          backdropFilter: 'blur(20px)',
-        }}
-      >
+      <div className="hero-card hero-card--summary rounded-[var(--r-lg)] p-[22px] mb-3">
         {/* Куплено / На человека */}
         <div className="grid grid-cols-2 gap-[14px]">
           <div>
@@ -121,10 +114,10 @@ export function SummaryScreen() {
             <div className="text-[11px] mt-[3px]" style={{ opacity: .65 }}>
               {boughtCount} из {enabledLen} позиций
             </div>
-            <div className="h-[5px] rounded-full mt-[8px] overflow-hidden" style={{ background: 'rgba(255,255,255,.15)' }}>
+            <div className="h-[5px] rounded-full mt-[8px] overflow-hidden progress-track">
               <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{ width: `${pct}%`, background: 'linear-gradient(90deg,var(--accent),var(--green))' }}
+                className="h-full rounded-full transition-all duration-500 progress-fill"
+                style={{ width: `${pct}%` }}
               />
             </div>
           </div>
@@ -141,14 +134,14 @@ export function SummaryScreen() {
         {myTransfers.length > 0 && (
           <div
             className="mt-4 pt-3.5 flex items-center gap-3"
-            style={{ borderTop: '1px solid rgba(255,255,255,.14)' }}
+            style={{ borderTop: '1px solid var(--surface-white-14)' }}
           >
             {/* Иконка направления */}
             <div
               className="size-[38px] rounded-[12px] flex items-center justify-center shrink-0"
               style={{
-                background: iSend ? 'rgba(0,0,0,.22)' : 'rgba(74,222,128,.2)',
-                color:      iSend ? '#fff'            : 'var(--green)',
+                background: iSend ? 'var(--surface-scrim-light)' : 'var(--surface-success-20)',
+                color:      iSend ? 'var(--text-on-accent)'            : 'var(--green)',
               }}
             >
               {iSend
@@ -183,7 +176,7 @@ export function SummaryScreen() {
                   navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
                 }}
                 className="size-[34px] rounded-[10px] flex items-center justify-center shrink-0 border-none cursor-pointer"
-                style={{ background: 'rgba(0,0,0,.22)', color: '#fff' }}
+                style={{ background: 'var(--surface-scrim-light)', color: 'var(--text-on-accent)' }}
               >
                 <IconClipboard size={14} />
               </button>
@@ -237,8 +230,8 @@ export function SummaryScreen() {
         disabled={loading}
         className="w-full py-3.5 rounded-md text-sm font-extrabold flex items-center justify-center gap-2 cursor-pointer mb-3"
         style={{
-          background: 'linear-gradient(90deg, rgba(96,165,250,.1), rgba(167,139,250,.08))',
-          border: '1px solid rgba(96,165,250,.25)',
+          background: 'var(--gradient-agent-panel)',
+          border: '1px solid var(--border-info)',
           color: 'var(--text)',
           opacity: loading ? 0.6 : 1,
           fontFamily: 'inherit',
@@ -300,7 +293,7 @@ export function SummaryScreen() {
       <button
         onClick={shareList}
         className="w-full py-[15px] rounded-[14px] border-none text-[14px] font-extrabold cursor-pointer flex items-center justify-center gap-2"
-        style={{ background: 'linear-gradient(90deg,var(--accent),var(--accent2))', color: '#fff', fontFamily: 'inherit' }}
+        style={{ background: 'var(--gradient-cta)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}
       >
         <IconShare size={15} strokeWidth={2} /> Поделиться списком
       </button>

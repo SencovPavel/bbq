@@ -81,7 +81,7 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
         <div className="grid grid-cols-2 gap-[10px]">
           <button onClick={onCreate}
             className="py-[14px] rounded-[14px] border-none text-[14px] font-extrabold cursor-pointer"
-            style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}>
+            style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}>
             ＋ Новая группа
           </button>
           <button onClick={onJoin}

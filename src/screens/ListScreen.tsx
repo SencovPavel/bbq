@@ -26,9 +26,24 @@ const sortItemsByName = (list: Item[]) =>
 
 type Source = 'chat' | 'agent' | 'manual'
 const SOURCE_MAP: Record<Source, { bg: string; border: string; color: string; label: string }> = {
-  chat:   { bg: 'rgba(96,165,250,.12)',  border: 'rgba(96,165,250,.25)',  color: '#93c5fd',        label: 'из чата'  },
-  agent:  { bg: 'rgba(255,107,53,.12)', border: 'rgba(255,107,53,.25)', color: 'var(--accent2)', label: 'агент'    },
-  manual: { bg: 'rgba(255,255,255,.06)',border: 'rgba(255,255,255,.14)',color: 'var(--muted)',   label: 'вручную'  },
+  chat: {
+    bg: 'var(--surface-info-12)',
+    border: 'var(--border-info)',
+    color: 'var(--color-info-muted)',
+    label: 'из чата',
+  },
+  agent: {
+    bg: 'var(--surface-fire-12)',
+    border: 'var(--surface-fire-25)',
+    color: 'var(--accent2)',
+    label: 'агент',
+  },
+  manual: {
+    bg: 'var(--surface-white-6)',
+    border: 'var(--surface-white-14)',
+    color: 'var(--muted)',
+    label: 'вручную',
+  },
 }
 
 function SourceBadge({ source }: { source: Source }) {
@@ -157,7 +172,7 @@ function ItemRow({ item, meId, readOnly = false, onUpdate, onBuyerTap, onOpenAct
                 minWidth: 0,
                 padding: '2px 8px',
                 border: '1px solid var(--accent)',
-                background: 'rgba(249,115,22,.08)',
+                background: 'var(--surface-fire-8)',
                 color: 'var(--text)',
               }}
             />
@@ -179,8 +194,8 @@ function ItemRow({ item, meId, readOnly = false, onUpdate, onBuyerTap, onOpenAct
           className="inline-flex items-center gap-1 rounded-pill text-xs font-extrabold shrink-0 border"
           style={{
             padding: '3px 8px',
-            background: isMe ? 'rgba(249,115,22,.15)' : 'transparent',
-            borderColor: isMe ? 'rgba(249,115,22,.4)' : 'var(--gb)',
+            background: isMe ? 'var(--surface-fire-15)' : 'transparent',
+            borderColor: isMe ? 'var(--surface-fire-40)' : 'var(--gb)',
             color: isMe ? 'var(--accent)' : 'var(--muted)',
             fontFamily: 'inherit',
             cursor: readOnly ? 'default' : 'pointer',
@@ -200,7 +215,7 @@ function ItemRow({ item, meId, readOnly = false, onUpdate, onBuyerTap, onOpenAct
 
         <div
           className="flex items-center shrink-0 rounded-sm p-px"
-          style={{ background: 'rgba(255,240,200,.04)', border: '1px solid var(--gb)' }}
+          style={{ background: 'var(--surface-subtle)', border: '1px solid var(--gb)' }}
         >
           <button
             type="button"
@@ -437,7 +452,7 @@ export function ListScreen() {
             <div className="flex items-center gap-[10px] px-[15px] py-[13px] cursor-pointer select-none"
               onClick={() => toggleCat(cat.id)}>
               <div className="flex items-center justify-center rounded-[10px] text-[18px] flex-shrink-0"
-                style={{ width: 36, height: 36, background: 'rgba(255,255,255,.08)', border: '1px solid var(--gbs)' }}>
+                style={{ width: 36, height: 36, background: 'var(--surface-white-8)', border: '1px solid var(--gbs)' }}>
                 {cat.icon}
               </div>
               <div className="text-[14px] font-extrabold flex-1">{cat.title}</div>
@@ -476,7 +491,7 @@ export function ListScreen() {
                     <Divider />
                     <button onClick={() => setAddModal(cat.id)}
                       className="w-full py-[10px] border-none bg-transparent text-[12px] font-bold flex items-center justify-center gap-[5px] cursor-pointer"
-                      style={{ borderTop: '1px dashed rgba(255,255,255,.1)', color: 'var(--muted)', fontFamily: 'inherit' }}>
+                      style={{ borderTop: '1px dashed var(--surface-white-10)', color: 'var(--muted)', fontFamily: 'inherit' }}>
                       ＋ Добавить в «{cat.title}»
                     </button>
                   </>
@@ -521,7 +536,7 @@ export function ListScreen() {
             <button key={em} onClick={() => setEmoji(em)}
               className="text-xl p-[6px] rounded-[8px] cursor-pointer border-none text-center"
               style={{
-                background: 'rgba(255,255,255,.08)',
+                background: 'var(--surface-white-8)',
                 border: selectedEmoji === em ? '1px solid var(--accent)' : '1px solid transparent',
                 fontFamily: 'inherit',
               }}>
@@ -569,9 +584,9 @@ export function ListScreen() {
               <button key={m.user_id} onClick={() => assignBuyer(m.user_id, m.name)}
                 className="py-[9px] px-1 rounded-[10px] text-[12px] font-bold cursor-pointer border-none text-center"
                 style={{
-                  background: active ? 'var(--accent)' : 'rgba(255,255,255,.08)',
+                  background: active ? 'var(--accent)' : 'var(--surface-white-8)',
                   border:     active ? '1px solid var(--accent)' : '1px solid var(--gb)',
-                  color:      active ? '#fff' : 'var(--text)', fontFamily: 'inherit',
+                  color:      active ? 'var(--text-on-accent)' : 'var(--text)', fontFamily: 'inherit',
                 }}>
                 {m.name}{m.user_id === me?.id ? ' (я)' : ''}
               </button>

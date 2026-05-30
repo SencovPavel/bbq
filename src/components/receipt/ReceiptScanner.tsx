@@ -45,7 +45,7 @@ export function ReceiptScanner({ open, onClose }: ReceiptScannerProps) {
         type="button"
         onClick={handleSubmit}
         className="w-full py-3 rounded-md border-none text-sm font-extrabold cursor-pointer"
-        style={{ background: 'var(--accent)', color: '#fff', fontFamily: 'inherit' }}
+        style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}
       >
         Продолжить
       </button>
