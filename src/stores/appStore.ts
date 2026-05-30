@@ -44,7 +44,7 @@ export const useAppStore = create<AppStore>((set) => ({
     const ui = loadGroupUi(groupId)
     set({
       tab: ui.tab,
-      currentEventId: ui.currentEventId,
+      currentEventId: null, // авто-выбор активного события при входе в группу
     })
   },
   enterEvent: (id) => {
