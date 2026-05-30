@@ -23,7 +23,3 @@ export function clearGroupSession(): void {
 export function fmt(n: number): string {
   return new Intl.NumberFormat('ru-RU').format(Math.round(n)) + '₽'
 }
-
-export function uid(): string {
-  return 'u_' + Math.random().toString(36).slice(2, 10)
-}
