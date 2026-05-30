@@ -3,10 +3,12 @@ import { useState } from 'react'
 import { GlassCard, Divider } from '../components/GlassCard'
 import { ConfirmModal } from '../components/ConfirmModal'
 import { EventDescriptionModal } from '../components/EventDescriptionModal'
+import { EventEditModal } from '../components/EventEditModal'
 import { NoEventsPrompt } from '../components/NoEventsPrompt'
 import { OfflineBanner } from '../components/states/OfflineBanner'
 import {
   IconCalendar,
+  IconCheckCircle,
   IconClipboard,
   IconCrown,
   IconLogOut,
@@ -24,6 +26,8 @@ import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
+
+import type { PicnicEvent } from '../types'
 
 export function EventScreen() {
   const serverState = useWsStore(s => s.serverState)
@@ -45,6 +49,7 @@ export function EventScreen() {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [confirmComplete, setConfirmComplete] = useState(false)
   const [showDescriptionEdit, setShowDescriptionEdit] = useState(false)
+  const [showEventEdit, setShowEventEdit] = useState(false)
 
   const { members = [], items = [], group, events = [] } = serverState ?? {}
   const currentEvent = currentEventId ? events.find(e => e.id === currentEventId) : undefined
@@ -65,6 +70,13 @@ export function EventScreen() {
     sendEventUpdates(send, currentEvent.id, { description })
     showToast('Заметки сохранены')
     setShowDescriptionEdit(false)
+  }
+
+  const handleSaveEvent = (data: Partial<Pick<PicnicEvent, 'name' | 'event_date' | 'event_time' | 'location'>>) => {
+    if (!currentEvent) return
+    sendEventUpdates(send, currentEvent.id, data)
+    showToast('Событие обновлено')
+    setShowEventEdit(false)
   }
 
   const copyCode = () => {
@@ -145,38 +157,44 @@ export function EventScreen() {
                     }
               }
             >
-              {eventIsActive ? 'Текущее событие' : 'Завершённое событие'}
+              {!eventIsActive && <IconCheckCircle size={11} strokeWidth={2.2} />}
+              {eventIsActive ? 'Текущее событие' : 'Завершено'}
             </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              {canCompleteEvent && (
+            {amIAdmin && currentEvent && (
+              <div className="flex items-center gap-1.5 shrink-0">
+                {canCompleteEvent && (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmComplete(true)}
+                    aria-label="Завершить событие"
+                    title="Завершить событие"
+                    className="size-8 rounded-sm flex items-center justify-center border cursor-pointer"
+                    style={{
+                      background: 'rgba(34,197,94,.12)',
+                      borderColor: 'rgba(34,197,94,.35)',
+                      color: '#4ade80',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    <IconCheckCircle size={15} strokeWidth={2} />
+                  </button>
+                )}
                 <button
                   type="button"
-                  onClick={() => setConfirmComplete(true)}
-                  className="px-2.5 py-1.5 rounded-sm border text-[11px] font-extrabold cursor-pointer whitespace-nowrap"
+                  onClick={() => setShowEventEdit(true)}
+                  aria-label="Редактировать событие"
+                  title="Редактировать событие"
+                  className="size-8 rounded-sm flex items-center justify-center border cursor-pointer"
                   style={{
-                    background: 'rgba(249,115,22,.14)',
-                    borderColor: 'rgba(249,115,22,.45)',
-                    color: 'var(--accent-2)',
-                    fontFamily: 'inherit',
+                    background: 'rgba(255,255,255,.06)',
+                    borderColor: 'var(--gb)',
+                    color: 'var(--muted)',
                   }}
                 >
-                  Завершить
+                  <IconPencil size={13} />
                 </button>
-              )}
-              <button
-                type="button"
-                onClick={() => setShowEventSheet(true)}
-                className="size-8 rounded-sm flex items-center justify-center border cursor-pointer"
-                style={{
-                  background: 'rgba(255,255,255,.06)',
-                  borderColor: 'var(--gb)',
-                  color: 'var(--muted)',
-                }}
-                title="Сменить событие"
-              >
-                <IconPencil size={13} />
-              </button>
-            </div>
+              </div>
+            )}
           </div>
           <div className="text-xl font-black tracking-tight mb-1">
             {currentEvent?.name ?? 'Событие не выбрано'}
@@ -249,6 +267,15 @@ export function EventScreen() {
             </p>
           )}
         </div>
+      )}
+
+      {currentEvent && (
+        <EventEditModal
+          open={showEventEdit}
+          event={currentEvent}
+          onClose={() => setShowEventEdit(false)}
+          onSave={handleSaveEvent}
+        />
       )}
 
       {currentEvent && (
