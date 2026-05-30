@@ -28,7 +28,7 @@ export function useWebSocket(groupId: string | null): void {
     })
   }, [setSend])
 
-  const connect = useCallback(() => {
+  const connect = useCallback(function connectWs() {
     if (!groupId) return
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:'
     const ws = new WebSocket(`${proto}//${location.host}/ws`)
@@ -94,7 +94,7 @@ export function useWebSocket(groupId: string | null): void {
 
     ws.onclose = () => {
       setWsOk(false)
-      reconnRef.current = setTimeout(connect, 3000)
+      reconnRef.current = setTimeout(connectWs, 3000)
     }
 
     ws.onerror = () => ws.close()

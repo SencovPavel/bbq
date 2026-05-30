@@ -14,7 +14,7 @@ describe('fmt', () => {
   })
 
   it('добавляет пробел-разделитель тысяч для 1850', () => {
-    // Intl.NumberFormat('ru-RU') использует   (неразрывный пробел)
+    // Intl.NumberFormat('ru-RU') может использовать неразрывный пробел (U+00A0)
     const result = fmt(1850)
     expect(result.replace(/\s/g, ' ')).toBe('1 850₽')
   })

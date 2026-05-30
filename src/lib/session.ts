@@ -4,7 +4,9 @@ export function saveSession(me: User, groupId: string): void {
   try {
     sessionStorage.setItem('picnic_me', JSON.stringify(me))
     sessionStorage.setItem('picnic_group', groupId)
-  } catch {}
+  } catch {
+    // sessionStorage недоступен (приватный режим и т.п.)
+  }
 }
 
 export function loadSession(): { me: User; groupId: string } | null {
@@ -12,12 +14,18 @@ export function loadSession(): { me: User; groupId: string } | null {
     const me      = sessionStorage.getItem('picnic_me')
     const groupId = sessionStorage.getItem('picnic_group')
     if (me && groupId) return { me: JSON.parse(me) as User, groupId }
-  } catch {}
+  } catch {
+    // повреждённые данные в sessionStorage
+  }
   return null
 }
 
 export function clearGroupSession(): void {
-  try { sessionStorage.removeItem('picnic_group') } catch {}
+  try {
+    sessionStorage.removeItem('picnic_group')
+  } catch {
+    // sessionStorage недоступен
+  }
 }
 
 export function fmt(n: number): string {
