@@ -5,7 +5,6 @@ import { ConfirmModal } from '../components/ConfirmModal'
 import { EventDescriptionModal } from '../components/EventDescriptionModal'
 import { EventEditModal } from '../components/EventEditModal'
 import { NoEventsPrompt } from '../components/NoEventsPrompt'
-import { OfflineBanner } from '../components/states/OfflineBanner'
 import {
   IconCalendar,
   IconCheckCircle,
@@ -31,7 +30,6 @@ import type { PicnicEvent } from '../types'
 
 export function EventScreen() {
   const serverState = useWsStore(s => s.serverState)
-  const wsOk        = useWsStore(s => s.wsOk)
   const send        = useWsStore(s => s.send)
   const resetWs     = useWsStore(s => s.reset)
   const me          = useSessionStore(s => s.me)
@@ -116,7 +114,6 @@ export function EventScreen() {
   if (!events.length) {
     return (
       <div className="px-3.5 pt-2 pb-8 relative">
-        {!wsOk && <OfflineBanner />}
         <NoEventsPrompt isAdmin={amIAdmin} onCreate={() => setShowEventSheet(true)} />
       </div>
     )
@@ -124,7 +121,6 @@ export function EventScreen() {
 
   return (
     <div className="px-3.5 pt-2 pb-8 relative">
-      {!wsOk && <OfflineBanner />}
 
       {/* Hero события */}
       <div

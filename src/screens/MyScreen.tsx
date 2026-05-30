@@ -2,7 +2,6 @@ import { useState } from 'react'
 
 import { NoEventsPrompt } from '../components/NoEventsPrompt'
 import { EmptyState } from '../components/states/EmptyState'
-import { OfflineBanner } from '../components/states/OfflineBanner'
 import { UserAvatar } from '../components/UserAvatar'
 import { ReceiptScanner } from '../components/receipt/ReceiptScanner'
 import { IconCart, IconCheck, IconQrScan } from '../components/Icon'
@@ -17,7 +16,6 @@ import { useWsStore } from '../stores/wsStore'
 
 export function MyScreen() {
   const serverState    = useWsStore(s => s.serverState)
-  const wsOk           = useWsStore(s => s.wsOk)
   const send           = useWsStore(s => s.send)
   const me             = useSessionStore(s => s.me)
   const showToast      = useToastStore(s => s.show)
@@ -62,7 +60,6 @@ export function MyScreen() {
   if (!events.length) {
     return (
       <div className="px-3.5 pt-2 pb-8 relative">
-        {!wsOk && <OfflineBanner />}
         <NoEventsPrompt isAdmin={amIAdmin} onCreate={() => setShowEventSheet(true)} />
       </div>
     )
@@ -71,7 +68,6 @@ export function MyScreen() {
   return (
     <>
       <div className="px-3.5 pt-2 pb-8 relative">
-        {!wsOk && <OfflineBanner />}
         {listLocked && <CompletedEventBanner />}
 
         <div className="glass rounded-lg p-5 mb-3">

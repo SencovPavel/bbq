@@ -12,7 +12,6 @@ import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
 import { NoEventsPrompt } from '../components/NoEventsPrompt'
 import { EmptyState } from '../components/states/EmptyState'
-import { OfflineBanner } from '../components/states/OfflineBanner'
 import { CompletedEventBanner } from '../components/states/CompletedEventBanner'
 import { isEventItemsLocked } from '../lib/event-status'
 import { ItemActionsSheet } from '../components/list/ItemActionsSheet'
@@ -253,7 +252,7 @@ function ItemRow({ item, meId, readOnly = false, onUpdate, onBuyerTap, onOpenAct
 }
 
 export function ListScreen() {
-  const { serverState, send, wsOk } = useWsStore()
+  const { serverState, send } = useWsStore()
   const me             = useSessionStore(s => s.me)
   const groupId        = useSessionStore(s => s.groupId)
   const showToast      = useToastStore(s => s.show)
@@ -387,7 +386,6 @@ export function ListScreen() {
   if (!events.length) {
     return (
       <div className="px-3.5 pt-2 pb-8 relative">
-        {!wsOk && <OfflineBanner />}
         <NoEventsPrompt
           isAdmin={amIAdmin}
           onCreate={() => setShowEventSheet(true)}
@@ -398,7 +396,6 @@ export function ListScreen() {
 
   return (
     <div className="px-3.5 pt-2 pb-8 relative">
-      {!wsOk && <OfflineBanner />}
       {listLocked && <CompletedEventBanner />}
 
       {categories.length > 0 && (

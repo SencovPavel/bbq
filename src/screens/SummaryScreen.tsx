@@ -9,7 +9,6 @@ import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
 import { NoEventsPrompt } from '../components/NoEventsPrompt'
-import { OfflineBanner } from '../components/states/OfflineBanner'
 import {
   IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle,
   IconReceipt, IconClipboard, IconChevronUp, IconChevronDown,
@@ -20,7 +19,6 @@ import type { AnalysisResult } from '../types'
 
 export function SummaryScreen() {
   const serverState    = useWsStore(s => s.serverState)
-  const wsOk           = useWsStore(s => s.wsOk)
   const groupId        = useSessionStore(s => s.groupId)
   const showToast      = useToastStore(s => s.show)
   const currentEventId    = useAppStore(s => s.currentEventId)
@@ -96,7 +94,6 @@ export function SummaryScreen() {
   if (!events.length) {
     return (
       <div className="px-3.5 pt-2 pb-8 relative">
-        {!wsOk && <OfflineBanner />}
         <NoEventsPrompt isAdmin={amIAdmin} onCreate={() => setShowEventSheet(true)} />
       </div>
     )
@@ -104,7 +101,6 @@ export function SummaryScreen() {
 
   return (
     <div className="px-3.5 pt-2 pb-8 relative">
-      {!wsOk && <OfflineBanner />}
 
       {/* Hero */}
       <div

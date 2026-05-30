@@ -8,7 +8,6 @@ import type { ReactNode } from 'react'
 interface AppShellProps {
   children: ReactNode
   group: Group | undefined
-  wsOk: boolean
   currentEvent: PicnicEvent | undefined
   tab: Tab
   slideKey: number
@@ -20,7 +19,6 @@ interface AppShellProps {
 export function AppShell({
   children,
   group,
-  wsOk,
   currentEvent,
   tab,
   slideKey,

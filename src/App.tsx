@@ -5,6 +5,7 @@ import { AppShell } from './components/AppShell'
 import { WebPageLayout } from './components/WebPageLayout'
 import { EventSheet } from './components/EventSheet'
 import { Toast } from './components/Toast'
+import { OfflineBanner } from './components/states/OfflineBanner'
 import { ListScreen } from './screens/ListScreen'
 import { SummaryScreen } from './screens/SummaryScreen'
 import { MyScreen } from './screens/MyScreen'
@@ -64,7 +65,6 @@ export default function App() {
   const setGroupId = useSessionStore(s => s.setGroupId)
 
   const serverState = useWsStore(s => s.serverState)
-  const wsOk        = useWsStore(s => s.wsOk)
   const resetWs     = useWsStore(s => s.reset)
   const showToast   = useToastStore(s => s.show)
 
@@ -262,7 +262,6 @@ export default function App() {
       <Blobs />
       <AppShell
         group={serverState?.group}
-        wsOk={wsOk}
         currentEvent={currentEvent}
         tab={tab}
         slideKey={slideKey}
@@ -276,6 +275,7 @@ export default function App() {
         {tab === 'members' && <EventScreen />}
       </AppShell>
       <EventSheet />
+      <OfflineBanner />
       <Toast />
     </div>
   )
