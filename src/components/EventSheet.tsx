@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useWsStore } from '../stores/wsStore'
 import { useAppStore } from '../stores/appStore'
+import { useSessionStore } from '../stores/sessionStore'
 import { IconCheck, IconMapPin, IconCalendar } from './Icon'
 import type { PicnicEvent } from '../types'
 
@@ -77,6 +78,9 @@ export function EventSheet() {
   const enterEvent      = useAppStore(s => s.enterEvent)
   const exitEvent       = useAppStore(s => s.exitEvent)
   const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
+  const me              = useSessionStore(s => s.me)
+
+  const isAdmin = !!serverState?.members.find(m => m.user_id === me?.id)?.is_admin
 
   const [showCreate, setShowCreate] = useState(false)
 
@@ -183,21 +187,23 @@ export function EventSheet() {
                         )}
                       </div>
                     </button>
-                    <button
-                      onClick={() => handleComplete(e)}
-                      className="rounded-[12px] border-none cursor-pointer text-[10px] font-bold flex-shrink-0"
-                      style={{
-                        padding: '0 12px',
-                        background: 'rgba(255,255,255,.05)',
-                        border: '1px solid rgba(255,255,255,.08)',
-                        color: 'var(--muted)',
-                        fontFamily: 'inherit',
-                        lineHeight: 1,
-                      }}
-                      title="Завершить событие"
-                    >
-                      Завершить
-                    </button>
+                    {isAdmin && (
+                      <button
+                        onClick={() => handleComplete(e)}
+                        className="rounded-[12px] border-none cursor-pointer text-[10px] font-bold flex-shrink-0"
+                        style={{
+                          padding: '0 12px',
+                          background: 'rgba(255,255,255,.05)',
+                          border: '1px solid rgba(255,255,255,.08)',
+                          color: 'var(--muted)',
+                          fontFamily: 'inherit',
+                          lineHeight: 1,
+                        }}
+                        title="Завершить событие"
+                      >
+                        Завершить
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -236,18 +242,20 @@ export function EventSheet() {
               </div>
             )}
 
-            {/* Create button */}
-            <button
-              onClick={() => setShowCreate(true)}
-              className="w-full mt-3 py-[12px] rounded-[12px] border-none cursor-pointer font-bold text-[13px] flex items-center justify-center gap-2"
-              style={{
-                background: 'transparent',
-                border: '1px dashed rgba(255,255,255,.15)',
-                color: 'rgba(245,240,234,.4)',
-                fontFamily: 'inherit',
-              }}>
-              + Новое событие
-            </button>
+            {/* Create button — только для админов */}
+            {isAdmin && (
+              <button
+                onClick={() => setShowCreate(true)}
+                className="w-full mt-3 py-[12px] rounded-[12px] border-none cursor-pointer font-bold text-[13px] flex items-center justify-center gap-2"
+                style={{
+                  background: 'transparent',
+                  border: '1px dashed rgba(255,255,255,.15)',
+                  color: 'rgba(245,240,234,.4)',
+                  fontFamily: 'inherit',
+                }}>
+                + Новое событие
+              </button>
+            )}
           </>
         ) : (
           <EventCreateModal
