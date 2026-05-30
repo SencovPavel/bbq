@@ -44,6 +44,10 @@ export function IconChevronDown(props: IconProps) {
   return icon(props, <path d="M6 9l6 6 6-6" />)
 }
 
+export function IconChevronUp(props: IconProps) {
+  return icon(props, <path d="M18 15l-6-6-6 6" />)
+}
+
 export function IconQrScan({ size = 15, strokeWidth = 2 }: IconProps) {
   return icon(
     { size, strokeWidth },

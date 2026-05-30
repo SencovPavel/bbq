@@ -9,8 +9,12 @@ import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
 import { OfflineBanner } from '../components/states/OfflineBanner'
-import { IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle, IconReceipt, IconClipboard } from '../components/Icon'
+import {
+  IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle,
+  IconReceipt, IconClipboard, IconChevronUp, IconChevronDown,
+} from '../components/Icon'
 import { calcSettlement } from '../lib/settlement'
+import { ActivityFeed } from '../components/ActivityFeed'
 import type { AnalysisResult } from '../types'
 
 export function SummaryScreen() {
@@ -36,11 +40,22 @@ export function SummaryScreen() {
 
   const me = useSessionStore(s => s.me)
 
-  const { categories = [], items = [], members = [] } = serverState ?? {}
+  const { categories = [], items = [], members = [], activity = [] } = serverState ?? {}
   const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson } = calcSummary(items, members, currentEventId)
   const { transfers } = calcSettlement(items, members, currentEventId)
   const enabled = currentEventId ? items.filter(i => i.event_id === currentEventId && i.enabled) : items.filter(i => i.enabled)
   const ppl     = members.length
+
+  // ── Личный баланс ─────────────────────────────────────────────────────────
+  const myTransfers    = transfers.filter(t => t.fromId === me?.id || t.toId === me?.id)
+  const iSendTotal     = myTransfers.filter(t => t.fromId === me?.id).reduce((s, t) => s + t.amount, 0)
+  const iGetTotal      = myTransfers.filter(t => t.toId   === me?.id).reduce((s, t) => s + t.amount, 0)
+  const net            = iGetTotal - iSendTotal   // >0 — вернут, <0 — перевести
+  const iSend          = net < 0
+  const singleTransfer = myTransfers.length === 1 ? myTransfers[0] : null
+  const counterparty   = singleTransfer
+    ? (singleTransfer.fromId === me?.id ? singleTransfer.toName : singleTransfer.fromName)
+    : null
 
   async function runAnalysis() {
     if (!groupId) return
@@ -78,30 +93,95 @@ export function SummaryScreen() {
   return (
     <div className="px-3.5 pt-2 pb-8 relative">
       {!wsOk && <OfflineBanner />}
+
       {/* Hero */}
-      <div className="rounded-[20px] p-[22px] mb-3 grid grid-cols-2 gap-[14px]"
-        style={{ background: 'linear-gradient(135deg,rgba(249,115,22,.22),rgba(251,191,36,.12))',
-                 border: '1px solid rgba(249,115,22,.28)', backdropFilter: 'blur(20px)' }}>
-        <div>
-          <div className="text-[10px] font-bold uppercase tracking-[.08em] mb-[5px]" style={{ opacity: .65 }}>Куплено</div>
-          <div className="text-[26px] font-black tracking-tight">
-            {actualTotal > 0 ? fmt(actualTotal) : `${enabledLen} поз.`}
+      <div
+        className="rounded-[20px] p-[22px] mb-3"
+        style={{
+          background: 'linear-gradient(135deg,rgba(249,115,22,.22),rgba(251,191,36,.12))',
+          border: '1px solid rgba(249,115,22,.28)',
+          backdropFilter: 'blur(20px)',
+        }}
+      >
+        {/* Куплено / На человека */}
+        <div className="grid grid-cols-2 gap-[14px]">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-[.08em] mb-[5px]" style={{ opacity: .65 }}>Куплено</div>
+            <div className="text-[26px] font-black tracking-tight">
+              {actualTotal > 0 ? fmt(actualTotal) : `${enabledLen} поз.`}
+            </div>
+            <div className="text-[11px] mt-[3px]" style={{ opacity: .65 }}>
+              {boughtCount} из {enabledLen} позиций
+            </div>
+            <div className="h-[5px] rounded-full mt-[8px] overflow-hidden" style={{ background: 'rgba(255,255,255,.15)' }}>
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${pct}%`, background: 'linear-gradient(90deg,var(--accent),var(--green))' }}
+              />
+            </div>
           </div>
-          <div className="text-[11px] mt-[3px]" style={{ opacity: .65 }}>
-            {boughtCount} из {enabledLen} позиций
-          </div>
-          <div className="h-[5px] rounded-full mt-[8px] overflow-hidden" style={{ background: 'rgba(255,255,255,.15)' }}>
-            <div className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${pct}%`, background: 'linear-gradient(90deg,var(--accent),var(--green))' }} />
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-[.08em] mb-[5px]" style={{ opacity: .65 }}>На человека</div>
+            <div className="text-[26px] font-black tracking-tight">
+              {perPerson !== null ? fmt(perPerson) : '—'}
+            </div>
+            <div className="text-[11px] mt-[3px]" style={{ opacity: .65 }}>из {ppl} чел.</div>
           </div>
         </div>
-        <div>
-          <div className="text-[10px] font-bold uppercase tracking-[.08em] mb-[5px]" style={{ opacity: .65 }}>На человека</div>
-          <div className="text-[26px] font-black tracking-tight">
-            {perPerson !== null ? fmt(perPerson) : '—'}
+
+        {/* Личный баланс — полная ширина под двумя колонками */}
+        {myTransfers.length > 0 && (
+          <div
+            className="mt-4 pt-3.5 flex items-center gap-3"
+            style={{ borderTop: '1px solid rgba(255,255,255,.14)' }}
+          >
+            {/* Иконка направления */}
+            <div
+              className="size-[38px] rounded-[12px] flex items-center justify-center shrink-0"
+              style={{
+                background: iSend ? 'rgba(0,0,0,.22)' : 'rgba(74,222,128,.2)',
+                color:      iSend ? '#fff'            : 'var(--green)',
+              }}
+            >
+              {iSend
+                ? <IconChevronUp   size={18} strokeWidth={2.6} />
+                : <IconChevronDown size={18} strokeWidth={2.6} />}
+            </div>
+
+            {/* Подпись + контрагент */}
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-extrabold uppercase tracking-[.1em]" style={{ opacity: .7 }}>
+                {iSend ? 'Тебе перевести' : 'Тебе вернут'}
+              </div>
+              <div className="text-[15px] font-extrabold mt-0.5 truncate">
+                {singleTransfer
+                  ? (iSend ? `→ ${counterparty}` : `← ${counterparty}`)
+                  : `${myTransfers.length} перевода`}
+              </div>
+            </div>
+
+            {/* Нетто-сумма */}
+            <div className="text-[20px] font-black tracking-tight tabular-nums shrink-0">
+              {fmt(Math.abs(net))}
+            </div>
+
+            {/* Копировать — только при одном переводе */}
+            {singleTransfer && (
+              <button
+                type="button"
+                title="Скопировать"
+                onClick={() => {
+                  const text = `${singleTransfer.fromName} → ${singleTransfer.toName}: ${fmt(singleTransfer.amount)}`
+                  navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
+                }}
+                className="size-[34px] rounded-[10px] flex items-center justify-center shrink-0 border-none cursor-pointer"
+                style={{ background: 'rgba(0,0,0,.22)', color: '#fff' }}
+              >
+                <IconClipboard size={14} />
+              </button>
+            )}
           </div>
-          <div className="text-[11px] mt-[3px]" style={{ opacity: .65 }}>из {ppl} чел.</div>
-        </div>
+        )}
       </div>
 
       {/* Empty state */}
@@ -140,54 +220,13 @@ export function SummaryScreen() {
         })}
       </GlassCard>
 
-      {/* Settlement */}
-      {transfers.length > 0 && (
-        <GlassCard>
-          <div className="px-[15px] pt-[12px] pb-[4px]">
-            <div className="text-[10px] font-extrabold uppercase tracking-[.09em] mb-[10px]"
-              style={{ color: 'var(--muted)' }}>
-              Переводы
-            </div>
-            {transfers.map((t, i) => {
-              const isMe = t.fromId === me?.id
-              return (
-                <div key={i}
-                  className="flex items-center justify-between py-[9px] border-b last:border-none"
-                  style={{ borderColor: 'var(--gb)' }}>
-                  <div className="flex items-center gap-[6px] min-w-0">
-                    <span className="text-[13px] font-bold truncate"
-                      style={{ color: isMe ? 'var(--accent)' : 'var(--text)' }}>
-                      {t.fromName}
-                    </span>
-                    <span className="text-[11px]" style={{ color: 'var(--muted)', flexShrink: 0 }}>→</span>
-                    <span className="text-[13px] font-bold truncate" style={{ color: 'var(--text)' }}>
-                      {t.toName}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-[8px] flex-shrink-0 ml-2">
-                    <span className="text-[14px] font-black"
-                      style={{ color: isMe ? 'var(--accent)' : 'var(--text)' }}>
-                      {fmt(t.amount)}
-                    </span>
-                    <button
-                      onClick={() => {
-                        const text = `${t.fromName} → ${t.toName}: ${fmt(t.amount)}`
-                        navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
-                      }}
-                      className="border-none cursor-pointer p-[4px] rounded-[6px]"
-                      style={{ background: 'rgba(255,255,255,.06)', color: 'var(--muted)', lineHeight: 0 }}>
-                      <IconClipboard size={12} />
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </GlassCard>
-      )}
+      {/* Activity feed */}
+      <ActivityFeed activity={activity} />
 
       {/* Agent */}
-      <button onClick={runAnalysis} disabled={loading}
+      <button
+        onClick={runAnalysis}
+        disabled={loading}
         className="w-full py-3.5 rounded-md text-sm font-extrabold flex items-center justify-center gap-2 cursor-pointer mb-3"
         style={{
           background: 'linear-gradient(90deg, rgba(96,165,250,.1), rgba(167,139,250,.08))',
@@ -250,9 +289,11 @@ export function SummaryScreen() {
         </GlassCard>
       )}
 
-      <button onClick={shareList}
+      <button
+        onClick={shareList}
         className="w-full py-[15px] rounded-[14px] border-none text-[14px] font-extrabold cursor-pointer flex items-center justify-center gap-2"
-        style={{ background: 'linear-gradient(90deg,var(--accent),var(--accent2))', color: '#fff', fontFamily: 'inherit' }}>
+        style={{ background: 'linear-gradient(90deg,var(--accent),var(--accent2))', color: '#fff', fontFamily: 'inherit' }}
+      >
         <IconShare size={15} strokeWidth={2} /> Поделиться списком
       </button>
     </div>

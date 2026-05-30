@@ -49,12 +49,23 @@ export interface Member {
   is_admin: boolean
 }
 
+export interface ActivityEntry {
+  id: number
+  group_id: string
+  event_id: string | null
+  type: string
+  actor_name: string | null
+  data: Record<string, unknown>
+  created_at: string
+}
+
 export interface ServerState {
   group: Group
   categories: Category[]
   items: Item[]
   members: Member[]
   events: PicnicEvent[]
+  activity: ActivityEntry[]
 }
 
 export interface GroupSummary {

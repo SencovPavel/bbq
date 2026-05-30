@@ -31,7 +31,8 @@ export function useWebSocket(groupId: string | null, userId: string | undefined)
     wsRef.current = ws
 
     ws.onopen = () => {
-      ws.send(JSON.stringify({ type: 'join', groupId, userId }))
+      const userName = useSessionStore.getState().me?.name ?? null
+      ws.send(JSON.stringify({ type: 'join', groupId, userId, userName }))
     }
 
     ws.onmessage = (e: MessageEvent) => {
