@@ -9,7 +9,8 @@ import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
 import { useToastStore } from '../stores/toastStore'
 import { OfflineBanner } from '../components/states/OfflineBanner'
-import { IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle, IconReceipt } from '../components/Icon'
+import { IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle, IconReceipt, IconClipboard } from '../components/Icon'
+import { calcSettlement } from '../lib/settlement'
 import type { AnalysisResult } from '../types'
 
 export function SummaryScreen() {
@@ -33,10 +34,13 @@ export function SummaryScreen() {
     saveGroupUiPatch(groupId, { summaryPanelOpen: panelOpen })
   }, [groupId, panelOpen])
 
+  const me = useSessionStore(s => s.me)
+
   const { categories = [], items = [], members = [] } = serverState ?? {}
   const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson } = calcSummary(items, members, currentEventId)
-  const enabled     = currentEventId ? items.filter(i => i.event_id === currentEventId && i.enabled) : items.filter(i => i.enabled)
-  const ppl         = members.length
+  const { transfers } = calcSettlement(items, members, currentEventId)
+  const enabled = currentEventId ? items.filter(i => i.event_id === currentEventId && i.enabled) : items.filter(i => i.enabled)
+  const ppl     = members.length
 
   async function runAnalysis() {
     if (!groupId) return
@@ -135,6 +139,52 @@ export function SummaryScreen() {
           )
         })}
       </GlassCard>
+
+      {/* Settlement */}
+      {transfers.length > 0 && (
+        <GlassCard>
+          <div className="px-[15px] pt-[12px] pb-[4px]">
+            <div className="text-[10px] font-extrabold uppercase tracking-[.09em] mb-[10px]"
+              style={{ color: 'var(--muted)' }}>
+              Переводы
+            </div>
+            {transfers.map((t, i) => {
+              const isMe = t.fromId === me?.id
+              return (
+                <div key={i}
+                  className="flex items-center justify-between py-[9px] border-b last:border-none"
+                  style={{ borderColor: 'var(--gb)' }}>
+                  <div className="flex items-center gap-[6px] min-w-0">
+                    <span className="text-[13px] font-bold truncate"
+                      style={{ color: isMe ? 'var(--accent)' : 'var(--text)' }}>
+                      {t.fromName}
+                    </span>
+                    <span className="text-[11px]" style={{ color: 'var(--muted)', flexShrink: 0 }}>→</span>
+                    <span className="text-[13px] font-bold truncate" style={{ color: 'var(--text)' }}>
+                      {t.toName}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-[8px] flex-shrink-0 ml-2">
+                    <span className="text-[14px] font-black"
+                      style={{ color: isMe ? 'var(--accent)' : 'var(--text)' }}>
+                      {fmt(t.amount)}
+                    </span>
+                    <button
+                      onClick={() => {
+                        const text = `${t.fromName} → ${t.toName}: ${fmt(t.amount)}`
+                        navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
+                      }}
+                      className="border-none cursor-pointer p-[4px] rounded-[6px]"
+                      style={{ background: 'rgba(255,255,255,.06)', color: 'var(--muted)', lineHeight: 0 }}>
+                      <IconClipboard size={12} />
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </GlassCard>
+      )}
 
       {/* Agent */}
       <button onClick={runAnalysis} disabled={loading}
