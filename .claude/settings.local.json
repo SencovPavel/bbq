@@ -16,7 +16,14 @@
       "Bash(git commit -m 'redesign: clean header — back button, name, copy code *)",
       "Bash(mkdir -p \"/Users/pavel/Desktop/project/Бот покупок/picnic-frontend/.claude\")",
       "mcp__Claude_Preview__preview_start",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(grep \"listen_addresses\\\\|password_encryption\\\\|scram\" /opt/homebrew/var/postgresql@18/postgresql.conf 2>/dev/null | grep -v \"^#\")",
+      "Bash(psql -h /tmp -U postgres -d picnic -c \"SELECT current_user, current_database\\(\\);\")",
+      "Bash(psql -h /private/tmp -U postgres -d picnic -c \"SELECT current_user;\")",
+      "Bash(grep -v \"^$\")",
+      "Bash(node -e ' *)",
+      "Bash(curl -s http://localhost:3001/api/health)",
+      "Bash(npm test *)"
     ]
   }
 }

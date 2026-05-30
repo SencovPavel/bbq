@@ -3,6 +3,7 @@ import { GlassCard, Divider } from '../components/GlassCard'
 import { fmt } from '../lib/session'
 import { loadGroupUi, saveGroupUiPatch } from '../lib/ui-persist'
 import { analyzeWithAgent } from '../lib/api'
+import { calcSummary } from '../lib/summary'
 import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useAppStore } from '../stores/appStore'
@@ -33,12 +34,8 @@ export function SummaryScreen() {
   }, [groupId, panelOpen])
 
   const { categories = [], items = [], members = [] } = serverState ?? {}
-  const allItems    = currentEventId ? items.filter(i => i.event_id === currentEventId) : items
-  const enabled     = allItems.filter(i => i.enabled)
-  const bought      = enabled.filter(i => i.bought && i.price > 0)
-  const actualTotal = bought.reduce((s, i) => s + i.price * i.qty, 0)
-  const boughtCount = enabled.filter(i => i.bought).length
-  const pct         = enabled.length ? Math.round(boughtCount / enabled.length * 100) : 0
+  const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson } = calcSummary(items, members, currentEventId)
+  const enabled     = currentEventId ? items.filter(i => i.event_id === currentEventId && i.enabled) : items.filter(i => i.enabled)
   const ppl         = members.length
 
   async function runAnalysis() {
@@ -69,7 +66,7 @@ export function SummaryScreen() {
       })
       text += '\n'
     })
-    text += `💰 Куплено: ${fmt(actualTotal)}\n👤 На человека (${ppl} чел.): ${fmt(ppl ? actualTotal / ppl : 0)}`
+    text += `💰 Куплено: ${fmt(actualTotal)}\n👤 На человека (${ppl} чел.): ${fmt(perPerson ?? 0)}`
     if (navigator.share) navigator.share({ text }).catch(() => {})
     else navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
   }
@@ -84,10 +81,10 @@ export function SummaryScreen() {
         <div>
           <div className="text-[10px] font-bold uppercase tracking-[.08em] mb-[5px]" style={{ opacity: .65 }}>Куплено</div>
           <div className="text-[26px] font-black tracking-tight">
-            {bought.length > 0 ? fmt(actualTotal) : `${enabled.length} поз.`}
+            {actualTotal > 0 ? fmt(actualTotal) : `${enabledLen} поз.`}
           </div>
           <div className="text-[11px] mt-[3px]" style={{ opacity: .65 }}>
-            {boughtCount} из {enabled.length} позиций
+            {boughtCount} из {enabledLen} позиций
           </div>
           <div className="h-[5px] rounded-full mt-[8px] overflow-hidden" style={{ background: 'rgba(255,255,255,.15)' }}>
             <div className="h-full rounded-full transition-all duration-500"
@@ -97,14 +94,14 @@ export function SummaryScreen() {
         <div>
           <div className="text-[10px] font-bold uppercase tracking-[.08em] mb-[5px]" style={{ opacity: .65 }}>На человека</div>
           <div className="text-[26px] font-black tracking-tight">
-            {ppl > 0 && bought.length > 0 ? fmt(actualTotal / ppl) : '—'}
+            {perPerson !== null ? fmt(perPerson) : '—'}
           </div>
           <div className="text-[11px] mt-[3px]" style={{ opacity: .65 }}>из {ppl} чел.</div>
         </div>
       </div>
 
       {/* Empty state */}
-      {enabled.length === 0 && (
+      {enabledLen === 0 && (
         <div className="flex flex-col items-center justify-center py-10 text-center">
           <div style={{ color: 'var(--muted)', opacity: 0.35, marginBottom: 14 }}><IconReceipt size={52} /></div>
           <div className="text-[16px] font-extrabold mb-[6px]">Список пустой</div>
