@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 import { fmt } from '@shared/lib/session'
 import { isEventItemsLocked } from '@shared/lib/event-status'
 
-import { useWsStore } from '../stores/wsStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useAppStore } from '../stores/appStore'
-import { useToastStore } from '../stores/toastStore'
+import { useWsStore } from '@stores/wsStore'
+import { useSessionStore } from '@stores/sessionStore'
+import { useAppStore } from '@stores/appStore'
+import { useToastStore } from '@stores/toastStore'
 
 export function useMyScreenVM() {
   const serverState       = useWsStore(s => s.serverState)
@@ -19,20 +19,49 @@ export function useMyScreenVM() {
   const [scanOpen, setScanOpen] = useState(false)
 
   // ── Derived data ─────────────────────────────────────────────────────────────
-  const allItems    = serverState?.items   ?? []
-  const members     = serverState?.members ?? []
-  const events      = serverState?.events  ?? []
+  const allItems = serverState?.items   ?? []
+  const members  = serverState?.members ?? []
+  const events   = serverState?.events  ?? []
+  const meId     = me?.id
 
-  const items       = currentEventId ? allItems.filter(i => i.event_id === currentEventId) : allItems
-  const myItems     = items.filter(i => i.buyer_id === me?.id)
-  const boughtItems = myItems.filter(i => i.bought && i.price > 0)
-  const actualTotal = boughtItems.reduce((s, i) => s + i.price * i.qty, 0)
-  const boughtCount = myItems.filter(i => i.bought).length
+  const currentEvent = useMemo(
+    () => currentEventId ? events.find(e => e.id === currentEventId) : undefined,
+    [events, currentEventId],
+  )
+  const listLocked = isEventItemsLocked(currentEvent?.status)
+
+  const amIAdmin = useMemo(
+    () => members.find(m => m.user_id === meId)?.is_admin ?? false,
+    [members, meId],
+  )
+
+  const items = useMemo(
+    () => currentEventId ? allItems.filter(i => i.event_id === currentEventId) : allItems,
+    [allItems, currentEventId],
+  )
+
+  const myItems = useMemo(
+    () => items.filter(i => i.buyer_id === meId),
+    [items, meId],
+  )
+
+  const boughtItems = useMemo(
+    () => myItems.filter(i => i.bought && i.price > 0),
+    [myItems],
+  )
+
+  const actualTotal = useMemo(
+    () => boughtItems.reduce((s, i) => s + i.price * i.qty, 0),
+    [boughtItems],
+  )
+
+  const boughtCount = useMemo(() => myItems.filter(i => i.bought).length, [myItems])
   const pct         = myItems.length ? Math.round(boughtCount / myItems.length * 100) : 0
-  const amIAdmin    = members.find(m => m.user_id === me?.id)?.is_admin ?? false
-  const currentEvent = currentEventId ? events.find(e => e.id === currentEventId) : undefined
-  const listLocked  = isEventItemsLocked(currentEvent?.status)
-  const sorted      = [...myItems].sort((a, b) => a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' }))
+
+  const sorted = useMemo(
+    () => [...myItems].sort((a, b) => a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' })),
+    [myItems],
+  )
 
   // ── Actions ──────────────────────────────────────────────────────────────────
   function showLockedToast() {

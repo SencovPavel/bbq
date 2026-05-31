@@ -1,138 +1,7 @@
-import { useState } from 'react'
-import { useWsStore } from '../stores/wsStore'
-import { useAppStore } from '../stores/appStore'
-import { sendEventUpdates } from '@shared/lib/event-update'
-import { IconX, IconPencil, IconCalendar, IconMapPin } from '@shared/ui/Icon'
+import { IconPencil, IconCalendar, IconMapPin } from '@shared/ui/Icon'
+import { EventModal } from '@widgets/EventModal'
+import { useEventsScreenVM, formatDate, isPast } from './useEventsScreenVM'
 import type { PicnicEvent } from '@shared/types'
-
-// ── helpers ──────────────────────────────────────────────────────────────────
-
-function formatDate(dateStr: string | null, timeStr: string | null): string {
-  if (!dateStr) return 'Дата не указана'
-  const d = new Date(dateStr + 'T00:00:00')
-  const day = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
-  if (!timeStr) return day
-  const [h, m] = timeStr.split(':')
-  return `${day} · ${h}:${m}`
-}
-
-function isPast(dateStr: string | null): boolean {
-  if (!dateStr) return false
-  return new Date(dateStr + 'T23:59:59') < new Date()
-}
-
-// ── EventModal ────────────────────────────────────────────────────────────────
-
-interface EventModalProps {
-  event?: PicnicEvent
-  onSave: (data: Partial<PicnicEvent>) => void
-  onClose: () => void
-  onDelete?: () => void
-}
-
-function EventModal({ event, onSave, onClose, onDelete }: EventModalProps) {
-  const [name,        setName]        = useState(event?.name        ?? '')
-  const [date,        setDate]        = useState(event?.event_date  ?? '')
-  const [time,        setTime]        = useState(event?.event_time  ? event.event_time.slice(0, 5) : '')
-  const [location,    setLocation]    = useState(event?.location    ?? '')
-  const [description, setDescription] = useState(event?.description ?? '')
-
-  const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '11px 13px', borderRadius: 12,
-    background: 'var(--surface-input)', border: '1px solid var(--card-b)',
-    color: 'var(--text)', fontFamily: 'inherit', fontSize: 14, fontWeight: 600,
-    outline: 'none', boxSizing: 'border-box',
-  }
-
-  return (
-    <div
-      className="fixed inset-0 z-[200] flex items-end justify-center"
-      style={{ background: 'var(--surface-scrim-heavy)', backdropFilter: 'blur(4px)' }}
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-[500px] rounded-t-[24px] p-5 pb-8"
-        style={{ background: 'var(--surface-modal-deep)', border: '1px solid var(--card-b)' }}
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between mb-5">
-          <span className="font-extrabold text-[16px]" style={{ color: 'var(--text)' }}>
-            {event ? 'Редактировать' : 'Новое событие'}
-          </span>
-          <button onClick={onClose}
-            style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', display: 'flex' }}>
-            <IconX size={18} />
-          </button>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <div>
-            <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
-              Название *
-            </label>
-            <input style={inputStyle} value={name} onChange={e => setName(e.target.value)}
-              placeholder="Пикник на природе" autoFocus />
-          </div>
-
-          <div className="flex gap-2">
-            <div style={{ flex: 1 }}>
-              <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
-                Дата
-              </label>
-              <input type="date" style={{ ...inputStyle, colorScheme: 'dark' }}
-                value={date} onChange={e => setDate(e.target.value)} />
-            </div>
-            <div style={{ width: 110 }}>
-              <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
-                Время
-              </label>
-              <input type="time" style={{ ...inputStyle, colorScheme: 'dark' }}
-                value={time} onChange={e => setTime(e.target.value)} />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
-              Место
-            </label>
-            <input style={inputStyle} value={location} onChange={e => setLocation(e.target.value)}
-              placeholder="Парк Сокольники" />
-          </div>
-
-          <div>
-            <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
-              Заметки
-            </label>
-            <textarea
-              style={{ ...inputStyle, resize: 'none', minHeight: 72, lineHeight: 1.5 }}
-              value={description} onChange={e => setDescription(e.target.value)}
-              placeholder="Любые заметки про событие…"
-            />
-          </div>
-        </div>
-
-        <div className="flex gap-2 mt-5">
-          {onDelete && (
-            <button onClick={onDelete}
-              className="py-[13px] px-4 rounded-[12px] border-none cursor-pointer font-bold text-[13px]"
-              style={{ background: 'var(--surface-danger-12)', color: 'var(--red)', fontFamily: 'inherit', border: '1px solid var(--surface-danger-25)' }}>
-              Удалить
-            </button>
-          )}
-          <button
-            onClick={() => {
-              if (!name.trim()) return
-              onSave({ name: name.trim(), event_date: date || null, event_time: time || null, location: location || null, description: description || null })
-            }}
-            className="flex-1 py-[13px] rounded-[12px] border-none cursor-pointer font-extrabold text-[15px]"
-            style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit', opacity: name.trim() ? 1 : 0.5 }}>
-            {event ? 'Сохранить' : 'Создать'}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 // ── EventCard ─────────────────────────────────────────────────────────────────
 
@@ -197,39 +66,10 @@ function EventCard({ event, itemCount, onEnter, onEdit }: EventCardProps) {
 // ── EventsScreen ──────────────────────────────────────────────────────────────
 
 export function EventsScreen() {
-  const serverState = useWsStore(s => s.serverState)
-  const send        = useWsStore(s => s.send)
-  const enterEvent  = useAppStore(s => s.enterEvent)
-
-  const [showModal,  setShowModal]  = useState(false)
-  const [editEvent,  setEditEvent]  = useState<PicnicEvent | undefined>(undefined)
-
-  const events = serverState?.events ?? []
-  const items  = serverState?.items  ?? []
-
-  const upcoming = events.filter(e => !isPast(e.event_date))
-  const past     = events.filter(e =>  isPast(e.event_date))
-
-  function itemCount(eventId: string) {
-    return items.filter(i => i.event_id === eventId).length
-  }
-
-  function handleSave(data: Partial<PicnicEvent>) {
-    if (editEvent) {
-      sendEventUpdates(send, editEvent.id, data)
-    } else {
-      send({ type: 'event:add', name: data.name, date: data.event_date, time: data.event_time, location: data.location, description: data.description })
-    }
-    setShowModal(false)
-    setEditEvent(undefined)
-  }
-
-  function handleDelete() {
-    if (!editEvent) return
-    send({ type: 'event:delete', id: editEvent.id })
-    setShowModal(false)
-    setEditEvent(undefined)
-  }
+  const vm = useEventsScreenVM()
+  const { events, upcoming, past, showModal, editEvent,
+          itemCount, enterEvent, openCreate, openEdit, closeModal,
+          handleSave, handleDelete } = vm
 
   return (
     <div className="px-4 pt-4" style={{ paddingBottom: 16 }}>
@@ -239,7 +79,7 @@ export function EventsScreen() {
           События
         </h2>
         <button
-          onClick={() => { setEditEvent(undefined); setShowModal(true) }}
+          onClick={openCreate}
           className="flex items-center gap-[6px] rounded-full border-none cursor-pointer font-bold text-[13px] transition-opacity active:opacity-70"
           style={{ padding: '8px 14px', background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}>
           + Создать
@@ -265,7 +105,7 @@ export function EventsScreen() {
           {upcoming.map(e => (
             <EventCard key={e.id} event={e} itemCount={itemCount(e.id)}
               onEnter={() => enterEvent(e.id)}
-              onEdit={() => { setEditEvent(e); setShowModal(true) }} />
+              onEdit={() => openEdit(e)} />
           ))}
         </div>
       )}
@@ -280,7 +120,7 @@ export function EventsScreen() {
             {past.map(e => (
               <EventCard key={e.id} event={e} itemCount={itemCount(e.id)}
                 onEnter={() => enterEvent(e.id)}
-                onEdit={() => { setEditEvent(e); setShowModal(true) }} />
+                onEdit={() => openEdit(e)} />
             ))}
           </div>
         </>
@@ -290,7 +130,7 @@ export function EventsScreen() {
         <EventModal
           event={editEvent}
           onSave={handleSave}
-          onClose={() => { setShowModal(false); setEditEvent(undefined) }}
+          onClose={closeModal}
           onDelete={editEvent ? handleDelete : undefined}
         />
       )}

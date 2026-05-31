@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { useWsStore } from '../../stores/wsStore'
+import { useWsStore } from '@stores/wsStore'
 
 const EXPANDED_MS = 2800
 const LEAVE_MS = 280

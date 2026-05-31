@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { isEventActive } from '@shared/lib/event-status'
-import { useWsStore } from '../stores/wsStore'
-import { useAppStore } from '../stores/appStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useToastStore } from '../stores/toastStore'
+import { useWsStore } from '@stores/wsStore'
+import { useAppStore } from '@stores/appStore'
+import { useSessionStore } from '@stores/sessionStore'
+import { useToastStore } from '@stores/toastStore'
 import { IconCheck, IconMapPin, IconCalendar } from '@shared/ui/Icon'
 import type { PicnicEvent } from '@shared/types'
 

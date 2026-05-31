@@ -1,14 +1,14 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 import { fmt, clearGroupSession } from '@shared/lib/session'
 import { shortDate } from '@shared/lib/format'
 import { canAdminCompleteEvent, isEventActive } from '@shared/lib/event-status'
 import { sendEventUpdates } from '@shared/lib/event-update'
 
-import { useWsStore } from '../stores/wsStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useAppStore } from '../stores/appStore'
-import { useToastStore } from '../stores/toastStore'
+import { useWsStore } from '@stores/wsStore'
+import { useSessionStore } from '@stores/sessionStore'
+import { useAppStore } from '@stores/appStore'
+import { useToastStore } from '@stores/toastStore'
 
 import type { PicnicEvent } from '@shared/types'
 
@@ -57,8 +57,18 @@ export function useEventScreenVM() {
 
   // ── Derived data ──────────────────────────────────────────────────────────
   const { members = [], items = [], group, events = [] } = serverState ?? {}
-  const currentEvent    = currentEventId ? events.find(e => e.id === currentEventId) : undefined
-  const amIAdmin        = members.find(m => m.user_id === me?.id)?.is_admin ?? false
+  const meId = me?.id
+
+  const currentEvent = useMemo(
+    () => currentEventId ? events.find(e => e.id === currentEventId) : undefined,
+    [events, currentEventId],
+  )
+
+  const amIAdmin = useMemo(
+    () => members.find(m => m.user_id === meId)?.is_admin ?? false,
+    [members, meId],
+  )
+
   const canCompleteEvent = canAdminCompleteEvent(amIAdmin, currentEvent)
 
   // Countdown
@@ -80,13 +90,19 @@ export function useEventScreenVM() {
       : { dot: '#4ade80',         text: '#4ade80',         border: 'rgba(74,222,128,.38)',  glow: '0 0 8px rgba(74,222,128,.6)' }
 
   // Readiness ring
-  const evItems  = currentEventId ? items.filter(i => i.event_id === currentEventId && i.enabled) : []
-  const evBought = evItems.filter(i => i.bought)
-  const readyPct = evItems.length ? Math.round(evBought.length / evItems.length * 100) : 0
+  const evItems = useMemo(
+    () => currentEventId ? items.filter(i => i.event_id === currentEventId && i.enabled) : [],
+    [items, currentEventId],
+  )
+  const evBought   = useMemo(() => evItems.filter(i => i.bought), [evItems])
+  const readyPct   = evItems.length ? Math.round(evBought.length / evItems.length * 100) : 0
   const readyColor = readyPct === 100 ? '#4ade80' : 'var(--accent-2)'
 
   // Member spend
-  const eventItems = currentEventId ? items.filter(i => i.event_id === currentEventId) : items
+  const eventItems = useMemo(
+    () => currentEventId ? items.filter(i => i.event_id === currentEventId) : items,
+    [items, currentEventId],
+  )
 
   // ── Actions ───────────────────────────────────────────────────────────────
   function handleCompleteEvent() {

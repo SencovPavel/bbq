@@ -83,3 +83,5 @@ export interface AnalysisResult {
 
 export type Screen = 'loading' | 'auth' | 'onboarding' | 'groups' | 'app'
 export type Tab    = 'events' | 'list' | 'summary' | 'my' | 'members'
+
+export type ToastVariant = 'default' | 'error' | 'info' | 'muted'

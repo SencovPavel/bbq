@@ -9,3 +9,8 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+interface Window {
+  /** Telegram Mini App haptic feedback injected by the native wrapper. */
+  haptic?: () => void
+}

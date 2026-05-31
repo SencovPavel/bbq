@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { Modal } from '@shared/ui/Modal'
-import { useToastStore } from '../stores/toastStore'
+import { useToastStore } from '@stores/toastStore'
 
 interface ReceiptScannerProps {
   open: boolean

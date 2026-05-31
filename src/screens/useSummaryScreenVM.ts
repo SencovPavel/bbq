@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { fmt } from '@shared/lib/session'
 import { loadGroupUi, saveGroupUiPatch } from '@shared/lib/ui-persist'
@@ -6,10 +6,10 @@ import { analyzeWithAgent } from '@shared/api/api'
 import { calcSummary } from '@shared/lib/summary'
 import { calcSettlement } from '@shared/lib/settlement'
 
-import { useWsStore } from '../stores/wsStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useAppStore } from '../stores/appStore'
-import { useToastStore } from '../stores/toastStore'
+import { useWsStore } from '@stores/wsStore'
+import { useSessionStore } from '@stores/sessionStore'
+import { useAppStore } from '@stores/appStore'
+import { useToastStore } from '@stores/toastStore'
 
 import type { AnalysisResult } from '@shared/types'
 
@@ -38,35 +38,68 @@ export function useSummaryScreenVM() {
 
   // ── Derived data ─────────────────────────────────────────────────────────────
   const { categories = [], items = [], members = [], events = [], activity = [] } = serverState ?? {}
-  const amIAdmin = members.some(m => m.user_id === me?.id && m.is_admin)
-  const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson } = calcSummary(items, members, currentEventId)
-  const { transfers } = calcSettlement(items, members, currentEventId)
-  const enabled = currentEventId
-    ? items.filter(i => i.event_id === currentEventId && i.enabled)
-    : items.filter(i => i.enabled)
+  const meId = me?.id
+
+  const amIAdmin = useMemo(
+    () => members.some(m => m.user_id === meId && m.is_admin),
+    [members, meId],
+  )
+
+  const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson } = useMemo(
+    () => calcSummary(items, members, currentEventId),
+    [items, members, currentEventId],
+  )
+
+  const { transfers } = useMemo(
+    () => calcSettlement(items, members, currentEventId),
+    [items, members, currentEventId],
+  )
+
+  const enabled = useMemo(
+    () => currentEventId
+      ? items.filter(i => i.event_id === currentEventId && i.enabled)
+      : items.filter(i => i.enabled),
+    [items, currentEventId],
+  )
+
   const ppl = members.length
 
   // ── Personal balance ─────────────────────────────────────────────────────────
-  const myTransfers    = transfers.filter(t => t.fromId === me?.id || t.toId === me?.id)
-  const iSendTotal     = myTransfers.filter(t => t.fromId === me?.id).reduce((s, t) => s + t.amount, 0)
-  const iGetTotal      = myTransfers.filter(t => t.toId   === me?.id).reduce((s, t) => s + t.amount, 0)
+  const myTransfers = useMemo(
+    () => transfers.filter(t => t.fromId === meId || t.toId === meId),
+    [transfers, meId],
+  )
+
+  const iSendTotal = useMemo(
+    () => myTransfers.filter(t => t.fromId === meId).reduce((s, t) => s + t.amount, 0),
+    [myTransfers, meId],
+  )
+
+  const iGetTotal = useMemo(
+    () => myTransfers.filter(t => t.toId === meId).reduce((s, t) => s + t.amount, 0),
+    [myTransfers, meId],
+  )
+
   const net            = iGetTotal - iSendTotal   // >0 — get back, <0 — must send
   const iSend          = net < 0
   const singleTransfer = myTransfers.length === 1 ? myTransfers[0] : null
   const counterparty   = singleTransfer
-    ? (singleTransfer.fromId === me?.id ? singleTransfer.toName : singleTransfer.fromName)
+    ? (singleTransfer.fromId === meId ? singleTransfer.toName : singleTransfer.fromName)
     : null
 
   // ── Per-category totals ──────────────────────────────────────────────────────
-  const catRows = categories
-    .map(cat => {
-      const catItems  = enabled.filter(x => x.cat_id === cat.id)
-      const catBought = catItems.filter(x => x.bought && x.price > 0)
-      const catTotal  = catBought.reduce((s, x) => s + x.price * x.qty, 0)
-      const catDone   = catItems.filter(x => x.bought).length
-      return { cat, catItems, catTotal, catDone }
-    })
-    .filter(r => r.catItems.length > 0)
+  const catRows = useMemo(
+    () => categories
+      .map(cat => {
+        const catItems  = enabled.filter(x => x.cat_id === cat.id)
+        const catBought = catItems.filter(x => x.bought && x.price > 0)
+        const catTotal  = catBought.reduce((s, x) => s + x.price * x.qty, 0)
+        const catDone   = catItems.filter(x => x.bought).length
+        return { cat, catItems, catTotal, catDone }
+      })
+      .filter(r => r.catItems.length > 0),
+    [categories, enabled],
+  )
 
   // ── Actions ──────────────────────────────────────────────────────────────────
   async function runAnalysis() {

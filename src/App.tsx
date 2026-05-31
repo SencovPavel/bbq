@@ -6,8 +6,8 @@ import { AppShell }       from '@app/AppShell'
 import { WebPageLayout }  from '@app/WebPageLayout'
 
 import { EventSheet }     from '@widgets/EventSheet'
-import { Toast }          from '@shared/ui/Toast'
-import { OfflineBanner }  from '@shared/ui/OfflineBanner'
+import { Toast }          from '@widgets/Toast'
+import { OfflineBanner }  from '@widgets/OfflineBanner'
 
 import { ListScreen }      from './screens/ListScreen'
 import { SummaryScreen }   from './screens/SummaryScreen'
@@ -17,13 +17,13 @@ import { GroupsScreen }    from './screens/GroupsScreen'
 import { OnboardingScreen } from './screens/OnboardingScreen'
 import { AuthScreen }      from './screens/AuthScreen'
 
-import { useWebSocket }    from '@shared/api/useWebSocket'
+import { useWebSocket }    from '@app/useWebSocket'
 import { useBootstrap }    from '@app/useBootstrap'
 import { useEventManager } from '@app/useEventManager'
 
-import { useAppStore }     from './stores/appStore'
-import { useSessionStore } from './stores/sessionStore'
-import { useWsStore }      from './stores/wsStore'
+import { useAppStore }     from '@stores/appStore'
+import { useSessionStore } from '@stores/sessionStore'
+import { useWsStore }      from '@stores/wsStore'
 
 import type { Tab } from '@shared/types'
 

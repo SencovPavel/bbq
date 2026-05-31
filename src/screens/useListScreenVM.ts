@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 
 import { fmt } from '@shared/lib/session'
 import { loadOpenCats, saveOpenCats } from '@shared/lib/ui-persist'
@@ -6,10 +6,10 @@ import { stepForUnit, fmtQty } from '@shared/lib/item-unit'
 import { haptic } from '@shared/lib/tg'
 import { isEventItemsLocked } from '@shared/lib/event-status'
 
-import { useWsStore } from '../stores/wsStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useAppStore } from '../stores/appStore'
-import { useToastStore } from '../stores/toastStore'
+import { useWsStore } from '@stores/wsStore'
+import { useSessionStore } from '@stores/sessionStore'
+import { useAppStore } from '@stores/appStore'
+import { useToastStore } from '@stores/toastStore'
 
 import type { Item } from '@shared/types'
 
@@ -57,17 +57,39 @@ export function useListScreenVM() {
 
   // ── Derived data ──────────────────────────────────────────────────────────────
   const { categories = [], items = [], members = [], events = [] } = serverState ?? {}
-  const amIAdmin     = members.find(m => m.user_id === me?.id)?.is_admin ?? false
-  const currentEvent = currentEventId ? events.find(e => e.id === currentEventId) : undefined
-  const listLocked   = isEventItemsLocked(currentEvent?.status)
+  const meId = me?.id
 
-  const eventItems   = currentEventId ? items.filter(i => i.event_id === currentEventId) : items
-  const visibleItems = eventItems.filter(i => !pendingDeletes.has(i.id))
-  const listTotal    = visibleItems.reduce((s, i) => s + i.price * i.qty, 0)
+  const amIAdmin = useMemo(
+    () => members.find(m => m.user_id === meId)?.is_admin ?? false,
+    [members, meId],
+  )
 
-  const actionItem   = actionItemId
-    ? visibleItems.find(i => i.id === actionItemId) ?? null
-    : null
+  const currentEvent = useMemo(
+    () => currentEventId ? events.find(e => e.id === currentEventId) : undefined,
+    [events, currentEventId],
+  )
+
+  const listLocked = isEventItemsLocked(currentEvent?.status)
+
+  const eventItems = useMemo(
+    () => currentEventId ? items.filter(i => i.event_id === currentEventId) : items,
+    [items, currentEventId],
+  )
+
+  const visibleItems = useMemo(
+    () => eventItems.filter(i => !pendingDeletes.has(i.id)),
+    [eventItems, pendingDeletes],
+  )
+
+  const listTotal = useMemo(
+    () => visibleItems.reduce((s, i) => s + i.price * i.qty, 0),
+    [visibleItems],
+  )
+
+  const actionItem = useMemo(
+    () => actionItemId ? visibleItems.find(i => i.id === actionItemId) ?? null : null,
+    [actionItemId, visibleItems],
+  )
 
   // ── Locked guard helper ───────────────────────────────────────────────────────
   function showLockedToast() {
@@ -160,9 +182,10 @@ export function useListScreenVM() {
   }
 
   // ── Category sorted items ─────────────────────────────────────────────────────
-  function catItems(catId: string) {
-    return sortByName(visibleItems.filter(i => i.cat_id === catId))
-  }
+  const catItems = useCallback(
+    (catId: string) => sortByName(visibleItems.filter(i => i.cat_id === catId)),
+    [visibleItems],
+  )
 
   return {
     // data

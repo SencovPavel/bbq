@@ -15,10 +15,10 @@ import {
   loadSession, saveSession, clearGroupSession,
 } from '@shared/lib/session'
 
-import { useAppStore } from '../stores/appStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useWsStore } from '../stores/wsStore'
-import { useToastStore } from '../stores/toastStore'
+import { useAppStore } from '@stores/appStore'
+import { useSessionStore } from '@stores/sessionStore'
+import { useWsStore } from '@stores/wsStore'
+import { useToastStore } from '@stores/toastStore'
 
 import type { User } from '@shared/types'
 

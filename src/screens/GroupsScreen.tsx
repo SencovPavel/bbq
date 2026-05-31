@@ -1,9 +1,6 @@
-import { useState, useEffect } from 'react'
-import { getUserGroups } from '@shared/api/api'
 import { IconFlame, IconUsers } from '@shared/ui/Icon'
 import { groupTint, TINT_STYLES } from '@shared/lib/group-icon'
-import { useSessionStore } from '../stores/sessionStore'
-import type { GroupSummary } from '@shared/types'
+import { useGroupsScreenVM } from './useGroupsScreenVM'
 
 interface GroupsScreenProps {
   onEnter: (gId: string) => void
@@ -12,18 +9,7 @@ interface GroupsScreenProps {
 }
 
 export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
-  const me = useSessionStore(s => s.me)
-
-  const [groups,  setGroups]  = useState<GroupSummary[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (!me?.id) { setLoading(false); return }
-    getUserGroups(me.id)
-      .then(setGroups)
-      .catch(() => setGroups([]))
-      .finally(() => setLoading(false))
-  }, [me?.id])
+  const { me, groups, loading } = useGroupsScreenVM()
 
   return (
     <div className="w-full">

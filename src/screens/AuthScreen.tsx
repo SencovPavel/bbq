@@ -1,15 +1,12 @@
-import { useState, useEffect } from 'react'
-import { authLogin, authRegister } from '@shared/api/auth'
-import { useToastStore } from '../stores/toastStore'
+import type { CSSProperties } from 'react'
+import { useAuthScreenVM, type AuthMode } from './useAuthScreenVM'
 import type { User } from '@shared/types'
 
 interface AuthScreenProps {
   onDone: (user: User) => void
 }
 
-type Mode = 'login' | 'register'
-
-const inputStyle: React.CSSProperties = {
+const inputStyle: CSSProperties = {
   width: '100%',
   padding: '11px 14px',
   borderRadius: 10,
@@ -22,7 +19,7 @@ const inputStyle: React.CSSProperties = {
   boxSizing: 'border-box',
 }
 
-const labelStyle: React.CSSProperties = {
+const labelStyle: CSSProperties = {
   display: 'block',
   fontSize: 11,
   fontWeight: 700,
@@ -33,40 +30,10 @@ const labelStyle: React.CSSProperties = {
 }
 
 export function AuthScreen({ onDone }: AuthScreenProps) {
-  const [mode,     setMode]     = useState<Mode>('login')
-  const [name,     setName]     = useState('')
-  const [email,    setEmail]    = useState('')
-  const [password, setPassword] = useState('')
-  const [loading,  setLoading]  = useState(false)
-  const showToast = useToastStore(s => s.show)
-
-  // Show error if redirected back from OAuth with error
-  useEffect(() => {
-    if (new URLSearchParams(window.location.search).get('auth_error')) {
-      showToast('Ошибка входа через соцсеть', 'error')
-      window.history.replaceState({}, '', window.location.pathname)
-    }
-  }, [showToast])
-
-  function switchMode(m: Mode) {
-    setMode(m)
-    setName(''); setEmail(''); setPassword('')
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    try {
-      const user = mode === 'register'
-        ? await authRegister(name.trim(), email.trim(), password)
-        : await authLogin(email.trim(), password)
-      onDone({ id: user.id, name: user.name })
-    } catch (err: unknown) {
-      showToast(err instanceof Error ? err.message : 'Ошибка', 'error')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const {
+    mode, name, setName, email, setEmail, password, setPassword,
+    loading, switchMode, handleSubmit,
+  } = useAuthScreenVM(onDone)
 
   return (
     <div className="w-full">
@@ -88,7 +55,7 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
         border: '1px solid var(--gb)',
         marginBottom: 16,
       }}>
-        {(['login', 'register'] as Mode[]).map(m => (
+        {(['login', 'register'] as AuthMode[]).map(m => (
           <button key={m} onClick={() => switchMode(m)}
             style={{
               flex: 1,
@@ -100,9 +67,7 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
               fontFamily: 'inherit',
               cursor: 'pointer',
               transition: 'all .18s',
-              background: mode === m
-                ? 'var(--gradient-cta)'
-                : 'transparent',
+              background: mode === m ? 'var(--gradient-cta)' : 'transparent',
               color: mode === m ? 'var(--text-on-accent)' : 'var(--muted)',
             }}>
             {m === 'login' ? 'Войти' : 'Регистрация'}
@@ -222,7 +187,7 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
               color: 'var(--text)', fontSize: 14, fontWeight: 700,
               fontFamily: 'inherit', cursor: 'pointer',
             }}>
-            {/* Apple icon — self-contained SVG like Yandex */}
+            {/* Apple icon */}
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
               <circle cx="12" cy="12" r="12" fill="#1a1a1a" stroke="rgba(255,255,255,0.15)" strokeWidth="0.5"/>
               <g transform="translate(3.6, 3.6) scale(0.7)">

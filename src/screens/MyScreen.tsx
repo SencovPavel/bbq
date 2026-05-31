@@ -1,10 +1,10 @@
 import { NoEventsPrompt } from '@widgets/NoEventsPrompt'
 import { EmptyState } from '@shared/ui/EmptyState'
-import { UserAvatar } from '@shared/ui/UserAvatar'
+import { UserAvatar } from '@entities/member/ui/UserAvatar'
 import { ReceiptScanner } from '@widgets/ReceiptScanner'
 import { IconCart, IconCheck, IconQrScan } from '@shared/ui/Icon'
 import { PriceCell } from '@entities/item/ui/PriceCell'
-import { CompletedEventBanner } from '@shared/ui/CompletedEventBanner'
+import { CompletedEventBanner } from '@entities/event/ui/CompletedEventBanner'
 import { useMyScreenVM } from './useMyScreenVM'
 
 export function MyScreen() {

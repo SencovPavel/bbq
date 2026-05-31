@@ -1,7 +1,7 @@
 import { NAV_TABS } from '@shared/config/nav-tabs'
-import { useAppStore } from '../stores/appStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useWsStore } from '../stores/wsStore'
+import { useAppStore } from '@stores/appStore'
+import { useSessionStore } from '@stores/sessionStore'
+import { useWsStore } from '@stores/wsStore'
 import { IconFlame } from '@shared/ui/Icon'
 
 import type { Group, PicnicEvent, Tab } from '@shared/types'

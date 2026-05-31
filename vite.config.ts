@@ -11,6 +11,7 @@ export default defineConfig({
       '@widgets':  path.resolve(__dirname, 'src/widgets'),
       '@screens':  path.resolve(__dirname, 'src/screens'),
       '@app':      path.resolve(__dirname, 'src/app'),
+      '@stores':   path.resolve(__dirname, 'src/app/stores'),
     },
   },
   build: {

@@ -9,9 +9,9 @@ import { useEffect, useRef } from 'react'
 
 import { pickEventOnEntry } from '@shared/lib/events'
 
-import { useAppStore } from '../stores/appStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useWsStore } from '../stores/wsStore'
+import { useAppStore } from '@stores/appStore'
+import { useSessionStore } from '@stores/sessionStore'
+import { useWsStore } from '@stores/wsStore'
 
 export function useEventManager() {
   const screen          = useAppStore(s => s.screen)

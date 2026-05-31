@@ -3,7 +3,7 @@ import {
   IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle,
   IconReceipt, IconClipboard, IconChevronUp, IconChevronDown,
 } from '@shared/ui/Icon'
-import { CatTile } from '@shared/ui/CatTile'
+import { CatTile } from '@entities/category/ui/CatTile'
 import { ActivityFeed } from '@widgets/ActivityFeed'
 import { NoEventsPrompt } from '@widgets/NoEventsPrompt'
 import { useSummaryScreenVM } from './useSummaryScreenVM'

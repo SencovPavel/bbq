@@ -1,8 +1,6 @@
-import { useState, type CSSProperties } from 'react'
-import { createGroup, joinGroup } from '@shared/api/api'
+import type { CSSProperties } from 'react'
 import { IconFlame, IconPerson } from '@shared/ui/Icon'
-import { getTelegramInitData } from '@shared/lib/tg'
-import { useSessionStore } from '../stores/sessionStore'
+import { useOnboardingScreenVM, type OnboardingTab } from './useOnboardingScreenVM'
 import type { User } from '@shared/types'
 
 interface OnboardingScreenProps {
@@ -10,45 +8,13 @@ interface OnboardingScreenProps {
 }
 
 export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
-  const me = useSessionStore(s => s.me)
-
-  const [tab,       setTab]       = useState<'create' | 'join'>('create')
-  const [err,       setErr]       = useState('')
-  const [groupName, setGroupName] = useState('')
-  const [code,      setCode]      = useState('')
-
-  const hasTg = !!me?.id
-  const canAuth = hasTg || !!getTelegramInitData()
-
-  async function doCreate() {
-    if (!canAuth) {
-      setErr('Войдите на сайте или откройте приложение в Telegram')
-      return
-    }
-    if (!groupName.trim()) { setErr('Введите название группы'); return }
-    if (!hasTg) { setErr('Войдите на сайте или откройте приложение в Telegram'); return }
-    setErr('')
-    try {
-      const d = await createGroup({ name: groupName.trim() })
-      if (d.error) { setErr(d.error); return }
-      onDone(me!, d.id!)
-    } catch { setErr('Нет соединения с сервером') }
-  }
-
-  async function doJoin() {
-    if (!canAuth) {
-      setErr('Войдите на сайте или откройте приложение в Telegram')
-      return
-    }
-    if (!code.trim()) { setErr('Введите код'); return }
-    if (!hasTg) { setErr('Войдите на сайте или откройте приложение в Telegram'); return }
-    setErr('')
-    try {
-      const d = await joinGroup({ inviteCode: code.trim() })
-      if (d.error) { setErr(d.error); return }
-      onDone(me!, d.id!)
-    } catch { setErr('Нет соединения с сервером') }
-  }
+  const {
+    me, tab, switchTab, err,
+    groupName, setGroupName,
+    code, setCode,
+    hasTg, canAuth,
+    doCreate, doJoin,
+  } = useOnboardingScreenVM(onDone)
 
   const inputStyle: CSSProperties = {
     width: '100%', padding: '12px 14px',
@@ -69,8 +35,8 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
       <div className="lg:p-0 lg:bg-transparent lg:border-none rounded-[20px] p-5 w-full glass lg:shadow-none">
         {/* Tabs */}
         <div className="flex gap-[6px] mb-5">
-          {(['create', 'join'] as const).map(t => (
-            <button key={t} onClick={() => { setTab(t); setErr('') }}
+          {(['create', 'join'] as OnboardingTab[]).map(t => (
+            <button key={t} onClick={() => switchTab(t)}
               className="flex-1 py-[9px] rounded-[10px] text-[13px] font-bold cursor-pointer border-none transition-all"
               style={{
                 background: tab === t ? 'var(--accent)' : 'var(--surface-white-6)',
@@ -99,7 +65,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
           </div>
         )}
 
-        {/* Оба таба в одной grid-ячейке — высота карточки всегда = max(обоих) */}
+        {/* Both tabs in the same grid cell — card height = max(both) */}
         <div style={{ display: 'grid' }}>
           {/* Создать */}
           <div style={{ gridArea: '1/1', visibility: tab === 'create' ? 'visible' : 'hidden' }}>

@@ -6,7 +6,8 @@
       "@entities/*": ["src/entities/*"],
       "@widgets/*":  ["src/widgets/*"],
       "@screens/*":  ["src/screens/*"],
-      "@app/*":      ["src/app/*"]
+      "@app/*":      ["src/app/*"],
+      "@stores/*":   ["src/app/stores/*"]
     },
     "target": "ES2020",
     "useDefineForClassFields": true,

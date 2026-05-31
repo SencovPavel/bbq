@@ -1,6 +1,7 @@
 import { create } from 'zustand'
+import type { ToastVariant } from '@shared/types'
 
-export type ToastVariant = 'default' | 'error' | 'info' | 'muted'
+export type { ToastVariant }
 
 interface ToastAction {
   label: string

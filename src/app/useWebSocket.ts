@@ -1,13 +1,13 @@
 import { useEffect, useRef, useCallback } from 'react'
 
-import { getTelegramInitData } from '../lib/tg'
-import { clearGroupSession } from '../lib/session'
-import { useWsStore } from '../../stores/wsStore'
-import { useToastStore } from '../../stores/toastStore'
-import { useAppStore } from '../../stores/appStore'
-import { useSessionStore } from '../../stores/sessionStore'
+import { getTelegramInitData } from '@shared/lib/tg'
+import { clearGroupSession } from '@shared/lib/session'
+import { useWsStore } from '@stores/wsStore'
+import { useToastStore } from '@stores/toastStore'
+import { useAppStore } from '@stores/appStore'
+import { useSessionStore } from '@stores/sessionStore'
 
-import type { ServerState } from '../types'
+import type { ServerState } from '@shared/types'
 
 export function useWebSocket(groupId: string | null): void {
   const wsRef = useRef<WebSocket | null>(null)
