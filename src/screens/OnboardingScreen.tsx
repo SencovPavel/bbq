@@ -1,9 +1,9 @@
 import { useState, type CSSProperties } from 'react'
-import { createGroup, joinGroup } from '../lib/api'
-import { IconFlame, IconPerson } from '../components/Icon'
-import { getTelegramInitData } from '../lib/tg'
+import { createGroup, joinGroup } from '@shared/api/api'
+import { IconFlame, IconPerson } from '@shared/ui/Icon'
+import { getTelegramInitData } from '@shared/lib/tg'
 import { useSessionStore } from '../stores/sessionStore'
-import type { User } from '../types'
+import type { User } from '@shared/types'
 
 interface OnboardingScreenProps {
   onDone: (user: User, gId: string) => void

@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 
-import { loadGroupUi, saveGroupUiPatch } from '../lib/ui-persist'
+import { loadGroupUi, saveGroupUiPatch } from '@shared/lib/ui-persist'
 import { useSessionStore } from './sessionStore'
 
-import type { Screen, Tab } from '../types'
+import type { Screen, Tab } from '@shared/types'
 
 interface AppStore {
   screen: Screen

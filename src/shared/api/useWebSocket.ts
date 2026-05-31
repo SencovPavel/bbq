@@ -2,10 +2,10 @@ import { useEffect, useRef, useCallback } from 'react'
 
 import { getTelegramInitData } from '../lib/tg'
 import { clearGroupSession } from '../lib/session'
-import { useWsStore } from '../stores/wsStore'
-import { useToastStore } from '../stores/toastStore'
-import { useAppStore } from '../stores/appStore'
-import { useSessionStore } from '../stores/sessionStore'
+import { useWsStore } from '../../stores/wsStore'
+import { useToastStore } from '../../stores/toastStore'
+import { useAppStore } from '../../stores/appStore'
+import { useSessionStore } from '../../stores/sessionStore'
 
 import type { ServerState } from '../types'
 

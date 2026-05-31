@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { ActivityEntry } from '../types'
+import type { ActivityEntry } from '@shared/types'
 
 // ── icons ─────────────────────────────────────────────────────────────────────
 

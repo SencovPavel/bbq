@@ -1,96 +1,22 @@
-import { useEffect, useState } from 'react'
-import { GlassCard, Divider } from '../components/GlassCard'
-import { fmt } from '../lib/session'
-import { loadGroupUi, saveGroupUiPatch } from '../lib/ui-persist'
-import { analyzeWithAgent } from '../lib/api'
-import { calcSummary } from '../lib/summary'
-import { useWsStore } from '../stores/wsStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useAppStore } from '../stores/appStore'
-import { useToastStore } from '../stores/toastStore'
-import { NoEventsPrompt } from '../components/NoEventsPrompt'
+import { GlassCard, Divider } from '@shared/ui/GlassCard'
 import {
   IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle,
   IconReceipt, IconClipboard, IconChevronUp, IconChevronDown,
-} from '../components/Icon'
-import { calcSettlement } from '../lib/settlement'
-import { ActivityFeed } from '../components/ActivityFeed'
-import { CatTile } from '../components/CatTile'
-import type { AnalysisResult } from '../types'
+} from '@shared/ui/Icon'
+import { CatTile } from '@shared/ui/CatTile'
+import { ActivityFeed } from '@widgets/ActivityFeed'
+import { NoEventsPrompt } from '@widgets/NoEventsPrompt'
+import { useSummaryScreenVM } from './useSummaryScreenVM'
 
 export function SummaryScreen() {
-  const serverState    = useWsStore(s => s.serverState)
-  const groupId        = useSessionStore(s => s.groupId)
-  const showToast      = useToastStore(s => s.show)
-  const currentEventId    = useAppStore(s => s.currentEventId)
-  const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
-
-  const [analysis,  setAnalysis]  = useState<AnalysisResult | null>(null)
-  const [loading,   setLoading]   = useState(false)
-  const [panelOpen, setPanelOpen] = useState(false)
-
-  useEffect(() => {
-    if (!groupId) return
-    setPanelOpen(loadGroupUi(groupId).summaryPanelOpen)
-  }, [groupId])
-
-  useEffect(() => {
-    if (!groupId) return
-    saveGroupUiPatch(groupId, { summaryPanelOpen: panelOpen })
-  }, [groupId, panelOpen])
-
-  const me = useSessionStore(s => s.me)
-
-  const { categories = [], items = [], members = [], events = [], activity = [] } = serverState ?? {}
-  const amIAdmin = members.some(m => m.user_id === me?.id && m.is_admin)
-  const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson } = calcSummary(items, members, currentEventId)
-  const { transfers } = calcSettlement(items, members, currentEventId)
-  const enabled = currentEventId ? items.filter(i => i.event_id === currentEventId && i.enabled) : items.filter(i => i.enabled)
-  const ppl     = members.length
-
-  // ── Личный баланс ─────────────────────────────────────────────────────────
-  const myTransfers    = transfers.filter(t => t.fromId === me?.id || t.toId === me?.id)
-  const iSendTotal     = myTransfers.filter(t => t.fromId === me?.id).reduce((s, t) => s + t.amount, 0)
-  const iGetTotal      = myTransfers.filter(t => t.toId   === me?.id).reduce((s, t) => s + t.amount, 0)
-  const net            = iGetTotal - iSendTotal   // >0 — вернут, <0 — перевести
-  const iSend          = net < 0
-  const singleTransfer = myTransfers.length === 1 ? myTransfers[0] : null
-  const counterparty   = singleTransfer
-    ? (singleTransfer.fromId === me?.id ? singleTransfer.toName : singleTransfer.fromName)
-    : null
-
-  async function runAnalysis() {
-    if (!groupId) return
-    setLoading(true)
-    setPanelOpen(false)
-    try {
-      const r = await analyzeWithAgent(groupId)
-      setAnalysis(r)
-      setPanelOpen(true)
-    } catch {
-      showToast('Ошибка агента', 'error')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  function shareList() {
-    let text = `🔥 ${serverState?.group?.name || 'Пикник'} — список\n\n`
-    categories.forEach(cat => {
-      const catItems = enabled.filter(i => i.cat_id === cat.id)
-      if (!catItems.length) return
-      text += `${cat.icon} ${cat.title}:\n`
-      catItems.forEach(i => {
-        text += `  • ${i.name} — ${i.qty} ${i.unit}`
-        if (i.buyer_name) text += ` (${i.buyer_name})`
-        text += '\n'
-      })
-      text += '\n'
-    })
-    text += `💰 Куплено: ${fmt(actualTotal)}\n👤 На человека (${ppl} чел.): ${fmt(perPerson ?? 0)}`
-    if (navigator.share) navigator.share({ text }).catch(() => {})
-    else navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
-  }
+  const vm = useSummaryScreenVM()
+  const {
+    events, categories, activity, amIAdmin,
+    actualTotal, boughtCount, enabledLen, pct, perPerson, ppl, catRows,
+    myTransfers, iSend, net, singleTransfer, counterparty,
+    analysis, loading, panelOpen,
+    runAnalysis, shareList, copyTransfer, setShowEventSheet, fmt,
+  } = vm
 
   if (!events.length) {
     return (
@@ -131,18 +57,17 @@ export function SummaryScreen() {
           </div>
         </div>
 
-        {/* Личный баланс — полная ширина под двумя колонками */}
+        {/* Личный баланс */}
         {myTransfers.length > 0 && (
           <div
             className="mt-4 pt-3.5 flex items-center gap-3"
             style={{ borderTop: '1px solid var(--surface-white-14)' }}
           >
-            {/* Иконка направления */}
             <div
               className="size-[38px] rounded-[12px] flex items-center justify-center shrink-0"
               style={{
                 background: iSend ? 'var(--surface-scrim-light)' : 'var(--surface-success-20)',
-                color:      iSend ? 'var(--text-on-accent)'            : 'var(--green)',
+                color:      iSend ? 'var(--text-on-accent)'       : 'var(--green)',
               }}
             >
               {iSend
@@ -150,7 +75,6 @@ export function SummaryScreen() {
                 : <IconChevronDown size={18} strokeWidth={2.6} />}
             </div>
 
-            {/* Подпись + контрагент */}
             <div className="flex-1 min-w-0">
               <div className="text-[10px] font-extrabold uppercase tracking-[.1em]" style={{ opacity: .7 }}>
                 {iSend ? 'Тебе перевести' : 'Тебе вернут'}
@@ -162,20 +86,15 @@ export function SummaryScreen() {
               </div>
             </div>
 
-            {/* Нетто-сумма */}
             <div className="text-[20px] font-black tracking-tight tabular-nums shrink-0">
               {fmt(Math.abs(net))}
             </div>
 
-            {/* Копировать — только при одном переводе */}
             {singleTransfer && (
               <button
                 type="button"
                 title="Скопировать"
-                onClick={() => {
-                  const text = `${singleTransfer.fromName} → ${singleTransfer.toName}: ${fmt(singleTransfer.amount)}`
-                  navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
-                }}
+                onClick={copyTransfer}
                 className="size-[34px] rounded-[10px] flex items-center justify-center shrink-0 border-none cursor-pointer"
                 style={{ background: 'var(--surface-scrim-light)', color: 'var(--text-on-accent)' }}
               >
@@ -199,28 +118,21 @@ export function SummaryScreen() {
 
       {/* Category rows */}
       <GlassCard>
-        {categories.map((cat, i) => {
-          const catItems  = enabled.filter(x => x.cat_id === cat.id)
-          if (!catItems.length) return null
-          const catBought = catItems.filter(x => x.bought && x.price > 0)
-          const catTotal  = catBought.reduce((s, x) => s + x.price * x.qty, 0)
-          const catDone   = catItems.filter(x => x.bought).length
-          return (
-            <div key={cat.id}>
-              {i > 0 && <Divider />}
-              <div className="flex items-center justify-between px-[15px] py-[10px]">
-                <span className="flex items-center gap-2.5 text-[13px] font-bold">
-                  <CatTile emoji={cat.icon} size={26} radius={7} />
-                  {cat.title}
-                  <span className="text-[11px]" style={{ color: 'var(--muted)' }}>{catDone}/{catItems.length}</span>
-                </span>
-                <span className="text-[13px] font-extrabold" style={{ color: catTotal > 0 ? 'var(--accent)' : 'var(--muted)' }}>
-                  {catTotal > 0 ? fmt(catTotal) : '—'}
-                </span>
-              </div>
+        {catRows.map(({ cat, catItems, catTotal, catDone }, i) => (
+          <div key={cat.id}>
+            {i > 0 && <Divider />}
+            <div className="flex items-center justify-between px-[15px] py-[10px]">
+              <span className="flex items-center gap-2.5 text-[13px] font-bold">
+                <CatTile emoji={cat.icon} size={26} radius={7} />
+                {cat.title}
+                <span className="text-[11px]" style={{ color: 'var(--muted)' }}>{catDone}/{catItems.length}</span>
+              </span>
+              <span className="text-[13px] font-extrabold" style={{ color: catTotal > 0 ? 'var(--accent)' : 'var(--muted)' }}>
+                {catTotal > 0 ? fmt(catTotal) : '—'}
+              </span>
             </div>
-          )
-        })}
+          </div>
+        ))}
       </GlassCard>
 
       {/* Activity feed */}
@@ -245,8 +157,7 @@ export function SummaryScreen() {
 
       {panelOpen && analysis && (
         <GlassCard>
-          <div className="px-[16px] py-[14px] text-[13px] leading-relaxed border-b"
-            style={{ borderColor: 'var(--gb)' }}>
+          <div className="px-[16px] py-[14px] text-[13px] leading-relaxed border-b" style={{ borderColor: 'var(--gb)' }}>
             {analysis.summary}
           </div>
 

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { isEventActive } from '../lib/event-status'
+import { isEventActive } from '@shared/lib/event-status'
 import { useWsStore } from '../stores/wsStore'
 import { useAppStore } from '../stores/appStore'
 import { useSessionStore } from '../stores/sessionStore'
 import { useToastStore } from '../stores/toastStore'
-import { IconCheck, IconMapPin, IconCalendar } from './Icon'
-import type { PicnicEvent } from '../types'
+import { IconCheck, IconMapPin, IconCalendar } from '@shared/ui/Icon'
+import type { PicnicEvent } from '@shared/types'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 

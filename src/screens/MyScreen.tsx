@@ -1,61 +1,21 @@
-import { useState } from 'react'
-
-import { NoEventsPrompt } from '../components/NoEventsPrompt'
-import { EmptyState } from '../components/states/EmptyState'
-import { UserAvatar } from '../components/UserAvatar'
-import { ReceiptScanner } from '../components/receipt/ReceiptScanner'
-import { IconCart, IconCheck, IconQrScan } from '../components/Icon'
-import { PriceCell } from '../components/PriceCell'
-import { fmt } from '../lib/session'
-import { useAppStore } from '../stores/appStore'
-import { useSessionStore } from '../stores/sessionStore'
-import { useToastStore } from '../stores/toastStore'
-import { CompletedEventBanner } from '../components/states/CompletedEventBanner'
-import { isEventItemsLocked } from '../lib/event-status'
-import { useWsStore } from '../stores/wsStore'
+import { NoEventsPrompt } from '@widgets/NoEventsPrompt'
+import { EmptyState } from '@shared/ui/EmptyState'
+import { UserAvatar } from '@shared/ui/UserAvatar'
+import { ReceiptScanner } from '@widgets/ReceiptScanner'
+import { IconCart, IconCheck, IconQrScan } from '@shared/ui/Icon'
+import { PriceCell } from '@entities/item/ui/PriceCell'
+import { CompletedEventBanner } from '@shared/ui/CompletedEventBanner'
+import { useMyScreenVM } from './useMyScreenVM'
 
 export function MyScreen() {
-  const serverState    = useWsStore(s => s.serverState)
-  const send           = useWsStore(s => s.send)
-  const me             = useSessionStore(s => s.me)
-  const showToast      = useToastStore(s => s.show)
-  const currentEventId    = useAppStore(s => s.currentEventId)
-  const setShowEventSheet = useAppStore(s => s.setShowEventSheet)
-  const [scanOpen, setScanOpen] = useState(false)
-
-  const allItems    = serverState?.items ?? []
-  const members     = serverState?.members ?? []
-  const events      = serverState?.events ?? []
-  const items       = currentEventId ? allItems.filter(i => i.event_id === currentEventId) : allItems
-  const myItems     = items.filter(i => i.buyer_id === me?.id)
-  const boughtItems = myItems.filter(i => i.bought && i.price > 0)
-  const actualTotal = boughtItems.reduce((s, i) => s + i.price * i.qty, 0)
-  const boughtCount = myItems.filter(i => i.bought).length
-  const pct         = myItems.length ? Math.round(boughtCount / myItems.length * 100) : 0
-  const amIAdmin    = members.find(m => m.user_id === me?.id)?.is_admin ?? false
-  const currentEvent = currentEventId ? events.find(e => e.id === currentEventId) : undefined
-  const listLocked  = isEventItemsLocked(currentEvent?.status)
-  const sorted      = [...myItems].sort((a, b) => a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' }))
-
-  const showLockedToast = () => {
-    showToast('Событие завершено — список только для просмотра', 'muted')
-  }
-
-  const toggleBought = (id: string, val: boolean) => {
-    if (listLocked) { showLockedToast(); return }
-    send({ type: 'item:update', id, field: 'bought', value: val })
-  }
-
-  const updatePrice = (id: string, price: number) => {
-    if (listLocked) { showLockedToast(); return }
-    send({ type: 'item:update', id, field: 'price', value: price })
-    if (price > 0) showToast('Цена обновлена')
-  }
-
-  const changeQty = (id: string, cur: number, d: number) => {
-    if (listLocked) { showLockedToast(); return }
-    send({ type: 'item:update', id, field: 'qty', value: Math.max(0, +(Number(cur) + d).toFixed(2)) })
-  }
+  const vm = useMyScreenVM()
+  const {
+    me, events, myItems, sorted, amIAdmin,
+    actualTotal, boughtItems, boughtCount, pct, listLocked,
+    scanOpen, setScanOpen,
+    toggleBought, updatePrice, changeQty, showLockedToast, setShowEventSheet,
+    fmt, currentEventId,
+  } = vm
 
   if (!events.length) {
     return (
@@ -105,28 +65,16 @@ export function MyScreen() {
             </button>
           </div>
 
-          <div
-            className="text-[11px] font-extrabold uppercase tracking-wider mb-1"
-            style={{ color: 'var(--muted)' }}
-          >
+          <div className="text-[11px] font-extrabold uppercase tracking-wider mb-1" style={{ color: 'var(--muted)' }}>
             Потрачено по факту
           </div>
-          <div
-            className="text-display font-black tracking-tight tabular-nums"
-            style={{ color: 'var(--accent)' }}
-          >
+          <div className="text-display font-black tracking-tight tabular-nums" style={{ color: 'var(--accent)' }}>
             {boughtItems.length > 0 ? fmt(actualTotal) : `${myItems.length} поз.`}
           </div>
-          <div
-            className="h-[5px] rounded-full mt-2.5 overflow-hidden"
-            style={{ background: 'var(--surface-white-10)' }}
-          >
+          <div className="h-[5px] rounded-full mt-2.5 overflow-hidden" style={{ background: 'var(--surface-white-10)' }}>
             <div
               className="h-full rounded-full transition-all duration-500"
-              style={{
-                width: `${pct}%`,
-                background: 'var(--gradient-progress)',
-              }}
+              style={{ width: `${pct}%`, background: 'var(--gradient-progress)' }}
             />
           </div>
         </div>
@@ -140,8 +88,7 @@ export function MyScreen() {
         )}
 
         {sorted.map(it => {
-          const price = it.price
-          const qty   = it.qty
+          const { price, qty } = it
           return (
             <div
               key={it.id}
@@ -155,8 +102,7 @@ export function MyScreen() {
                 onClick={() => { if (!listLocked) toggleBought(it.id, !it.bought) }}
                 className="flex items-center justify-center rounded-full shrink-0 mt-px transition-all duration-200"
                 style={{
-                  width: 28,
-                  height: 28,
+                  width: 28, height: 28,
                   border: it.bought ? '2px solid var(--green)' : '2px solid var(--gbs)',
                   background: it.bought ? 'var(--green)' : 'transparent',
                   color: it.bought ? 'var(--text-on-success)' : 'transparent',
@@ -166,6 +112,7 @@ export function MyScreen() {
               >
                 <IconCheck size={13} />
               </div>
+
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-bold">{it.name}</div>
                 <div className="flex items-center gap-1.5 mt-1.5">
@@ -175,15 +122,10 @@ export function MyScreen() {
                     disabled={listLocked}
                     className="flex items-center justify-center rounded-sm text-sm border size-[22px]"
                     style={{
-                      background: 'var(--surface-input)',
-                      borderColor: 'var(--gbs)',
-                      color: 'var(--text)',
-                      cursor: listLocked ? 'default' : 'pointer',
-                      opacity: listLocked ? 0.5 : 1,
+                      background: 'var(--surface-input)', borderColor: 'var(--gbs)', color: 'var(--text)',
+                      cursor: listLocked ? 'default' : 'pointer', opacity: listLocked ? 0.5 : 1,
                     }}
-                  >
-                    −
-                  </button>
+                  >−</button>
                   <span className="text-sm font-bold">{qty}</span>
                   <button
                     type="button"
@@ -191,35 +133,24 @@ export function MyScreen() {
                     disabled={listLocked}
                     className="flex items-center justify-center rounded-sm text-sm border size-[22px]"
                     style={{
-                      background: 'var(--surface-input)',
-                      borderColor: 'var(--gbs)',
-                      color: 'var(--text)',
-                      cursor: listLocked ? 'default' : 'pointer',
-                      opacity: listLocked ? 0.5 : 1,
+                      background: 'var(--surface-input)', borderColor: 'var(--gbs)', color: 'var(--text)',
+                      cursor: listLocked ? 'default' : 'pointer', opacity: listLocked ? 0.5 : 1,
                     }}
-                  >
-                    +
-                  </button>
-                  <span className="text-[11px]" style={{ color: 'var(--muted)' }}>
-                    {it.unit}
-                  </span>
+                  >+</button>
+                  <span className="text-[11px]" style={{ color: 'var(--muted)' }}>{it.unit}</span>
                 </div>
               </div>
+
               <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
                 <div
                   className="font-extrabold tabular-nums"
-                  style={{
-                    color: price > 0 ? 'var(--accent)' : 'var(--muted)',
-                    fontSize: price > 0 ? 13 : 11,
-                  }}
+                  style={{ color: price > 0 ? 'var(--accent)' : 'var(--muted)', fontSize: price > 0 ? 13 : 11 }}
                 >
                   {price > 0 ? fmt(price * qty) : 'нет цены'}
                 </div>
                 <div className="flex items-center gap-1">
                   <PriceCell item={it} readOnly={listLocked} onChange={updatePrice} />
-                  <span className="text-[10px]" style={{ color: 'var(--muted)' }}>
-                    ₽/{it.unit}
-                  </span>
+                  <span className="text-[10px]" style={{ color: 'var(--muted)' }}>₽/{it.unit}</span>
                 </div>
               </div>
             </div>

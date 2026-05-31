@@ -1,5 +1,5 @@
-import { IconCalendar } from './Icon'
-import { EmptyState } from './states/EmptyState'
+import { IconCalendar } from '@shared/ui/Icon'
+import { EmptyState } from '@shared/ui/EmptyState'
 
 interface NoEventsPromptProps {
   isAdmin: boolean

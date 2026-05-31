@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import type { Item } from '../types'
+import type { Item } from '@shared/types'
 
 interface PriceCellProps {
   item: Item

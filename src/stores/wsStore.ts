@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { ServerState } from '../types'
+import type { ServerState } from '@shared/types'
 
 type SendFn = (msg: Record<string, unknown>) => boolean
 

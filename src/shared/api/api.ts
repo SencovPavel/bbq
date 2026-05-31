@@ -1,4 +1,4 @@
-import { getTelegramInitData } from './tg'
+import { getTelegramInitData } from '../lib/tg'
 
 import type { GroupSummary, AnalysisResult } from '../types'
 

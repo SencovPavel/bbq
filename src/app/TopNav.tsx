@@ -1,6 +1,6 @@
-import { NAV_TABS, NAV_TAB_COUNT } from '../config/nav-tabs'
+import { NAV_TABS, NAV_TAB_COUNT } from '@shared/config/nav-tabs'
 
-import type { Tab } from '../types'
+import type { Tab } from '@shared/types'
 
 interface TopNavProps {
   active: Tab

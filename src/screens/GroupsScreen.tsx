@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { getUserGroups } from '../lib/api'
-import { IconFlame, IconUsers } from '../components/Icon'
-import { groupTint, TINT_STYLES } from '../lib/group-icon'
+import { getUserGroups } from '@shared/api/api'
+import { IconFlame, IconUsers } from '@shared/ui/Icon'
+import { groupTint, TINT_STYLES } from '@shared/lib/group-icon'
 import { useSessionStore } from '../stores/sessionStore'
-import type { GroupSummary } from '../types'
+import type { GroupSummary } from '@shared/types'
 
 interface GroupsScreenProps {
   onEnter: (gId: string) => void

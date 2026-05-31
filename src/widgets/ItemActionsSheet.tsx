@@ -1,7 +1,7 @@
-import { Modal } from '../Modal'
-import { IconPencil, IconShare, IconTrash } from '../Icon'
+import { Modal } from '@shared/ui/Modal'
+import { IconPencil, IconShare, IconTrash } from '@shared/ui/Icon'
 
-import type { Item } from '../../types'
+import type { Item } from '@shared/types'
 
 interface ItemActionsSheetProps {
   item: Item | null

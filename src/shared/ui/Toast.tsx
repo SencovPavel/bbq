@@ -1,5 +1,5 @@
 import { TOAST_VARIANT_ACCENT } from '../lib/toast-variant'
-import { useToastStore } from '../stores/toastStore'
+import { useToastStore } from '../../stores/toastStore'
 
 import type { CSSProperties } from 'react'
 

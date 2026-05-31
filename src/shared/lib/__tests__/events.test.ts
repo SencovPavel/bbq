@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { pickEventOnEntry } from '../events'
-import { useAppStore } from '../../stores/appStore'
-import type { PicnicEvent } from '../../types'
+import { useAppStore } from '../../../stores/appStore'
+import type { PicnicEvent } from '@shared/types'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 
-import { Modal, ModalButtons } from './Modal'
+import { Modal, ModalButtons } from '@shared/ui/Modal'
 
 interface EventDescriptionModalProps {
   open: boolean

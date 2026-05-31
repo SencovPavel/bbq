@@ -2,7 +2,7 @@ import { GroupBar } from './GroupBar'
 import { TopNav } from './TopNav'
 import { AppSidebar } from './AppSidebar'
 
-import type { Group, PicnicEvent, Tab } from '../types'
+import type { Group, PicnicEvent, Tab } from '@shared/types'
 import type { ReactNode } from 'react'
 
 interface AppShellProps {

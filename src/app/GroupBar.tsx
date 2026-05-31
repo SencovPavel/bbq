@@ -1,10 +1,10 @@
 import { useAppStore } from '../stores/appStore'
 import { useWsStore } from '../stores/wsStore'
 import { useSessionStore } from '../stores/sessionStore'
-import { dateTileMonth } from '../lib/format'
-import { IconCalendar, IconChevronDown, IconChevronLeft } from './Icon'
+import { dateTileMonth } from '@shared/lib/format'
+import { IconCalendar, IconChevronDown, IconChevronLeft } from '@shared/ui/Icon'
 
-import type { Group, PicnicEvent } from '../types'
+import type { Group, PicnicEvent } from '@shared/types'
 
 interface GroupBarProps {
   group: Group | undefined

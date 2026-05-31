@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useWsStore } from '../stores/wsStore'
 import { useAppStore } from '../stores/appStore'
-import { sendEventUpdates } from '../lib/event-update'
-import { IconX, IconPencil, IconCalendar, IconMapPin } from '../components/Icon'
-import type { PicnicEvent } from '../types'
+import { sendEventUpdates } from '@shared/lib/event-update'
+import { IconX, IconPencil, IconCalendar, IconMapPin } from '@shared/ui/Icon'
+import type { PicnicEvent } from '@shared/types'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 

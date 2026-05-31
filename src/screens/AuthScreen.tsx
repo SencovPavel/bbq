@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { authLogin, authRegister } from '../lib/auth'
+import { authLogin, authRegister } from '@shared/api/auth'
 import { useToastStore } from '../stores/toastStore'
-import type { User } from '../types'
+import type { User } from '@shared/types'
 
 interface AuthScreenProps {
   onDone: (user: User) => void

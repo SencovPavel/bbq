@@ -1,8 +1,8 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 
-import { Modal, ModalButtons } from './Modal'
+import { Modal, ModalButtons } from '@shared/ui/Modal'
 
-import type { PicnicEvent } from '../types'
+import type { PicnicEvent } from '@shared/types'
 
 interface EventEditModalProps {
   open: boolean

@@ -1,5 +1,13 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*":   ["src/shared/*"],
+      "@entities/*": ["src/entities/*"],
+      "@widgets/*":  ["src/widgets/*"],
+      "@screens/*":  ["src/screens/*"],
+      "@app/*":      ["src/app/*"]
+    },
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
