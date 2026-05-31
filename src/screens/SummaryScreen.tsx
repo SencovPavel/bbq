@@ -15,6 +15,7 @@ import {
 } from '../components/Icon'
 import { calcSettlement } from '../lib/settlement'
 import { ActivityFeed } from '../components/ActivityFeed'
+import { CatTile } from '../components/CatTile'
 import type { AnalysisResult } from '../types'
 
 export function SummaryScreen() {
@@ -208,9 +209,10 @@ export function SummaryScreen() {
             <div key={cat.id}>
               {i > 0 && <Divider />}
               <div className="flex items-center justify-between px-[15px] py-[10px]">
-                <span className="text-[13px] font-bold">
-                  {cat.icon} {cat.title}
-                  <span className="text-[11px] ml-[6px]" style={{ color: 'var(--muted)' }}>{catDone}/{catItems.length}</span>
+                <span className="flex items-center gap-2.5 text-[13px] font-bold">
+                  <CatTile emoji={cat.icon} size={26} radius={7} />
+                  {cat.title}
+                  <span className="text-[11px]" style={{ color: 'var(--muted)' }}>{catDone}/{catItems.length}</span>
                 </span>
                 <span className="text-[13px] font-extrabold" style={{ color: catTotal > 0 ? 'var(--accent)' : 'var(--muted)' }}>
                   {catTotal > 0 ? fmt(catTotal) : '—'}

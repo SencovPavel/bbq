@@ -25,6 +25,7 @@
   --surface-sidebar: color-mix(in srgb, var(--color-bg-base) 72%, transparent);
   --surface-elevated: var(--color-coal);
   --surface-muted: var(--color-stone-700);
+  --surface-cream-6: color-mix(in srgb, var(--color-cream) 6%, transparent);
   --surface-input: color-mix(in srgb, var(--color-cream) 6%, transparent);
   --surface-strong: color-mix(in srgb, var(--color-cream) 8%, transparent);
   --surface-subtle: color-mix(in srgb, var(--color-cream) 4%, transparent);

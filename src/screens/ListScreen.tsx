@@ -16,6 +16,7 @@ import { CompletedEventBanner } from '../components/states/CompletedEventBanner'
 import { isEventItemsLocked } from '../lib/event-status'
 import { ItemActionsSheet } from '../components/list/ItemActionsSheet'
 import { IconDots, IconPerson, IconCart, IconTrash } from '../components/Icon'
+import { CatTile } from '../components/CatTile'
 import type { Item } from '../types'
 
 const UNITS  = ['шт','кг','л','г','мл','упак','наб','пуч','банк','меш','рул']
@@ -451,10 +452,7 @@ export function ListScreen() {
           <GlassCard key={cat.id}>
             <div className="flex items-center gap-[10px] px-[15px] py-[13px] cursor-pointer select-none"
               onClick={() => toggleCat(cat.id)}>
-              <div className="flex items-center justify-center rounded-[10px] text-[18px] flex-shrink-0"
-                style={{ width: 36, height: 36, background: 'var(--surface-white-8)', border: '1px solid var(--gbs)' }}>
-                {cat.icon}
-              </div>
+              <CatTile emoji={cat.icon} size={36} radius={10} />
               <div className="text-[14px] font-extrabold flex-1">{cat.title}</div>
               <button
                 onClick={e => { e.stopPropagation(); if (!listLocked) setConfirmCat({ id: cat.id, title: cat.title }) }}
@@ -531,16 +529,16 @@ export function ListScreen() {
         <GlassInput label="Название" value={newCat.title}
           onChange={e => setNewCat({ title: e.target.value })} placeholder="Например: Сладкое" autoFocus />
         <div className="text-[11px] font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--muted)' }}>Иконка</div>
-        <div className="grid gap-[6px] mb-3" style={{ gridTemplateColumns: 'repeat(8,1fr)' }}>
+        <div className="grid gap-2 mb-3" style={{ gridTemplateColumns: 'repeat(7,1fr)' }}>
           {EMOJIS.map(em => (
-            <button key={em} onClick={() => setEmoji(em)}
-              className="text-xl p-[6px] rounded-[8px] cursor-pointer border-none text-center"
+            <button key={em} type="button" onClick={() => setEmoji(em)}
+              className="p-1 rounded-[12px] cursor-pointer flex items-center justify-center border"
               style={{
-                background: 'var(--surface-white-8)',
-                border: selectedEmoji === em ? '1px solid var(--accent)' : '1px solid transparent',
+                background: selectedEmoji === em ? 'var(--surface-fire-12)' : 'transparent',
+                borderColor: selectedEmoji === em ? 'var(--accent)' : 'transparent',
                 fontFamily: 'inherit',
               }}>
-              {em}
+              <CatTile emoji={em} size={34} radius={9} />
             </button>
           ))}
         </div>
