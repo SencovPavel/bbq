@@ -1,30 +1,15 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(cp /tmp/picnic-v3-extract/picnic-v3/agent.js \"/Users/pavel/Desktop/project/Бот покупок/picnic-backend/agent.js\")",
-      "Bash(cp /tmp/picnic-v3-extract/picnic-v3/bot.js \"/Users/pavel/Desktop/project/Бот покупок/picnic-backend/bot.js\")",
-      "Bash(cp /tmp/picnic-v3-extract/picnic-v3/migrate.js \"/Users/pavel/Desktop/project/Бот покупок/picnic-backend/migrate.js\")",
-      "Bash(git commit -m ' *)",
+    "allow": ["Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(ssh-add --apple-use-keychain ~/.ssh/id_rsa)",
-      "Bash(ssh-add -K ~/.ssh/id_rsa)",
-      "Bash(GIT_SSH_COMMAND=\"ssh -o IdentitiesOnly=yes\" git push -u origin main)",
       "Bash(git add *)",
       "Bash(npm install *)",
-      "Bash(git commit -m 'chore: add package-lock.json for reproducible installs *)",
-      "Bash(git commit -m 'fix: remove duplicate toggle circle \\(span + ::after conflict\\) *)",
-      "Bash(git commit -m 'redesign: clean header — back button, name, copy code *)",
-      "Bash(mkdir -p \"/Users/pavel/Desktop/project/Бот покупок/picnic-frontend/.claude\")",
       "mcp__Claude_Preview__preview_start",
-      "Bash(npx tsc *)",
-      "Bash(grep \"listen_addresses\\\\|password_encryption\\\\|scram\" /opt/homebrew/var/postgresql@18/postgresql.conf 2>/dev/null | grep -v \"^#\")",
-      "Bash(psql -h /tmp -U postgres -d picnic -c \"SELECT current_user, current_database\\(\\);\")",
-      "Bash(psql -h /private/tmp -U postgres -d picnic -c \"SELECT current_user;\")",
-      "Bash(grep -v \"^$\")",
+      "Bash(npx tsc *)","Bash(grep -v \"^$\")",
       "Bash(node -e ' *)",
       "Bash(curl -s http://localhost:3001/api/health)",
       "Bash(npm test *)",
-      "WebFetch(domain:receipt.taxcom.ru)"
+      "Bash(npx vitest *)"
     ]
   }
 }
