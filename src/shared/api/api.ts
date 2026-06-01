@@ -1,6 +1,6 @@
 import { getTelegramInitData } from '../lib/tg'
 
-import type { GroupSummary, AnalysisResult } from '../types'
+import type { GroupSummary, AnalysisResult, FamilyMemberFull } from '../types'
 
 const base = ''
 
@@ -47,6 +47,48 @@ export async function getUserGroups(userId: string) {
   if (!r.ok) return []
   return r.json() as Promise<GroupSummary[]>
 }
+
+// ── Family ────────────────────────────────────────────────────────────────────
+
+export async function getFamilyMembers(): Promise<FamilyMemberFull[]> {
+  const r = await authFetch('/family/members')
+  if (!r.ok) return []
+  return r.json()
+}
+
+export async function addFamilyMember(data: { name: string; label?: string }) {
+  const r = await authFetch('/family/members', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+  return r.json() as Promise<FamilyMemberFull & { error?: string }>
+}
+
+export async function updateFamilyMember(id: string, data: { name?: string; label?: string | null }) {
+  const r = await authFetch(`/family/members/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  })
+  return r.json() as Promise<{ ok?: boolean; error?: string }>
+}
+
+export async function deleteFamilyMember(id: string) {
+  const r = await authFetch(`/family/members/${id}`, { method: 'DELETE' })
+  return r.json() as Promise<{ ok?: boolean; error?: string }>
+}
+
+export async function setFamilyMemberGroup(
+  memberId: string,
+  opts: { groupId: string; enabled: boolean; includeInCalc?: boolean; costPct?: number },
+) {
+  const r = await authFetch(`/family/members/${memberId}/groups`, {
+    method: 'POST',
+    body: JSON.stringify(opts),
+  })
+  return r.json() as Promise<{ ok?: boolean; error?: string }>
+}
+
+// ── Agent ─────────────────────────────────────────────────────────────────────
 
 export async function analyzeWithAgent(groupId: string) {
   const r = await authFetch('/agent/analyze', {

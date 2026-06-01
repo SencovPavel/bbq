@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 
 import { fmt } from '@shared/lib/session'
 import { isEventItemsLocked } from '@shared/lib/event-status'
@@ -24,15 +24,42 @@ export function useMyScreenVM() {
   const events   = serverState?.events  ?? []
   const meId     = me?.id
 
+  const rsvp          = serverState?.rsvp          ?? []
+  const familyMembers = serverState?.familyMembers  ?? []
+  const familyRsvp    = serverState?.familyRsvp     ?? []
+
   const currentEvent = useMemo(
     () => currentEventId ? events.find(e => e.id === currentEventId) : undefined,
     [events, currentEventId],
   )
   const listLocked = isEventItemsLocked(currentEvent?.status)
 
+  const amIAttending = useMemo(() => {
+    if (!currentEventId || !meId) return true
+    const entry = rsvp.find(r => r.event_id === currentEventId && r.user_id === meId)
+    return entry ? entry.attending : true
+  }, [rsvp, currentEventId, meId])
+
   const amIAdmin = useMemo(
     () => members.find(m => m.user_id === meId)?.is_admin ?? false,
     [members, meId],
+  )
+
+  // Мои члены семьи в этой группе (только те, у кого owner_id === me)
+  const myFamilyMembers = useMemo(
+    () => familyMembers.filter(fm => fm.owner_id === meId),
+    [familyMembers, meId],
+  )
+
+  const familyMemberAttending = useCallback(
+    (familyMemberId: string): boolean => {
+      if (!currentEventId) return true
+      const entry = familyRsvp.find(
+        r => r.family_member_id === familyMemberId && r.event_id === currentEventId,
+      )
+      return entry ? entry.attending : true
+    },
+    [familyRsvp, currentEventId],
   )
 
   const items = useMemo(
@@ -64,6 +91,17 @@ export function useMyScreenVM() {
   )
 
   // ── Actions ──────────────────────────────────────────────────────────────────
+  function toggleRsvp() {
+    if (!currentEventId) return
+    send({ type: 'event:rsvp', eventId: currentEventId, attending: !amIAttending })
+  }
+
+  function toggleFamilyRsvp(familyMemberId: string) {
+    if (!currentEventId) return
+    const current = familyMemberAttending(familyMemberId)
+    send({ type: 'family:rsvp', familyMemberId, eventId: currentEventId, attending: !current })
+  }
+
   function showLockedToast() {
     showToast('Событие завершено — список только для просмотра', 'muted')
   }
@@ -84,15 +122,22 @@ export function useMyScreenVM() {
     send({ type: 'item:update', id, field: 'qty', value: Math.max(0, +(Number(cur) + d).toFixed(2)) })
   }
 
+  const setScreen = useAppStore(s => s.setScreen)
+
   return {
     // data
     me, events, members, myItems, sorted, amIAdmin,
     // totals
     actualTotal, boughtItems, boughtCount, pct, listLocked,
+    // rsvp (own + family)
+    amIAttending, currentEvent, toggleRsvp,
+    myFamilyMembers, familyMemberAttending, toggleFamilyRsvp,
     // scan
     scanOpen, setScanOpen,
     // actions
-    toggleBought, updatePrice, changeQty, showLockedToast, setShowEventSheet,
+    toggleBought, updatePrice, changeQty, showLockedToast,
+    setShowEventSheet,
+    goToFamily: () => setScreen('family'),
     // utils
     fmt, currentEventId,
   }

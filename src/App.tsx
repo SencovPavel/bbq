@@ -9,6 +9,7 @@ import { EventSheet }     from '@widgets/EventSheet'
 import { Toast }          from '@widgets/Toast'
 import { OfflineBanner }  from '@widgets/OfflineBanner'
 
+import { FamilyScreen }    from './screens/FamilyScreen'
 import { ListScreen }      from './screens/ListScreen'
 import { SummaryScreen }   from './screens/SummaryScreen'
 import { MyScreen }        from './screens/MyScreen'
@@ -93,6 +94,16 @@ export default function App() {
         <WebPageLayout>
           <OnboardingScreen onDone={onOnboardingDone} />
         </WebPageLayout>
+        <Toast />
+      </div>
+    )
+  }
+
+  if (screen === 'family') {
+    return (
+      <div className="relative min-h-screen">
+        <Blobs />
+        <FamilyScreen />
         <Toast />
       </div>
     )

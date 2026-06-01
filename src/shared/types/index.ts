@@ -59,6 +59,42 @@ export interface ActivityEntry {
   created_at: string
 }
 
+export interface EventRsvp {
+  event_id:  string
+  user_id:   string
+  attending: boolean
+}
+
+/** Глобальный (не группо-специфичный) член семьи — часть serverState с настройками группы. */
+export interface FamilyMember {
+  id:              string
+  owner_id:        string
+  name:            string
+  label:           string | null
+  /** Настройки для конкретной группы (null — не добавлен в эту группу). */
+  include_in_calc: boolean | null
+  cost_pct:        number | null
+}
+
+/** RSVP члена семьи (без аккаунта) на событие. */
+export interface FamilyRsvp {
+  family_member_id: string
+  event_id:         string
+  attending:        boolean
+}
+
+/** Полный член семьи с настройками по всем группам — только в HTTP /family/members. */
+export interface FamilyMemberGroup {
+  group_id:        string
+  group_name:      string
+  include_in_calc: boolean
+  cost_pct:        number
+}
+
+export interface FamilyMemberFull extends FamilyMember {
+  groups: FamilyMemberGroup[]
+}
+
 export interface ServerState {
   group: Group
   categories: Category[]
@@ -66,6 +102,9 @@ export interface ServerState {
   members: Member[]
   events: PicnicEvent[]
   activity?: ActivityEntry[]
+  rsvp?: EventRsvp[]
+  familyMembers?: FamilyMember[]
+  familyRsvp?: FamilyRsvp[]
 }
 
 export interface GroupSummary {
@@ -81,7 +120,7 @@ export interface AnalysisResult {
   changed?: Array<{ name: string; chat_qty: number | string; list_qty: number | string }>
 }
 
-export type Screen = 'loading' | 'auth' | 'onboarding' | 'groups' | 'app'
+export type Screen = 'loading' | 'auth' | 'onboarding' | 'groups' | 'app' | 'family'
 export type Tab    = 'events' | 'list' | 'summary' | 'my' | 'members'
 
 export type ToastVariant = 'default' | 'error' | 'info' | 'muted'

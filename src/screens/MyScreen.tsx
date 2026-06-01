@@ -1,4 +1,4 @@
-import { NoEventsPrompt } from '@widgets/NoEventsPrompt'
+import { NoEventsPrompt }  from '@widgets/NoEventsPrompt'
 import { EmptyState } from '@shared/ui/EmptyState'
 import { UserAvatar } from '@entities/member/ui/UserAvatar'
 import { ReceiptScanner } from '@widgets/ReceiptScanner'
@@ -7,13 +7,50 @@ import { PriceCell } from '@entities/item/ui/PriceCell'
 import { CompletedEventBanner } from '@entities/event/ui/CompletedEventBanner'
 import { useMyScreenVM } from './useMyScreenVM'
 
+// ── RsvpRow ───────────────────────────────────────────────────────────────────
+
+function RsvpRow({ name, label, attending, onToggle }: {
+  name: string
+  label?: string
+  attending: boolean
+  onToggle: () => void
+}) {
+  return (
+    <div className="flex items-center justify-between mb-1.5">
+      <div className="flex items-baseline gap-1.5 min-w-0">
+        <span className="text-[13px] font-semibold truncate">{name}</span>
+        {label && (
+          <span className="text-[11px] shrink-0" style={{ color: 'var(--muted)' }}>{label}</span>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={onToggle}
+        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-pill text-[11px] font-extrabold border transition-all active:scale-95 shrink-0 ml-2"
+        style={{
+          background:  attending ? 'rgba(74,222,128,.13)' : 'rgba(248,113,113,.10)',
+          borderColor: attending ? 'rgba(74,222,128,.35)' : 'rgba(248,113,113,.30)',
+          color:       attending ? '#4ade80' : 'var(--red)',
+          fontFamily:  'inherit',
+          cursor:      'pointer',
+        }}
+      >
+        {attending ? '✓ Иду' : '✕ Не иду'}
+      </button>
+    </div>
+  )
+}
+
 export function MyScreen() {
   const vm = useMyScreenVM()
   const {
     me, events, myItems, sorted, amIAdmin,
     actualTotal, boughtItems, boughtCount, pct, listLocked,
+    amIAttending, currentEvent, toggleRsvp,
+    myFamilyMembers, familyMemberAttending, toggleFamilyRsvp,
     scanOpen, setScanOpen,
     toggleBought, updatePrice, changeQty, showLockedToast, setShowEventSheet,
+    goToFamily,
     fmt, currentEventId,
   } = vm
 
@@ -65,6 +102,46 @@ export function MyScreen() {
             </button>
           </div>
 
+          {currentEvent && (
+            <>
+              <div className="h-px my-3" style={{ background: 'var(--surface-white-10)' }} />
+
+              {/* Явка — заголовок */}
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
+                  Явка
+                </span>
+                <button
+                  type="button"
+                  onClick={goToFamily}
+                  className="text-[11px] font-bold border-none bg-transparent cursor-pointer"
+                  style={{ color: 'var(--muted)', fontFamily: 'inherit' }}
+                >
+                  Управление семьёй →
+                </button>
+              </div>
+
+              {/* Я */}
+              <RsvpRow
+                name={`${me?.name ?? '...'} (я)`}
+                attending={amIAttending}
+                onToggle={toggleRsvp}
+              />
+
+              {/* Члены семьи */}
+              {myFamilyMembers.map(fm => (
+                <RsvpRow
+                  key={fm.id}
+                  name={fm.name}
+                  label={fm.label ?? undefined}
+                  attending={familyMemberAttending(fm.id)}
+                  onToggle={() => toggleFamilyRsvp(fm.id)}
+                />
+              ))}
+            </>
+          )}
+
+          <div className="h-px my-3" style={{ background: 'var(--surface-white-10)' }} />
           <div className="text-[11px] font-extrabold uppercase tracking-wider mb-1" style={{ color: 'var(--muted)' }}>
             Потрачено по факту
           </div>
