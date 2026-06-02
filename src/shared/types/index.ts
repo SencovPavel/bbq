@@ -1,6 +1,10 @@
 export interface User {
   id: string
   name: string
+  /** @username из Telegram — TODO бэк пока не отдаёт */
+  username?: string | null
+  /** Является ли пользователь администратором текущей группы — TODO бэк пока не отдаёт */
+  is_admin?: boolean
   bio?: string
 }
 

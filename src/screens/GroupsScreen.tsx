@@ -1,5 +1,6 @@
 import { IconFlame, IconUsers } from '@shared/ui/Icon'
 import { groupTint, TINT_STYLES } from '@shared/lib/group-icon'
+import { UserAvatar } from '@entities/member/ui/UserAvatar'
 import { useGroupsScreenVM } from './useGroupsScreenVM'
 
 interface GroupsScreenProps {
@@ -17,10 +18,18 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
           <div className="flex items-center gap-[6px] text-[22px] font-black" style={{ color: 'var(--accent)', fontFamily: 'inherit' }}>
             <IconFlame size={22} strokeWidth={1.4} /> Котёл
           </div>
-          <button onClick={goToProfile}
-            className="text-[13px] font-semibold border-none bg-transparent cursor-pointer"
-            style={{ color: 'var(--muted)', fontFamily: 'inherit' }}>
-            {me?.name ? me.name.split(' ')[0] : 'Профиль'} →
+          <button
+            onClick={goToProfile}
+            title="Мой профиль"
+            className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-pill border-none cursor-pointer"
+            style={{
+              background: 'rgba(255,255,255,.04)',
+              border: '1px solid var(--gb)',
+              fontFamily: 'inherit',
+            }}
+          >
+            <UserAvatar name={me?.name ?? ''} size={28} isAdmin={me?.is_admin} />
+            <span className="text-[12.5px] font-extrabold" style={{ color: 'var(--text)' }}>Профиль</span>
           </button>
         </div>
         <div className="text-[13px] mb-6 lg:hidden" style={{ color: 'var(--muted)' }}>
