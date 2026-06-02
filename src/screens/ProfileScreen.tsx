@@ -95,17 +95,17 @@ export function ProfileScreen() {
     : 'Добавь, кто ходит с тобой'
 
   return (
-    <div className="min-h-screen" style={{ padding: '0 0 40px' }}>
+    <div className="pb-10">
 
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 pt-12 pb-6">
+      <div className="flex items-center gap-3 px-4 lg:px-0 pt-4 lg:pt-1 pb-6">
         <BackButton onClick={goBack} />
         <h1 className="text-[20px] font-extrabold flex-1" style={{ letterSpacing: '-0.02em' }}>
           Мой профиль
         </h1>
       </div>
 
-      <div className="px-4 flex flex-col gap-3">
+      <div className="px-4 lg:px-0 flex flex-col gap-3">
 
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <div className="glass rounded-[18px] overflow-hidden">

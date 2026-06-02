@@ -35,7 +35,22 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
         <div className="text-[13px] mb-6 lg:hidden" style={{ color: 'var(--muted)' }}>
           {me?.name ? `Привет, ${me.name}!` : 'Планируй закупки вместе с друзьями'}
         </div>
-        <div className="hidden lg:block text-[20px] font-extrabold mb-1">Мои группы</div>
+        <div className="hidden lg:flex items-center justify-between mb-1">
+          <div className="text-[20px] font-extrabold">Мои группы</div>
+          <button
+            onClick={goToProfile}
+            title="Мой профиль"
+            className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full border-none cursor-pointer"
+            style={{
+              background: 'rgba(255,240,200,0.06)',
+              border: '1px solid var(--card-b)',
+              fontFamily: 'inherit',
+            }}
+          >
+            <UserAvatar name={me?.name ?? ''} size={26} isAdmin={me?.is_admin} />
+            <span className="text-[12.5px] font-extrabold" style={{ color: 'var(--text)' }}>Профиль</span>
+          </button>
+        </div>
         <div className="hidden lg:block text-[13px] mb-6" style={{ color: 'var(--muted)' }}>
           {me?.name ? `Привет, ${me.name}!` : 'Выберите группу или создайте новую'}
         </div>

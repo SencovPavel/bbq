@@ -82,7 +82,7 @@ export function FamilyScreen() {
   } = vm
 
   return (
-    <div className="px-3.5 pt-4 pb-10 max-w-lg mx-auto">
+    <div className="px-3.5 lg:px-0 pt-4 lg:pt-1 pb-10">
 
       {/* Header */}
       <div className="flex items-center gap-3 mb-5">
