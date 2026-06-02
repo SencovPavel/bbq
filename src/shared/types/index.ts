@@ -1,6 +1,7 @@
 export interface User {
   id: string
   name: string
+  bio?: string
 }
 
 export interface Group {
@@ -120,7 +121,7 @@ export interface AnalysisResult {
   changed?: Array<{ name: string; chat_qty: number | string; list_qty: number | string }>
 }
 
-export type Screen = 'loading' | 'auth' | 'onboarding' | 'groups' | 'app' | 'family'
+export type Screen = 'loading' | 'auth' | 'onboarding' | 'groups' | 'app' | 'family' | 'profile'
 export type Tab    = 'events' | 'list' | 'summary' | 'my' | 'members'
 
 export type ToastVariant = 'default' | 'error' | 'info' | 'muted'

@@ -7,6 +7,7 @@ import type { Screen, Tab } from '@shared/types'
 
 interface AppStore {
   screen: Screen
+  previousScreen: Screen | null
   tab: Tab
   currentEventId: string | null
   showEventSheet: boolean
@@ -27,10 +28,11 @@ const persistUi = (patch: Parameters<typeof saveGroupUiPatch>[1]): void => {
 
 export const useAppStore = create<AppStore>((set) => ({
   screen: 'loading',
+  previousScreen: null,
   tab: 'list',
   currentEventId: null,
   showEventSheet: false,
-  setScreen: (screen) => set({ screen }),
+  setScreen: (screen) => set(state => ({ previousScreen: state.screen, screen })),
   setTab: (tab) => {
     set({ tab })
     persistUi({ tab })

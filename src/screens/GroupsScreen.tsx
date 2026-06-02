@@ -9,12 +9,19 @@ interface GroupsScreenProps {
 }
 
 export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
-  const { me, groups, loading } = useGroupsScreenVM()
+  const { me, groups, loading, goToProfile } = useGroupsScreenVM()
 
   return (
     <div className="w-full">
-        <div className="flex items-center gap-[6px] text-[22px] font-black mb-1 lg:hidden" style={{ color: 'var(--accent)', fontFamily: 'inherit' }}>
-          <IconFlame size={22} strokeWidth={1.4} /> Котёл
+        <div className="flex items-center justify-between mb-1 lg:hidden">
+          <div className="flex items-center gap-[6px] text-[22px] font-black" style={{ color: 'var(--accent)', fontFamily: 'inherit' }}>
+            <IconFlame size={22} strokeWidth={1.4} /> Котёл
+          </div>
+          <button onClick={goToProfile}
+            className="text-[13px] font-semibold border-none bg-transparent cursor-pointer"
+            style={{ color: 'var(--muted)', fontFamily: 'inherit' }}>
+            {me?.name ? me.name.split(' ')[0] : 'Профиль'} →
+          </button>
         </div>
         <div className="text-[13px] mb-6 lg:hidden" style={{ color: 'var(--muted)' }}>
           {me?.name ? `Привет, ${me.name}!` : 'Планируй закупки вместе с друзьями'}

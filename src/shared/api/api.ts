@@ -88,6 +88,17 @@ export async function setFamilyMemberGroup(
   return r.json() as Promise<{ ok?: boolean; error?: string }>
 }
 
+// ── Profile ───────────────────────────────────────────────────────────────────
+
+export async function updateProfile(data: { bio?: string }) {
+  const r = await authFetch('/auth/profile', {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  })
+  if (!r.ok) throw new Error('Ошибка сохранения профиля')
+  return r.json() as Promise<{ id: string; name: string; email: string; bio: string | null }>
+}
+
 // ── Agent ─────────────────────────────────────────────────────────────────────
 
 export async function analyzeWithAgent(groupId: string) {
