@@ -52,13 +52,17 @@ export function useFamilyScreenVM() {
   async function handleAdd() {
     const name = newName.trim()
     if (!name) return
-    const result = await addFamilyMember({ name, label: newLabel || undefined })
-    if (result.error) { showToast(result.error, 'error'); return }
-    setMembers(prev => [...prev, result])
-    setAddOpen(false)
-    setNewName('')
-    setNewLabel(FAMILY_LABELS[0])
-    showToast(`${name} добавлен в семью`)
+    try {
+      const result = await addFamilyMember({ name, label: newLabel || undefined })
+      if (result.error) { showToast(result.error, 'error'); return }
+      setMembers(prev => [...prev, result])
+      setAddOpen(false)
+      setNewName('')
+      setNewLabel(FAMILY_LABELS[0])
+      showToast(`${name} добавлен в семью`)
+    } catch {
+      showToast('Ошибка добавления', 'error')
+    }
   }
 
   function openEdit(member: FamilyMemberFull) {
@@ -71,12 +75,17 @@ export function useFamilyScreenVM() {
     if (!editMember) return
     const name = editName.trim()
     if (!name) return
-    await updateFamilyMember(editMember.id, { name, label: editLabel || null })
-    setMembers(prev => prev.map(m =>
-      m.id === editMember.id ? { ...m, name, label: editLabel || null } : m,
-    ))
-    setEditMember(null)
-    showToast('Сохранено')
+    try {
+      const result = await updateFamilyMember(editMember.id, { name, label: editLabel || null })
+      if (result.error) { showToast(result.error, 'error'); return }
+      setMembers(prev => prev.map(m =>
+        m.id === editMember.id ? { ...m, name, label: editLabel || null } : m,
+      ))
+      setEditMember(null)
+      showToast('Сохранено')
+    } catch {
+      showToast('Ошибка сохранения', 'error')
+    }
   }
 
   async function handleDelete(id: string) {

@@ -21,6 +21,7 @@ export default defineConfig({
     proxy: {
       '/groups': 'http://localhost:3001',
       '/users':  'http://localhost:3001',
+      '/family': 'http://localhost:3001',
       '/agent':  'http://localhost:3001',
       '/auth':   'http://localhost:3001',
       '/ws':     { target: 'ws://localhost:3001', ws: true },
