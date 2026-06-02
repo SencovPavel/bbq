@@ -19,10 +19,10 @@ export const FAMILY_LABELS = ['ребёнок', 'муж', 'жена', 'парт�
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
 export function useFamilyScreenVM() {
-  const me             = useSessionStore(s => s.me)
-  const setScreen      = useAppStore(s => s.setScreen)
-  const previousScreen = useAppStore(s => s.previousScreen)
-  const showToast      = useToastStore(s => s.show)
+  const me        = useSessionStore(s => s.me)
+  const setScreen = useAppStore(s => s.setScreen)
+  const popScreen = useAppStore(s => s.popScreen)
+  const showToast = useToastStore(s => s.show)
 
   // ── Remote data ────────────────────────────────────────────────────────────
   const [members, setMembers] = useState<FamilyMemberFull[]>([])
@@ -115,6 +115,6 @@ export function useFamilyScreenVM() {
     confirmDeleteId, setConfirmDeleteId,
     // actions
     handleAdd, openEdit, handleEdit, handleDelete, toggleGroup,
-    goBack: () => setScreen(previousScreen ?? 'app'),
+    goBack: () => popScreen('app'),
   }
 }

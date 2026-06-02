@@ -6,11 +6,11 @@ import { useAppStore }     from '@stores/appStore'
 import { useToastStore }   from '@stores/toastStore'
 
 export function useProfileScreenVM() {
-  const me             = useSessionStore(s => s.me)
-  const setMe          = useSessionStore(s => s.setMe)
-  const previousScreen = useAppStore(s => s.previousScreen)
-  const setScreen      = useAppStore(s => s.setScreen)
-  const showToast      = useToastStore(s => s.show)
+  const me        = useSessionStore(s => s.me)
+  const setMe     = useSessionStore(s => s.setMe)
+  const popScreen = useAppStore(s => s.popScreen)
+  const setScreen = useAppStore(s => s.setScreen)
+  const showToast = useToastStore(s => s.show)
 
   // ── Статистика ─────────────────────────────────────────────────────────────
   const [groupCount,  setGroupCount]  = useState(0)
@@ -52,7 +52,7 @@ export function useProfileScreenVM() {
     }
   }, [draftBio, me, setMe, showToast])
 
-  const goBack     = useCallback(() => setScreen(previousScreen ?? 'groups'), [setScreen, previousScreen])
+  const goBack     = useCallback(() => popScreen('groups'), [popScreen])
   const goToFamily = useCallback(() => setScreen('family'), [setScreen])
 
   return {
