@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 
-import { Modal, GlassInput }           from '@shared/ui/Modal'
-import { UserAvatar }                  from '@entities/member/ui/UserAvatar'
+import { Modal, GlassInput }                          from '@shared/ui/Modal'
+import { UserAvatar }                                 from '@entities/member/ui/UserAvatar'
+import { BackButton, GlassIconButton }                from '@shared/ui/GlassIconButton'
 import { IconUsers, IconFlag, IconPencil, IconCrown } from '@shared/ui/Icon'
 
-import { useProfileScreenVM }          from './useProfileScreenVM'
+import { useProfileScreenVM }                         from './useProfileScreenVM'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -98,13 +99,7 @@ export function ProfileScreen() {
 
       {/* Header */}
       <div className="flex items-center gap-3 px-4 pt-12 pb-6">
-        <button
-          onClick={goBack}
-          className="border-none bg-transparent cursor-pointer text-[22px] leading-none p-0"
-          style={{ color: 'var(--muted)', fontFamily: 'inherit' }}
-        >
-          ←
-        </button>
+        <BackButton onClick={goBack} />
         <h1 className="text-[20px] font-extrabold flex-1" style={{ letterSpacing: '-0.02em' }}>
           Мой профиль
         </h1>
@@ -144,18 +139,9 @@ export function ProfileScreen() {
                 )}
               </div>
 
-              <button
-                onClick={openEdit}
-                title="Редактировать"
-                className="size-9 rounded-[10px] flex items-center justify-center cursor-pointer flex-shrink-0 border-none"
-                style={{
-                  background: 'rgba(255,255,255,.05)',
-                  border: '1px solid var(--gb)',
-                  color: 'var(--muted)',
-                }}
-              >
+              <GlassIconButton onClick={openEdit} title="Редактировать">
                 <IconPencil size={14} />
-              </button>
+              </GlassIconButton>
             </div>
 
             {/* Статистика */}

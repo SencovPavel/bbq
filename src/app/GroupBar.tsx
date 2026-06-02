@@ -3,6 +3,7 @@ import { useWsStore } from '@stores/wsStore'
 import { useSessionStore } from '@stores/sessionStore'
 import { dateTileMonth } from '@shared/lib/format'
 import { IconCalendar, IconChevronDown, IconChevronLeft } from '@shared/ui/Icon'
+import { GlassIconButton } from '@shared/ui/GlassIconButton'
 
 import type { Group, PicnicEvent } from '@shared/types'
 
@@ -58,16 +59,9 @@ export function GroupBar({ group, currentEvent, onBack }: GroupBarProps) {
                  bg-[rgba(16,14,11,0.78)] backdrop-blur-xl backdrop-saturate-150
                  border-b border-[rgba(255,220,150,0.06)]"
     >
-      <button
-        type="button"
-        onClick={onBack}
-        aria-label="Все группы"
-        className="size-9 rounded-full flex items-center justify-center shrink-0
-                   bg-[rgba(255,240,200,0.08)] border border-[var(--card-b)]
-                   text-[var(--text)] active:scale-95 transition border-none cursor-pointer"
-      >
+      <GlassIconButton onClick={onBack} ariaLabel="Все группы">
         <IconChevronLeft size={15} />
-      </button>
+      </GlassIconButton>
 
       <button
         type="button"

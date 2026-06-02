@@ -3,6 +3,7 @@ import { Modal, ModalButtons, GlassInput }     from '@shared/ui/Modal'
 import { ConfirmModal }                        from '@shared/ui/ConfirmModal'
 import { EmptyState }                          from '@shared/ui/EmptyState'
 import { UserAvatar }                          from '@entities/member/ui/UserAvatar'
+import { BackButton }                          from '@shared/ui/GlassIconButton'
 import { useFamilyScreenVM, FAMILY_LABELS }    from './useFamilyScreenVM'
 
 // ── LabelSelect ───────────────────────────────────────────────────────────────
@@ -85,14 +86,7 @@ export function FamilyScreen() {
 
       {/* Header */}
       <div className="flex items-center gap-3 mb-5">
-        <button
-          type="button"
-          onClick={goBack}
-          className="flex items-center gap-1 text-[13px] font-bold border-none bg-transparent cursor-pointer"
-          style={{ color: 'var(--muted)', fontFamily: 'inherit' }}
-        >
-          ← Назад
-        </button>
+        <BackButton onClick={goBack} />
         <h1 className="text-[20px] font-black flex-1 m-0">Моя семья</h1>
         <button
           type="button"
