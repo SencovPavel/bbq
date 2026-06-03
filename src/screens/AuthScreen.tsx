@@ -32,7 +32,7 @@ const labelStyle: CSSProperties = {
 export function AuthScreen({ onDone }: AuthScreenProps) {
   const {
     mode, name, setName, email, setEmail, password, setPassword,
-    loading, switchMode, handleSubmit,
+    loading, switchMode, handleSubmit, handleDevLogin,
   } = useAuthScreenVM(onDone)
 
   return (
@@ -156,6 +156,26 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
           <span style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 600 }}>или</span>
           <div style={{ flex: 1, height: 1, background: 'var(--gb)' }} />
         </div>
+
+        {/* Dev login (только в режиме разработки) */}
+        {import.meta.env.DEV && (
+          <button
+            type="button"
+            onClick={handleDevLogin}
+            disabled={loading}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              width: '100%', padding: '11px 0',
+              borderRadius: 12,
+              border: '1px dashed rgba(249,115,22,.4)',
+              background: 'rgba(249,115,22,.06)',
+              color: 'var(--accent)', fontSize: 13, fontWeight: 700,
+              fontFamily: 'inherit', cursor: loading ? 'default' : 'pointer',
+              opacity: loading ? 0.6 : 1,
+            }}>
+            ⚡ Dev login
+          </button>
+        )}
 
         {/* OAuth buttons */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

@@ -1,9 +1,21 @@
 import { useState, useEffect } from 'react'
-import { authLogin, authRegister } from '@shared/api/auth'
+import { authLogin, authRegister, authDevLogin } from '@shared/api/auth'
 import { useToastStore } from '@stores/toastStore'
 import type { User } from '@shared/types'
 
 export type AuthMode = 'login' | 'register'
+
+/** Преобразует ответ бэкенда в User для sessionStore */
+function toUser(raw: { id: string; name: string; email?: string; bio?: string | null; username?: string | null; is_admin?: boolean }): User {
+  return {
+    id:       raw.id,
+    name:     raw.name,
+    email:    raw.email,
+    bio:      raw.bio ?? undefined,
+    username: raw.username ?? null,
+    is_admin: raw.is_admin ?? false,
+  }
+}
 
 export function useAuthScreenVM(onDone: (user: User) => void) {
   const [mode,     setMode]     = useState<AuthMode>('login')
@@ -30,12 +42,25 @@ export function useAuthScreenVM(onDone: (user: User) => void) {
     e.preventDefault()
     setLoading(true)
     try {
-      const user = mode === 'register'
+      const raw = mode === 'register'
         ? await authRegister(name.trim(), email.trim(), password)
         : await authLogin(email.trim(), password)
-      onDone({ id: user.id, name: user.name })
+      onDone(toUser(raw))
     } catch (err: unknown) {
       showToast(err instanceof Error ? err.message : 'Ошибка', 'error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleDevLogin() {
+    setLoading(true)
+    try {
+      const raw = await authDevLogin()
+      if (raw) onDone(toUser(raw))
+      else showToast('dev-login недоступен', 'error')
+    } catch {
+      showToast('Ошибка dev-login', 'error')
     } finally {
       setLoading(false)
     }
@@ -49,5 +74,6 @@ export function useAuthScreenVM(onDone: (user: User) => void) {
     loading,
     switchMode,
     handleSubmit,
+    handleDevLogin,
   }
 }

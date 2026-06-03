@@ -4,9 +4,12 @@
  */
 
 export interface WebUser {
-  id:    string
-  name:  string
-  email: string
+  id:       string
+  name:     string
+  email:    string
+  bio?:     string | null
+  username?: string | null
+  is_admin?: boolean
 }
 
 async function post(path: string, body: object): Promise<WebUser> {
