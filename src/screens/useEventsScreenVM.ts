@@ -8,7 +8,7 @@ import type { PicnicEvent } from '@shared/types'
 
 export function formatDate(dateStr: string | null, timeStr: string | null): string {
   if (!dateStr) return 'Дата не указана'
-  const d = new Date(dateStr + 'T00:00:00')
+  const d = new Date(dateStr.slice(0, 10) + 'T00:00:00')
   const day = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
   if (!timeStr) return day
   const [h, m] = timeStr.split(':')
@@ -17,7 +17,7 @@ export function formatDate(dateStr: string | null, timeStr: string | null): stri
 
 export function isPast(dateStr: string | null): boolean {
   if (!dateStr) return false
-  return new Date(dateStr + 'T23:59:59') < new Date()
+  return new Date(dateStr.slice(0, 10) + 'T23:59:59') < new Date()
 }
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────

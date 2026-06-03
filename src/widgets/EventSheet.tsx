@@ -11,7 +11,7 @@ import type { PicnicEvent } from '@shared/types'
 
 function formatDate(dateStr: string | null, timeStr: string | null): string {
   if (!dateStr) return 'Дата не указана'
-  const d = new Date(dateStr + 'T00:00:00')
+  const d = new Date(dateStr.slice(0, 10) + 'T00:00:00')
   const day = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
   if (!timeStr) return day
   const [h, m] = timeStr.split(':')

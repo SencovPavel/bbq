@@ -22,7 +22,7 @@ function DateTile({ event }: { event: PicnicEvent | undefined }) {
     )
   }
 
-  const d = new Date(event.event_date + 'T00:00:00')
+  const d = new Date(event.event_date.slice(0, 10) + 'T00:00:00')
 
   return (
     <div

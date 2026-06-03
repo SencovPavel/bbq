@@ -15,7 +15,7 @@ interface AppSidebarProps {
 }
 
 const shortDate = (iso: string): string => {
-  const d = new Date(iso + 'T00:00:00')
+  const d = new Date(iso.slice(0, 10) + 'T00:00:00')
   return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })
 }
 

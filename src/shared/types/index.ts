@@ -1,11 +1,12 @@
 export interface User {
   id: string
   name: string
-  /** @username из Telegram — TODO бэк пока не отдаёт */
+  email?: string
+  /** Часть email до "@", напр. "anya_k" из "anya_k@mail.ru" */
   username?: string | null
-  /** Является ли пользователь администратором текущей группы — TODO бэк пока не отдаёт */
+  /** true если пользователь является администратором хотя бы в одной группе */
   is_admin?: boolean
-  bio?: string
+  bio?: string | null
 }
 
 export interface Group {

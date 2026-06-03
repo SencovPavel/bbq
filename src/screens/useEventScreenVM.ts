@@ -19,7 +19,7 @@ function daysUntil(dateStr: string | null): number | null {
   if (!dateStr) return null
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const target = new Date(dateStr + 'T00:00:00')
+  const target = new Date(dateStr.slice(0, 10) + 'T00:00:00')
   return Math.round((target.getTime() - today.getTime()) / 86_400_000)
 }
 

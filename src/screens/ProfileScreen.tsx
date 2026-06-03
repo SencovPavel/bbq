@@ -101,7 +101,7 @@ export function ProfileScreen() {
       <div className="flex items-center gap-3 px-4 lg:px-0 pt-4 lg:pt-1 pb-6">
         <BackButton onClick={goBack} />
         <h1 className="text-[20px] font-extrabold flex-1" style={{ letterSpacing: '-0.02em' }}>
-          Мой профиль
+          Профиль
         </h1>
       </div>
 
