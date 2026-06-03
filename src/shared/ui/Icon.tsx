@@ -3,11 +3,14 @@
  * Все иконки 1:1 с Lucide, strokeWidth по умолчанию 1.8.
  */
 
+import { CSSProperties } from "react"
+
 interface IconProps {
   size?: number
   color?: string
   strokeWidth?: number
   className?: string
+  style?: CSSProperties
 }
 
 const base = (
@@ -82,7 +85,7 @@ export function IconQrScan({ size = 15, strokeWidth = 2 }: IconProps) {
   )
 }
 
-export function IconDots({ size = 14, strokeWidth = 1.8, className }: IconProps) {
+export function IconDots({ size = 14, className }: IconProps) {
   return (
     <svg
       width={size}
@@ -220,23 +223,11 @@ export function IconCheckCircle({ size = 14, strokeWidth = 1.8 }: IconProps) {
   )
 }
 
-export function IconFlame({ size = 24, strokeWidth = 1.6 }: IconProps) {
+export function IconFlame({ size = 24, strokeWidth = 1.6, style }: IconProps) {
   return base(size, strokeWidth,
-    <path d="M12 2C8 8 6 11 6 14a6 6 0 0 0 12 0c0-3-2-6-6-12zM8.5 17c.5-2 2-3.5 3.5-4-.5 2 .5 3.5 2 4a4 4 0 0 1-5.5 0z" />
+    <path d="M12 2C8 8 6 11 6 14a6 6 0 0 0 12 0c0-3-2-6-6-12zM8.5 17c.5-2 2-3.5 3.5-4-.5 2 .5 3.5 2 4a4 4 0 0 1-5.5 0z" style={style} />
   )
 }
-
-export function IconUsers({ size = 40, strokeWidth = 1.5 }: IconProps) {
-  return base(size, strokeWidth,
-    <>
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </>
-  )
-}
-
 export function IconReceipt({ size = 40, strokeWidth = 1.5 }: IconProps) {
   return base(size, strokeWidth,
     <>

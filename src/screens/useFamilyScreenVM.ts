@@ -20,7 +20,6 @@ export const FAMILY_LABELS = ['ребёнок', 'муж', 'жена', 'парт�
 
 export function useFamilyScreenVM() {
   const me        = useSessionStore(s => s.me)
-  const setScreen = useAppStore(s => s.setScreen)
   const popScreen = useAppStore(s => s.popScreen)
   const showToast = useToastStore(s => s.show)
 
@@ -124,6 +123,6 @@ export function useFamilyScreenVM() {
     confirmDeleteId, setConfirmDeleteId,
     // actions
     handleAdd, openEdit, handleEdit, handleDelete, toggleGroup,
-    goBack: () => popScreen('app'),
+    goBack: () => popScreen('profile'),
   }
 }

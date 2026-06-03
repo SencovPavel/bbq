@@ -1,10 +1,10 @@
-import { GlassCard }                          from '@shared/ui/GlassCard'
-import { Modal, ModalButtons, GlassInput }     from '@shared/ui/Modal'
-import { ConfirmModal }                        from '@shared/ui/ConfirmModal'
-import { EmptyState }                          from '@shared/ui/EmptyState'
-import { UserAvatar }                          from '@entities/member/ui/UserAvatar'
-import { BackButton }                          from '@shared/ui/GlassIconButton'
-import { useFamilyScreenVM, FAMILY_LABELS }    from './useFamilyScreenVM'
+import { Modal, ModalButtons, GlassInput } from '@shared/ui/Modal'
+import { ConfirmModal } from '@shared/ui/ConfirmModal'
+import { EmptyState } from '@shared/ui/EmptyState'
+import { UserAvatar } from '@entities/member/ui/UserAvatar'
+import { BackButton } from '@shared/ui/GlassIconButton'
+import { IconPerson } from '@shared/ui/Icon'
+import { useFamilyScreenVM, FAMILY_LABELS } from './useFamilyScreenVM'
 
 // ── LabelSelect ───────────────────────────────────────────────────────────────
 
@@ -12,8 +12,10 @@ function LabelSelect({ value, onChange }: { value: string; onChange: (v: string)
   const options = [...FAMILY_LABELS, '']
   return (
     <div className="mb-1">
-      <div className="text-[11px] font-extrabold uppercase tracking-wider mb-2"
-        style={{ color: 'var(--muted)' }}>
+      <div
+        className="text-[11px] font-extrabold uppercase tracking-wider mb-2"
+        style={{ color: 'var(--muted)' }}
+      >
         Кто это
       </div>
       <div className="flex flex-wrap gap-2">
@@ -26,11 +28,11 @@ function LabelSelect({ value, onChange }: { value: string; onChange: (v: string)
               onClick={() => onChange(l)}
               className="px-3 py-1 rounded-pill text-[12px] font-bold border transition-all"
               style={{
-                background:   active ? 'var(--surface-fire-12)' : 'var(--surface-white-8)',
-                borderColor:  active ? 'var(--accent)' : 'var(--gb)',
-                color:        active ? 'var(--accent)' : 'var(--muted)',
-                fontFamily:   'inherit',
-                cursor:       'pointer',
+                background:  active ? 'var(--surface-fire-12)' : 'var(--surface-white-8)',
+                borderColor: active ? 'var(--accent)' : 'var(--gb)',
+                color:       active ? 'var(--accent)' : 'var(--muted)',
+                fontFamily:  'inherit',
+                cursor:      'pointer',
               }}
             >
               {l || 'без метки'}
@@ -51,7 +53,9 @@ function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
       onClick={onToggle}
       className="relative border-none cursor-pointer transition-colors duration-200 shrink-0"
       style={{
-        width: 40, height: 22, borderRadius: 11,
+        width: 40,
+        height: 22,
+        borderRadius: 11,
         background: on ? 'var(--accent)' : 'var(--surface-white-10)',
       }}
       aria-pressed={on}
@@ -59,7 +63,8 @@ function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
       <span
         className="absolute top-[3px] rounded-full transition-all duration-200"
         style={{
-          width: 16, height: 16,
+          width: 16,
+          height: 16,
           background: '#fff',
           left: on ? 'calc(100% - 19px)' : 3,
         }}
@@ -71,7 +76,6 @@ function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
 // ── FamilyScreen ──────────────────────────────────────────────────────────────
 
 export function FamilyScreen() {
-  const vm = useFamilyScreenVM()
   const {
     members, groups, loading,
     addOpen, setAddOpen, newName, setNewName, newLabel, setNewLabel,
@@ -79,88 +83,110 @@ export function FamilyScreen() {
     confirmDeleteId, setConfirmDeleteId,
     handleAdd, openEdit, handleEdit, handleDelete, toggleGroup,
     goBack,
-  } = vm
+  } = useFamilyScreenVM()
 
   return (
-    <div className="px-3.5 lg:px-0 pt-4 lg:pt-1 pb-10">
+    <div className="pb-10">
 
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-5">
+      {/* Header — как в ProfileScreen */}
+      <div className="flex items-center gap-3 pb-6">
         <BackButton onClick={goBack} />
-        <h1 className="text-[20px] font-black flex-1 m-0">Моя семья</h1>
+        <h1 className="text-[20px] font-extrabold flex-1 m-0" style={{ letterSpacing: '-0.02em' }}>
+          Моя семья
+        </h1>
         <button
           type="button"
           onClick={() => setAddOpen(true)}
-          className="px-3 py-1.5 rounded-pill text-[12px] font-extrabold border-none cursor-pointer"
+          className="px-3 py-1.5 rounded-pill text-[12px] font-extrabold border-none cursor-pointer shrink-0"
           style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}
         >
           + Добавить
         </button>
       </div>
 
-      {loading && (
-        <div className="text-center py-10 text-[13px]" style={{ color: 'var(--muted)' }}>
-          Загрузка…
-        </div>
-      )}
+      <div className="lg:px-0 flex flex-col gap-3">
 
-      {!loading && members.length === 0 && (
-        <EmptyState
-          icon={<span style={{ fontSize: 48 }}>👨‍👩‍👧</span>}
-          title="Пока никого нет"
-          body="Добавь членов семьи, которые ходят с тобой на пикники — детей, партнёра, гостей"
-          ctaLabel="+ Добавить первого"
-          onCta={() => setAddOpen(true)}
-        />
-      )}
-
-      {members.map(member => (
-        <GlassCard key={member.id} className="mb-3">
-          {/* Member row */}
-          <div className="flex items-center gap-3 px-4 py-3">
-            <UserAvatar name={member.name} size={40} />
-            <div className="flex-1 min-w-0">
-              <div className="text-[14px] font-extrabold">{member.name}</div>
-              {member.label && (
-                <div className="text-[11px]" style={{ color: 'var(--muted)' }}>{member.label}</div>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={() => openEdit(member)}
-              className="text-[12px] font-bold border-none bg-transparent cursor-pointer px-2 py-1"
-              style={{ color: 'var(--muted)', fontFamily: 'inherit' }}
-            >
-              Изменить
-            </button>
+        {loading && (
+          <div className="text-center py-10 text-[13px]" style={{ color: 'var(--muted)' }}>
+            Загрузка…
           </div>
+        )}
 
-          {/* Group toggles */}
-          {groups.length > 0 && (
-            <div className="px-4 pb-3 border-t" style={{ borderColor: 'var(--surface-white-10)' }}>
-              <div
-                className="text-[10px] font-extrabold uppercase tracking-wider mt-3 mb-2"
-                style={{ color: 'var(--muted)' }}
+        {!loading && members.length === 0 && (
+          <div className="glass rounded-[18px] p-6">
+            <EmptyState
+              icon={<IconPerson size={44} strokeWidth={1.4} />}
+              title="Пока никого нет"
+              body="Добавь членов семьи, которые ходят с тобой на пикники — детей, партнёра, гостей"
+              ctaLabel="+ Добавить первого"
+              onCta={() => setAddOpen(true)}
+            />
+          </div>
+        )}
+
+        {members.map(member => (
+          <div key={member.id} className="glass rounded-[18px] overflow-hidden">
+            <div className="flex items-center gap-3 px-4 py-3.5">
+              <UserAvatar name={member.name} size={40} />
+              <div className="flex-1 min-w-0">
+                <div className="text-[14px] font-extrabold">{member.name}</div>
+                {member.label && (
+                  <div className="text-[11.5px] font-semibold mt-px" style={{ color: 'var(--muted)' }}>
+                    {member.label}
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => openEdit(member)}
+                className="text-[12px] font-bold border-none bg-transparent cursor-pointer px-2 py-1 shrink-0"
+                style={{ color: 'var(--muted)', fontFamily: 'inherit' }}
               >
-                Участвует в пикниках
-              </div>
-              <div className="flex flex-col gap-2">
-                {groups.map(group => {
-                  const enabled = member.groups.some(g => g.group_id === group.id)
-                  return (
-                    <div key={group.id} className="flex items-center justify-between">
-                      <span className="text-[13px] font-semibold">{group.name}</span>
-                      <Toggle on={enabled} onToggle={() => toggleGroup(member.id, group.id, enabled)} />
-                    </div>
-                  )
-                })}
-              </div>
+                Изменить
+              </button>
             </div>
-          )}
-        </GlassCard>
-      ))}
 
-      {/* Add member modal */}
+            {groups.length > 0 && (
+              <>
+                <div className="h-px mx-4" style={{ background: 'var(--gb)' }} />
+                <div className="px-4 py-3">
+                  <div
+                    className="text-[11px] font-extrabold uppercase tracking-wider mb-2.5"
+                    style={{ color: 'var(--muted)' }}
+                  >
+                    Участвует в пикниках
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {groups.map(group => {
+                      const enabled = member.groups.some(g => g.group_id === group.id)
+                      return (
+                        <div key={group.id} className="flex items-center justify-between gap-3">
+                          <span className="text-[13px] font-semibold">{group.name}</span>
+                          <Toggle
+                            on={enabled}
+                            onToggle={() => toggleGroup(member.id, group.id, enabled)}
+                          />
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        ))}
+
+        {!loading && members.length > 0 && (
+          <div
+            className="text-center text-[11px] mt-0.5 leading-normal"
+            style={{ color: 'var(--muted)', opacity: 0.6 }}
+          >
+            Члены семьи учитываются в явке и расчётах только в включённых группах
+          </div>
+        )}
+
+      </div>
+
       <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Добавить в семью">
         <GlassInput
           label="Имя"
@@ -177,7 +203,6 @@ export function FamilyScreen() {
         />
       </Modal>
 
-      {/* Edit member modal */}
       <Modal open={!!editMember} onClose={() => setEditMember(null)} title="Изменить">
         <GlassInput
           label="Имя"
@@ -203,7 +228,6 @@ export function FamilyScreen() {
         </div>
       </Modal>
 
-      {/* Delete confirm */}
       <ConfirmModal
         open={!!confirmDeleteId}
         message={
@@ -215,6 +239,7 @@ export function FamilyScreen() {
         onConfirm={() => confirmDeleteId && handleDelete(confirmDeleteId)}
         onCancel={() => setConfirmDeleteId(null)}
       />
+
     </div>
   )
 }

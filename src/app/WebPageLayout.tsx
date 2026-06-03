@@ -27,7 +27,7 @@ export function WebPageLayout({ children, wide = false }: WebPageLayoutProps) {
         </div>
       </div>
       <div className="web-page__body">
-        <div className="cloud-panel web-page__card">{children}</div>
+        {children}
       </div>
     </div>
   )

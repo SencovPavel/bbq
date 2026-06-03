@@ -104,7 +104,7 @@ export default function App() {
     return (
       <div className="relative min-h-screen">
         <Blobs />
-        <WebPageLayout>
+        <WebPageLayout wide>
           <ProfileScreen />
         </WebPageLayout>
         <Toast />
@@ -116,7 +116,7 @@ export default function App() {
     return (
       <div className="relative min-h-screen">
         <Blobs />
-        <WebPageLayout>
+        <WebPageLayout wide>
           <FamilyScreen />
         </WebPageLayout>
         <Toast />

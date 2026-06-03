@@ -1,13 +1,16 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { createGroup, joinGroup } from '@shared/api/api'
 import { getTelegramInitData } from '@shared/lib/tg'
 import { useSessionStore } from '@stores/sessionStore'
+import { useAppStore } from '@stores/appStore'
 import type { User } from '@shared/types'
 
 export type OnboardingTab = 'create' | 'join'
 
 export function useOnboardingScreenVM(onDone: (user: User, gId: string) => void) {
-  const me = useSessionStore(s => s.me)
+  const me        = useSessionStore(s => s.me)
+  const popScreen = useAppStore(s => s.popScreen)
+  const goBack    = useCallback(() => popScreen('groups'), [popScreen])
 
   const [tab,       setTab]       = useState<OnboardingTab>('create')
   const [err,       setErr]       = useState('')
@@ -56,5 +59,6 @@ export function useOnboardingScreenVM(onDone: (user: User, gId: string) => void)
     canAuth,
     doCreate,
     doJoin,
+    goBack,
   }
 }

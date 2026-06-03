@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { IconFlame, IconPerson } from '@shared/ui/Icon'
+import { BackButton } from '@shared/ui/GlassIconButton'
 import { useOnboardingScreenVM, type OnboardingTab } from './useOnboardingScreenVM'
 import type { User } from '@shared/types'
 
@@ -14,6 +15,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
     code, setCode,
     hasTg, canAuth,
     doCreate, doJoin,
+    goBack,
   } = useOnboardingScreenVM(onDone)
 
   const inputStyle: CSSProperties = {
@@ -25,11 +27,14 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center gap-[8px] text-[28px] font-black mb-2 lg:hidden" style={{ color: 'var(--accent)' }}>
-        <IconFlame size={28} strokeWidth={1.4} /> Котёл
+      <div className="flex items-center gap-3 mb-4">
+        <BackButton onClick={goBack} />
+        <div className="flex items-center gap-[8px] text-[28px] font-black lg:hidden" style={{ color: 'var(--accent)' }}>
+          <IconFlame size={28} strokeWidth={1.4} style={{ fill: 'var(--accent)' }} /> Котёл
+        </div>
       </div>
       <div className="text-[13px] mb-6 lg:mb-8 text-center lg:text-left" style={{ color: 'var(--muted)' }}>
-        Создайте группу или войдите по коду
+        Список покупок и расчёты для большой компании. На одном экране — все участники, что куплено, сколько с кого.
       </div>
 
       <div className="lg:p-0 lg:bg-transparent lg:border-none rounded-[20px] p-5 w-full glass lg:shadow-none">
@@ -76,7 +81,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
             <button onClick={doCreate}
               className="w-full py-[14px] rounded-[12px] border-none text-[15px] font-extrabold cursor-pointer mt-1"
               style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}>
-              Создать пикник
+              Создать группу
             </button>
           </div>
 

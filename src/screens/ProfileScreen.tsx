@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { Modal, GlassInput }                          from '@shared/ui/Modal'
 import { UserAvatar }                                 from '@entities/member/ui/UserAvatar'
 import { BackButton, GlassIconButton }                from '@shared/ui/GlassIconButton'
-import { IconUsers, IconFlag, IconPencil, IconCrown } from '@shared/ui/Icon'
+import { IconFlag, IconPencil, IconCrown, IconPerson } from '@shared/ui/Icon'
 
 import { useProfileScreenVM }                         from './useProfileScreenVM'
 
@@ -98,14 +98,14 @@ export function ProfileScreen() {
     <div className="pb-10">
 
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 lg:px-0 pt-4 lg:pt-1 pb-6">
+      <div className="flex items-center gap-3 pb-6">
         <BackButton onClick={goBack} />
         <h1 className="text-[20px] font-extrabold flex-1" style={{ letterSpacing: '-0.02em' }}>
           Профиль
         </h1>
       </div>
 
-      <div className="px-4 lg:px-0 flex flex-col gap-3">
+      <div className="lg:px-0 flex flex-col gap-3">
 
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <div className="glass rounded-[18px] overflow-hidden">
@@ -180,7 +180,7 @@ export function ProfileScreen() {
         {/* ── Навигация ─────────────────────────────────────────────────────── */}
         <div className="glass rounded-[18px] overflow-hidden">
           <NavRow
-            icon={<IconUsers size={18} strokeWidth={1.8} />}
+            icon={<IconPerson size={18} strokeWidth={1.8} />}
             iconBg="rgba(167,139,250,.14)" iconColor="#c4b5fd"
             title="Моя семья"
             meta={familyMeta}
