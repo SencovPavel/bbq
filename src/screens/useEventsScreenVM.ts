@@ -30,8 +30,14 @@ export function useEventsScreenVM() {
   const [showModal, setShowModal] = useState(false)
   const [editEvent, setEditEvent] = useState<PicnicEvent | undefined>(undefined)
 
-  const events = serverState?.events ?? []
-  const items  = serverState?.items  ?? []
+  const events = useMemo(
+    () => serverState?.events ?? [],
+    [serverState?.events],
+  )
+  const items = useMemo(
+    () => serverState?.items ?? [],
+    [serverState?.items],
+  )
 
   const upcoming = useMemo(() => events.filter(e => !isPast(e.event_date)), [events])
   const past     = useMemo(() => events.filter(e =>  isPast(e.event_date)), [events])

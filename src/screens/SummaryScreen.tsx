@@ -11,7 +11,7 @@ import { useSummaryScreenVM } from './useSummaryScreenVM'
 export function SummaryScreen() {
   const vm = useSummaryScreenVM()
   const {
-    events, categories, activity, amIAdmin,
+    events, activity, amIAdmin,
     actualTotal, boughtCount, enabledLen, pct, perPerson, ppl, catRows,
     myTransfers, iSend, net, singleTransfer, counterparty,
     analysis, loading, panelOpen,

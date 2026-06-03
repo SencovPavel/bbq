@@ -44,10 +44,16 @@ export function ItemRow({ item, meId, readOnly = false, onUpdate, onBuyerTap, on
   const qtyTimer   = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pendingQty = useRef<number | null>(null)
 
+  const prevItemIdRef = useRef(item.id)
+
   useEffect(() => {
+    if (prevItemIdRef.current === item.id) return
+    prevItemIdRef.current = item.id
     pendingQty.current = null
+    if (qtyTimer.current) clearTimeout(qtyTimer.current)
+    qtyTimer.current = null
     setLocalQty(Number(item.qty) || 0)
-  }, [item.id])
+  }, [item.id, item.qty])
 
   useEffect(() => {
     const serverQty = Number(item.qty) || 0

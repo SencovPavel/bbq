@@ -23,7 +23,7 @@ export function ListScreen() {
     toggleCat, saveCat,
     setAddModal, setCatModal, setEmoji, setNewItem, setNewCat,
     setCustomBuyer, setConfirmCat, setActionItemId, setShowEventSheet,
-    catItems, send, showLockedToast, fmt, stepForUnit, fmtQty,
+    catItems, send, fmt, stepForUnit, fmtQty,
   } = vm
 
   if (!events.length) {

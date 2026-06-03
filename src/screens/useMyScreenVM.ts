@@ -19,14 +19,32 @@ export function useMyScreenVM() {
   const [scanOpen, setScanOpen] = useState(false)
 
   // ── Derived data ─────────────────────────────────────────────────────────────
-  const allItems = serverState?.items   ?? []
-  const members  = serverState?.members ?? []
-  const events   = serverState?.events  ?? []
-  const meId     = me?.id
+  const allItems = useMemo(
+    () => serverState?.items ?? [],
+    [serverState?.items],
+  )
+  const members = useMemo(
+    () => serverState?.members ?? [],
+    [serverState?.members],
+  )
+  const events = useMemo(
+    () => serverState?.events ?? [],
+    [serverState?.events],
+  )
+  const meId = me?.id
 
-  const rsvp          = serverState?.rsvp          ?? []
-  const familyMembers = serverState?.familyMembers  ?? []
-  const familyRsvp    = serverState?.familyRsvp     ?? []
+  const rsvp = useMemo(
+    () => serverState?.rsvp ?? [],
+    [serverState?.rsvp],
+  )
+  const familyMembers = useMemo(
+    () => serverState?.familyMembers ?? [],
+    [serverState?.familyMembers],
+  )
+  const familyRsvp = useMemo(
+    () => serverState?.familyRsvp ?? [],
+    [serverState?.familyRsvp],
+  )
 
   const currentEvent = useMemo(
     () => currentEventId ? events.find(e => e.id === currentEventId) : undefined,

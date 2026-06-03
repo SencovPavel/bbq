@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { isEventActive } from '@shared/lib/event-status'
 import { useWsStore } from '@stores/wsStore'
 import { useAppStore } from '@stores/appStore'
@@ -131,9 +131,15 @@ export function EventSheet() {
   const [creating, setCreating]     = useState(false)
   const pendingNameRef              = useRef<string | null>(null)
 
-  const events    = serverState?.events ?? []
+  const events = useMemo(
+    () => serverState?.events ?? [],
+    [serverState?.events],
+  )
   const hasEvents = events.length > 0
-  const items     = serverState?.items ?? []
+  const items = useMemo(
+    () => serverState?.items ?? [],
+    [serverState?.items],
+  )
 
   useEffect(() => {
     if (!showEventSheet) {
