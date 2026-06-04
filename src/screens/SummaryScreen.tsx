@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import { GlassCard, Divider } from '@shared/ui/GlassCard'
 import {
   IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle,
@@ -18,6 +18,70 @@ function StatLabel({ children }: { children: ReactNode }) {
       style={{ opacity: .7 }}
     >
       {children}
+    </div>
+  )
+}
+
+interface ReadyRingProps {
+  pct: number
+  done: number
+  total: number
+  size?: number
+  sw?: number
+}
+
+function ReadyRing({ pct, done, total, size = 60, sw = 6 }: ReadyRingProps) {
+  const gradId = `ready-grad-${useId().replace(/:/g, '')}`
+  const r = (size - sw) / 2
+  const c = 2 * Math.PI * r
+  const half = size / 2
+
+  return (
+    <div className="relative flex items-center justify-center shrink-0">
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        className="shrink-0"
+        style={{ transform: 'rotate(-90deg)' }}
+      >
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="var(--accent)" />
+            <stop offset="1" stopColor="var(--green)" />
+          </linearGradient>
+        </defs>
+        <circle
+          cx={half}
+          cy={half}
+          r={r}
+          fill="none"
+          stroke="rgba(0,0,0,.25)"
+          strokeWidth={sw}
+        />
+        <circle
+          cx={half}
+          cy={half}
+          r={r}
+          fill="none"
+          stroke={`url(#${gradId})`}
+          strokeWidth={sw}
+          strokeLinecap="round"
+          strokeDasharray={`${(c * pct) / 100} ${c}`}
+          className="transition-all duration-500"
+        />
+      </svg>
+      <div className="absolute text-center leading-none">
+        <div className="text-[14px] font-black tabular-nums">
+          {done}<span className="opacity-50 text-[11px]">/{total}</span>
+        </div>
+        <div
+          className="text-[7px] font-extrabold uppercase tracking-[.08em] mt-0.5"
+          style={{ opacity: 0.55 }}
+        >
+          куплено
+        </div>
+      </div>
     </div>
   )
 }
@@ -55,38 +119,22 @@ export function SummaryScreen() {
           boxShadow:      '0 12px 40px rgba(249,115,22,.12)',
         }}
       >
-        {/* Куплено / На человека */}
-        <div className="grid grid-cols-2 gap-3.5">
-
-          {/* Куплено */}
-          <div>
+        {/* Готовность + суммы */}
+        <div className="flex items-center gap-4">
+          <ReadyRing pct={pct} done={boughtCount} total={enabledLen} />
+          <div className="flex-1 min-w-0">
             <StatLabel>Куплено</StatLabel>
-            <div className="text-display font-black tracking-tight leading-none tabular-nums">
+            <div className="text-display font-black tracking-tight leading-none tabular-nums whitespace-nowrap">
               {actualTotal > 0 ? fmt(actualTotal) : `${enabledLen} поз.`}
             </div>
-            <div className="text-[11px] mt-1" style={{ opacity: .7 }}>
-              {boughtCount} из {enabledLen} позиций
-            </div>
-            <div
-              className="mt-2 h-1.5 rounded-full overflow-hidden"
-              style={{ background: 'rgba(0,0,0,.2)' }}
-            >
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{ width: `${pct}%`, background: 'var(--accent)' }}
-              />
+            <div className="text-[11px] mt-[5px]" style={{ opacity: 0.7 }}>
+              На человека ·{' '}
+              <b className="font-extrabold" style={{ opacity: 0.95 }}>
+                {fmt(perPerson ?? 0)}
+              </b>
+              {' '}· {ppl} чел.
             </div>
           </div>
-
-          {/* На человека */}
-          <div>
-            <StatLabel>На человека</StatLabel>
-            <div className="text-display font-black tracking-tight leading-none tabular-nums">
-              {fmt(perPerson ?? 0)}
-            </div>
-            <div className="text-[11px] mt-1" style={{ opacity: .7 }}>из {ppl} чел.</div>
-          </div>
-
         </div>
 
         {/* Личный баланс */}

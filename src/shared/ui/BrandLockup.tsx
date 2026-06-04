@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import { IconFlame } from './Icon'
 
 // ── Пресеты размеров ──────────────────────────────────────────────────────────
@@ -47,7 +46,7 @@ export function BrandLockup({
   return (
     <div className="flex items-center" style={{ gap: s.gap }}>
       {/* Иконка всегда var(--accent), независимо от accent-пропа вордмарка */}
-      <span style={{ color: 'var(--accent)', display: 'flex' }} aria-hidden="true">
+      <span style={{ color: 'var(--color-cream)', display: 'flex' }} aria-hidden="true">
         <IconFlame size={s.icon} strokeWidth={s.stroke} />
       </span>
 
