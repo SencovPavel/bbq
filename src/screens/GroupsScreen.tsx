@@ -1,4 +1,5 @@
 import { IconFlame, IconPerson } from '@shared/ui/Icon'
+import { BrandLockup } from '@shared/ui/BrandLockup'
 import { groupTint, TINT_STYLES } from '@shared/lib/group-icon'
 import { UserAvatar } from '@entities/member/ui/UserAvatar'
 import { useGroupsScreenVM } from './useGroupsScreenVM'
@@ -15,9 +16,7 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
   return (
     <div className="w-full">
         <div className="flex items-center justify-between mb-1 lg:hidden">
-          <div className="flex items-center gap-[6px] text-[22px] font-black" style={{ color: 'var(--accent)', fontFamily: 'inherit' }}>
-            <IconFlame size={22} strokeWidth={1.4} /> Котёл
-          </div>
+          <BrandLockup size="md" />
           <button
             onClick={goToProfile}
             title="Мой профиль"

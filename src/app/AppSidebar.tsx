@@ -2,7 +2,7 @@ import { NAV_TABS } from '@shared/config/nav-tabs'
 import { useAppStore } from '@stores/appStore'
 import { useSessionStore } from '@stores/sessionStore'
 import { useWsStore } from '@stores/wsStore'
-import { IconFlame } from '@shared/ui/Icon'
+import { BrandLockup } from '@shared/ui/BrandLockup'
 
 import type { Group, PicnicEvent, Tab } from '@shared/types'
 
@@ -43,13 +43,7 @@ export function AppSidebar({
     <aside className="app-sidebar hidden lg:flex">
       {/* Brand */}
       <div className="app-sidebar__brand">
-        <div className="app-sidebar__logo" aria-hidden>
-          <IconFlame size={22} strokeWidth={1.4} />
-        </div>
-        <div>
-          <div className="app-sidebar__title">Котёл</div>
-          <div className="app-sidebar__subtitle">Совместные закупки</div>
-        </div>
+        <BrandLockup size="md" accent={false} subtitle="Совместные закупки" />
       </div>
 
       {/* Nav — вверху */}
