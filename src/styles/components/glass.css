@@ -32,11 +32,30 @@
   height: var(--control-height);
   padding: 0 var(--control-pad-x);
   border-radius: var(--control-radius);
-  font-size: var(--t-sm);
+  font-size: var(--t-input);
   font-weight: var(--fw-semibold);
   line-height: 1.25;
   appearance: none;
   -webkit-appearance: none;
+}
+
+/* iOS Safari увеличивает viewport при фокусе, если font-size поля < 16px */
+@media (hover: none) and (pointer: coarse) {
+  input:not(
+      [type='checkbox'],
+      [type='radio'],
+      [type='button'],
+      [type='submit'],
+      [type='reset'],
+      [type='hidden'],
+      [type='file'],
+      [type='image'],
+      [type='range']
+    ),
+  select,
+  textarea {
+    font-size: var(--t-input) !important;
+  }
 }
 
 .form-field select.glass-input {

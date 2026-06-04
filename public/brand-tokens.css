@@ -40,6 +40,8 @@
 
   --t-xs: 11px;
   --t-sm: 13px;
+  /** Минимум для input/select/textarea — иначе iOS Safari зумит при фокусе */
+  --t-input: 16px;
   --t-md: 15px;
   --t-lg: 17px;
   --t-xl: 22px;
