@@ -1,5 +1,11 @@
 import { useState, useMemo } from 'react'
 
+export const GROUP_EMOJIS = [
+  '🔥','🎉','🏕️','🍖','🌿','🏖️','🎪','🏡','🌄','🎭',
+  '🍕','🍺','🧃','⛺','🎶','🚗','🎿','🎸','🌊','🤝',
+  '🎂','🌮','🥂','🎯','🏆','⚽','🎲','🌻','🫶','🍔',
+]
+
 import { fmt, clearGroupSession } from '@shared/lib/session'
 import { shortDate } from '@shared/lib/format'
 import { canAdminCompleteEvent, isEventActive } from '@shared/lib/event-status'
@@ -54,6 +60,7 @@ export function useEventScreenVM() {
   const [confirmComplete,    setConfirmComplete]    = useState(false)
   const [showDescriptionEdit, setShowDescriptionEdit] = useState(false)
   const [showEventEdit,      setShowEventEdit]      = useState(false)
+  const [emojiPickerOpen,    setEmojiPickerOpen]    = useState(false)
 
   // ── Derived data ──────────────────────────────────────────────────────────
   const { members = [], items = [], group, events = [] } = serverState ?? {}
@@ -127,6 +134,11 @@ export function useEventScreenVM() {
     setShowEventEdit(false)
   }
 
+  function setGroupEmoji(emoji: string | null) {
+    send({ type: 'group:set-emoji', emoji })
+    setEmojiPickerOpen(false)
+  }
+
   function copyCode() {
     const code = group?.invite_code
     if (!code) return
@@ -176,9 +188,11 @@ export function useEventScreenVM() {
     readyPct, readyColor, C,
     // modals
     copied, confirmKick, confirmDemote, confirmLeave, confirmDelete,
-    confirmComplete, showDescriptionEdit, showEventEdit,
+    confirmComplete, showDescriptionEdit, showEventEdit, emojiPickerOpen,
     setConfirmKick, setConfirmDemote, setConfirmLeave, setConfirmDelete,
-    setConfirmComplete, setShowDescriptionEdit, setShowEventEdit,
+    setConfirmComplete, setShowDescriptionEdit, setShowEventEdit, setEmojiPickerOpen,
+    // group emoji
+    setGroupEmoji,
     // actions
     handleCompleteEvent, handleSaveDescription, handleSaveEvent,
     copyCode, shareCode, navigateToGroups, promoteMember,

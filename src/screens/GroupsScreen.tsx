@@ -76,11 +76,14 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
                 style={{
                   width: 46,
                   height: 46,
-                  color: 'var(--accent)',
+                  color: 'var(--color-cream)',
                   background: `linear-gradient(135deg, ${tint.from}, ${tint.to})`,
                   border: `1px solid ${tint.border}`,
+                  fontSize: 22,
                 }}>
-                <IconFlame size={22} strokeWidth={1.5} />
+                {g.emoji
+                  ? <span>{g.emoji}</span>
+                  : <IconFlame size={22} strokeWidth={1.5} />}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-[15px] font-extrabold truncate">{g.name}</div>

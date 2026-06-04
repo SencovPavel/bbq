@@ -13,6 +13,7 @@ export interface Group {
   id: string
   name: string
   invite_code: string
+  emoji?: string | null
 }
 
 export interface Category {
@@ -118,6 +119,7 @@ export interface GroupSummary {
   name: string
   member_count: number
   item_count: number
+  emoji?: string | null
 }
 
 export interface AnalysisResult {

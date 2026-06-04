@@ -10,7 +10,7 @@ import {
   IconCalendar, IconChevronRight, IconClock, IconClipboard, IconCrown,
   IconFlag, IconLogOut, IconMapPin, IconPencil, IconShare, IconShield, IconX,
 } from '@shared/ui/Icon'
-import { useEventScreenVM } from './useEventScreenVM'
+import { useEventScreenVM, GROUP_EMOJIS } from './useEventScreenVM'
 
 // ── MetaChip ─────────────────────────────────────────────────────────────────
 
@@ -36,11 +36,11 @@ export function EventScreen() {
     countdownLabel, urgency, readyPct, readyColor, C,
     group, copied, me,
     confirmKick, confirmDemote, confirmLeave, confirmDelete,
-    confirmComplete, showDescriptionEdit, showEventEdit,
+    confirmComplete, showDescriptionEdit, showEventEdit, emojiPickerOpen,
     setConfirmKick, setConfirmDemote, setConfirmLeave, setConfirmDelete,
-    setConfirmComplete, setShowDescriptionEdit, setShowEventEdit,
+    setConfirmComplete, setShowDescriptionEdit, setShowEventEdit, setEmojiPickerOpen,
     handleCompleteEvent, handleSaveDescription, handleSaveEvent,
-    copyCode, shareCode, navigateToGroups, promoteMember,
+    copyCode, shareCode, navigateToGroups, promoteMember, setGroupEmoji,
     setShowEventSheet, setTab, send,
     fmt, shortDate,
   } = vm
@@ -215,7 +215,67 @@ export function EventScreen() {
       {/* ── Группа ────────────────────────────────────────────────────────────── */}
       <CollapseSection title="Группа" defaultOpen={false}>
         <div className="p-4">
-          <div className="text-lg font-black tracking-tight mb-3">{group?.name}</div>
+          {/* Имя группы + текущая иконка */}
+          <div className="flex items-center gap-3 mb-3">
+            <div
+              className="flex items-center justify-center rounded-[12px] shrink-0 text-[22px]"
+              style={{ width: 44, height: 44, background: 'rgba(249,115,22,.12)', border: '1px solid rgba(249,115,22,.2)' }}
+            >
+              {group?.emoji ?? '🔥'}
+            </div>
+            <div className="text-lg font-black tracking-tight">{group?.name}</div>
+          </div>
+
+          {/* Смена иконки — только для администратора */}
+          {amIAdmin && (
+            <div className="mb-3">
+              <button
+                type="button"
+                onClick={() => setEmojiPickerOpen(o => !o)}
+                className="text-[11px] font-bold border-none bg-transparent cursor-pointer p-0 mb-2"
+                style={{ color: 'var(--accent)', fontFamily: 'inherit' }}
+              >
+                {emojiPickerOpen ? 'Скрыть' : '✏️ Сменить иконку группы'}
+              </button>
+              {emojiPickerOpen && (
+                <div>
+                  <div className="flex flex-wrap gap-1.5 mb-1.5">
+                    {GROUP_EMOJIS.map(e => (
+                      <button
+                        key={e}
+                        type="button"
+                        onClick={() => setGroupEmoji(e)}
+                        className="flex items-center justify-center rounded-[10px] text-[22px] transition-all active:scale-90"
+                        style={{
+                          width: 42, height: 42,
+                          background: group?.emoji === e
+                            ? 'rgba(249,115,22,.2)'
+                            : 'rgba(255,255,255,.06)',
+                          border: group?.emoji === e
+                            ? '1px solid rgba(249,115,22,.45)'
+                            : '1px solid var(--gb)',
+                        }}
+                      >
+                        {e}
+                      </button>
+                    ))}
+                  </div>
+                  {group?.emoji && (
+                    <button
+                      type="button"
+                      onClick={() => setGroupEmoji(null)}
+                      className="text-[11px] font-bold border-none bg-transparent cursor-pointer p-0"
+                      style={{ color: 'var(--muted)', fontFamily: 'inherit' }}
+                    >
+                      Сбросить к 🔥
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Инвайт-код */}
           <div
             className="flex items-center gap-2.5 p-2.5 rounded-md mb-2.5"
             style={{ background: 'rgba(251,191,36,.06)', border: '1px dashed rgba(251,191,36,.28)' }}
