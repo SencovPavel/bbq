@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { GlassCard, Divider } from '@shared/ui/GlassCard'
 import {
   IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle,
@@ -7,6 +8,21 @@ import { CatTile } from '@entities/category/ui/CatTile'
 import { ActivityFeed } from '@widgets/ActivityFeed'
 import { NoEventsPrompt } from '@widgets/NoEventsPrompt'
 import { useSummaryScreenVM } from './useSummaryScreenVM'
+
+// ── StatLabel ─────────────────────────────────────────────────────────────────
+
+function StatLabel({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className="text-[10px] font-extrabold uppercase tracking-[.1em] mb-1"
+      style={{ opacity: .7 }}
+    >
+      {children}
+    </div>
+  )
+}
+
+// ── SummaryScreen ─────────────────────────────────────────────────────────────
 
 export function SummaryScreen() {
   const vm = useSummaryScreenVM()
@@ -30,31 +46,47 @@ export function SummaryScreen() {
     <div className="px-3.5 pt-2 pb-8 relative">
 
       {/* Hero */}
-      <div className="hero-card hero-card--summary rounded-[var(--r-lg)] p-[22px] mb-3">
+      <div
+        className="rounded-lg p-5 mb-3"
+        style={{
+          background:     'linear-gradient(135deg, rgba(249,115,22,.22), rgba(245,158,11,.08))',
+          border:         '1px solid rgba(249,115,22,.28)',
+          backdropFilter: 'blur(24px)',
+          boxShadow:      '0 12px 40px rgba(249,115,22,.12)',
+        }}
+      >
         {/* Куплено / На человека */}
-        <div className="grid grid-cols-2 gap-[14px]">
+        <div className="grid grid-cols-2 gap-3.5">
+
+          {/* Куплено */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-[.08em] mb-[5px]" style={{ opacity: .65 }}>Куплено</div>
-            <div className="text-[26px] font-black tracking-tight">
+            <StatLabel>Куплено</StatLabel>
+            <div className="text-display font-black tracking-tight leading-none tabular-nums">
               {actualTotal > 0 ? fmt(actualTotal) : `${enabledLen} поз.`}
             </div>
-            <div className="text-[11px] mt-[3px]" style={{ opacity: .65 }}>
+            <div className="text-[11px] mt-1" style={{ opacity: .7 }}>
               {boughtCount} из {enabledLen} позиций
             </div>
-            <div className="h-[5px] rounded-full mt-[8px] overflow-hidden progress-track">
+            <div
+              className="mt-2 h-1.5 rounded-full overflow-hidden"
+              style={{ background: 'rgba(0,0,0,.2)' }}
+            >
               <div
-                className="h-full rounded-full transition-all duration-500 progress-fill"
-                style={{ width: `${pct}%` }}
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${pct}%`, background: 'var(--accent)' }}
               />
             </div>
           </div>
+
+          {/* На человека */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-[.08em] mb-[5px]" style={{ opacity: .65 }}>На человека</div>
-            <div className="text-[26px] font-black tracking-tight">
-              {perPerson !== null ? fmt(perPerson) : '—'}
+            <StatLabel>На человека</StatLabel>
+            <div className="text-display font-black tracking-tight leading-none tabular-nums">
+              {fmt(perPerson ?? 0)}
             </div>
-            <div className="text-[11px] mt-[3px]" style={{ opacity: .65 }}>из {ppl} чел.</div>
+            <div className="text-[11px] mt-1" style={{ opacity: .7 }}>из {ppl} чел.</div>
           </div>
+
         </div>
 
         {/* Личный баланс */}
