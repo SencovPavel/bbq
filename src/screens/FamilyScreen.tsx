@@ -2,8 +2,8 @@ import { Modal, ModalButtons, GlassInput } from '@shared/ui/Modal'
 import { ConfirmModal } from '@shared/ui/ConfirmModal'
 import { EmptyState } from '@shared/ui/EmptyState'
 import { UserAvatar } from '@entities/member/ui/UserAvatar'
-import { BackButton } from '@shared/ui/GlassIconButton'
-import { IconPerson } from '@shared/ui/Icon'
+import { BackButton, GlassIconButton } from '@shared/ui/GlassIconButton'
+import { IconPerson, IconPlus } from '@shared/ui/Icon'
 import { useFamilyScreenVM, FAMILY_LABELS } from './useFamilyScreenVM'
 
 // ── LabelSelect ───────────────────────────────────────────────────────────────
@@ -94,14 +94,9 @@ export function FamilyScreen() {
         <h1 className="text-[20px] font-extrabold flex-1 m-0" style={{ letterSpacing: '-0.02em' }}>
           Моя семья
         </h1>
-        <button
-          type="button"
-          onClick={() => setAddOpen(true)}
-          className="px-3 py-1.5 rounded-pill text-[12px] font-extrabold border-none cursor-pointer shrink-0"
-          style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}
-        >
-          + Добавить
-        </button>
+        <GlassIconButton onClick={() => setAddOpen(true)} accent>
+          <IconPlus size={16} strokeWidth={1.8} />
+        </GlassIconButton>
       </div>
 
       <div className="lg:px-0 flex flex-col gap-3">
