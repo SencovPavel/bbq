@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { IconFlame } from '@shared/ui/Icon'
 import { useAuthScreenVM, type AuthMode } from './useAuthScreenVM'
 import type { User } from '@shared/types'
 
@@ -37,13 +38,39 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
 
   return (
     <div className="w-full">
-      <div className="lg:hidden" style={{ fontSize: 44, marginBottom: 8 }}>🔥</div>
-      <div className="text-[26px] lg:text-[22px] font-black mb-1" style={{ letterSpacing: '-.02em' }}>
-        {mode === 'login' ? 'Вход' : 'Регистрация'}
-      </div>
-      <div className="text-[13px] mb-6" style={{ color: 'var(--muted)' }}>
-        Список покупок для компании
-      </div>
+      {/* ── Auth header ──────────────────────────────────────────────────── */}
+      <header className="flex flex-col items-center">
+
+        {/* Бейдж-пламя */}
+        <div
+          className="flex items-center justify-center mb-5"
+          style={{
+            width: 76, height: 76, borderRadius: 24,
+            background: 'linear-gradient(135deg, rgba(249,115,22,.25), rgba(245,158,11,.12))',
+            border: '1px solid rgba(249,115,22,.35)',
+            color: 'var(--accent)',
+            boxShadow: '0 12px 40px rgba(249,115,22,.25)',
+            marginTop: 30,
+          }}
+          aria-hidden="true"
+        >
+          <IconFlame size={36} strokeWidth={1.4} />
+        </div>
+
+        {/* Заголовок */}
+        <h1
+          className="text-display font-black text-center"
+          style={{ letterSpacing: '-.02em', marginBottom: 4 }}
+        >
+          {mode === 'login' ? 'С возвращением' : 'Создать аккаунт'}
+        </h1>
+
+        {/* Подзаголовок */}
+        <p className="text-center" style={{ fontSize: 13.5, color: 'var(--muted)', marginBottom: 24 }}>
+          Готовим закупки на компанию вместе
+        </p>
+
+      </header>
 
       {/* Mode switch */}
       <div style={{
