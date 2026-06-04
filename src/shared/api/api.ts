@@ -61,7 +61,9 @@ export async function addFamilyMember(data: { name: string; label?: string }) {
     method: 'POST',
     body: JSON.stringify(data),
   })
-  return r.json() as Promise<FamilyMemberFull & { error?: string }>
+  const json = (await r.json()) as FamilyMemberFull & { error?: string }
+  if (!r.ok) return { error: json.error ?? 'Не удалось добавить' }
+  return json
 }
 
 export async function updateFamilyMember(id: string, data: { name?: string; label?: string | null }) {
@@ -69,7 +71,9 @@ export async function updateFamilyMember(id: string, data: { name?: string; labe
     method: 'PUT',
     body: JSON.stringify(data),
   })
-  return r.json() as Promise<{ ok?: boolean; error?: string }>
+  const json = (await r.json()) as { ok?: boolean; error?: string }
+  if (!r.ok) return { error: json.error ?? 'Не удалось сохранить' }
+  return json
 }
 
 export async function deleteFamilyMember(id: string) {
