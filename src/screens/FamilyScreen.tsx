@@ -72,71 +72,50 @@ export function FamilyScreen() {
           </div>
         )}
 
-        {groups.length > 6 && members.length > 0 && (
-          <GlassInput
-            value={groupSearch}
-            onChange={e => setGroupSearch(e.target.value)}
-            placeholder="Поиск группы…"
-          />
-        )}
-
-        {members.map(member => (
-          <div key={member.id} className="glass rounded-[18px] overflow-hidden">
-            <div className="flex items-center gap-3 px-4 py-3.5">
-              <UserAvatar name={member.name} size={40} />
-              <div className="flex-1 min-w-0">
-                <div className="text-[14px] font-extrabold">{member.name}</div>
-                {member.label && (
-                  <div className="text-[11.5px] font-semibold mt-px" style={{ color: 'var(--muted)' }}>
-                    {member.label}
-                  </div>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => openEdit(member)}
-                className="text-[12px] font-bold border-none bg-transparent cursor-pointer px-2 py-1 shrink-0"
-                style={{ color: 'var(--muted)', fontFamily: 'inherit' }}
-              >
-                Изменить
-              </button>
-            </div>
-
-            {groups.length > 0 && (
-              <>
-                <div className="h-px mx-4" style={{ background: 'var(--gb)' }} />
-                <div className="px-4 py-3">
-                  <div
-                    className="text-[11px] font-extrabold uppercase tracking-wider mb-2.5"
-                    style={{ color: 'var(--muted)' }}
-                  >
-                    Участвует в пикниках
-                  </div>
-                  {filteredGroups.length === 0 ? (
-                    <div className="text-center text-[12px] py-2" style={{ color: 'var(--muted)' }}>
-                      Ничего не найдено
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-2">
-                      {filteredGroups.map(group => {
-                        const enabled = member.groups.some(g => g.group_id === group.id)
-                        return (
-                          <div key={group.id} className="flex items-center justify-between gap-3">
-                            <span className="text-[13px] font-semibold">{group.name}</span>
-                            <Toggle
-                              on={enabled}
-                              onToggle={() => toggleGroup(member.id, group.id, enabled)}
-                            />
-                          </div>
-                        )
-                      })}
+        {members.map(member => {
+          const chips = member.groups.slice(0, 3)
+          const overflow = member.groups.length - chips.length
+          return (
+            <button
+              key={member.id}
+              type="button"
+              onClick={() => openEdit(member)}
+              className="glass rounded-[18px] overflow-hidden w-full text-left border-none cursor-pointer"
+              style={{ fontFamily: 'inherit' }}
+            >
+              <div className="flex items-center gap-3 px-4 py-3.5">
+                <UserAvatar name={member.name} size={40} />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[14px] font-extrabold">{member.name}</div>
+                  {member.label && (
+                    <div className="text-[11.5px] font-semibold mt-px" style={{ color: 'var(--muted)' }}>
+                      {member.label}
                     </div>
                   )}
                 </div>
-              </>
-            )}
-          </div>
-        ))}
+                <span className="shrink-0 text-[18px]" style={{ color: 'var(--muted)' }}>›</span>
+              </div>
+
+              {member.groups.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 px-4 pb-3.5">
+                  {chips.map(g => (
+                    <span
+                      key={g.group_id}
+                      className="badge-pill--muted px-2 py-[3px] rounded-pill text-[11px] font-bold"
+                    >
+                      {g.group_name}
+                    </span>
+                  ))}
+                  {overflow > 0 && (
+                    <span className="badge-pill--muted px-2 py-[3px] rounded-pill text-[11px] font-bold">
+                      +{overflow}
+                    </span>
+                  )}
+                </div>
+              )}
+            </button>
+          )
+        })}
 
         {!loading && members.length > 0 && (
           <div
@@ -173,6 +152,46 @@ export function FamilyScreen() {
           autoFocus
         />
         <LabelSelect value={editLabel} onChange={setEditLabel} />
+
+        {groups.length > 0 && editMember && (() => {
+          const liveMember = members.find(m => m.id === editMember.id)
+          return (
+            <div className="mb-3">
+              <div className="text-[11px] font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--muted)' }}>
+                Участвует в пикниках
+              </div>
+              {groups.length > 6 && (
+                <GlassInput
+                  value={groupSearch}
+                  onChange={e => setGroupSearch(e.target.value)}
+                  placeholder="Поиск группы…"
+                  className="mb-2"
+                />
+              )}
+              {filteredGroups.length === 0 ? (
+                <div className="text-center text-[12px] py-2" style={{ color: 'var(--muted)' }}>
+                  Ничего не найдено
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2" style={{ maxHeight: 232, overflowY: 'auto' }}>
+                  {filteredGroups.map(group => {
+                    const enabled = liveMember?.groups.some(g => g.group_id === group.id) ?? false
+                    return (
+                      <div key={group.id} className="flex items-center justify-between gap-3">
+                        <span className="text-[13px] font-semibold">{group.name}</span>
+                        <Toggle
+                          on={enabled}
+                          onToggle={() => toggleGroup(editMember.id, group.id, enabled)}
+                        />
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )
+        })()}
+
         <ModalButtons
           onCancel={() => setEditMember(null)}
           onConfirm={handleEdit}

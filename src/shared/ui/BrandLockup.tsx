@@ -39,7 +39,7 @@ export function BrandLockup({
         margin:        0,
       }}
     >
-      Котёл
+      Планер
     </Tag>
   )
 

@@ -4,7 +4,7 @@ import type { Item, Member } from '../../types'
 
 function item(overrides: Partial<Item> = {}): Item {
   return {
-    id: 'i1', cat_id: 'food', event_id: null,
+    id: 'i1', cat_id: 'food', event_id: null, kind: 'bring',
     name: 'Товар', qty: 1, unit: 'шт',
     price: 0, enabled: true, bought: false,
     buyer_id: null, buyer_name: null,

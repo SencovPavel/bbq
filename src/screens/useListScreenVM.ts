@@ -33,11 +33,14 @@ export function useListScreenVM() {
   const [catModal,      setCatModal]     = useState(false)
   const [buyerModal,    setBuyerModal]   = useState<string | null>(null)
   const [selectedEmoji, setEmoji]        = useState('📦')
-  const [newItem,       setNewItem]      = useState({ name: '', qty: '1', unit: 'шт' })
+  const [newItem,       setNewItem]      = useState<{ name: string; qty: string; unit: string; kind: 'bring' | 'task' }>({ name: '', qty: '1', unit: 'шт', kind: 'bring' })
   const [newCat,        setNewCat]       = useState({ title: '' })
   const [customBuyer,   setCustomBuyer]  = useState('')
   const [confirmCat,    setConfirmCat]   = useState<{ id: string; title: string } | null>(null)
   const [actionItemId,  setActionItemId] = useState<string | null>(null)
+  const [priceModalItemId, setPriceModalItemId] = useState<string | null>(null)
+  const [priceInput,       setPriceInput]       = useState('')
+  const [moveModalItemId,  setMoveModalItemId]  = useState<string | null>(null)
   const [renamingId,    setRenamingId]   = useState<string | null>(null)
   const [renameTick,    setRenameTick]   = useState(0)
 
@@ -103,6 +106,32 @@ export function useListScreenVM() {
     send({ type: 'item:update', id, field, value })
   }
 
+  function openPriceModal(id: string) {
+    if (listLocked) { showLockedToast(); return }
+    const item = visibleItems.find(i => i.id === id)
+    setPriceInput(item?.price ? String(item.price) : '')
+    setPriceModalItemId(id)
+  }
+
+  function savePrice() {
+    if (!priceModalItemId) return
+    const price = parseFloat(priceInput.replace(',', '.')) || 0
+    send({ type: 'item:update', id: priceModalItemId, field: 'price', value: price })
+    setPriceModalItemId(null)
+  }
+
+  function openMoveModal(id: string) {
+    if (listLocked) { showLockedToast(); return }
+    setMoveModalItemId(id)
+  }
+
+  function moveToCategory(catId: string) {
+    if (!moveModalItemId) return
+    send({ type: 'item:update', id: moveModalItemId, field: 'cat_id', value: catId })
+    setMoveModalItemId(null)
+    showToast('Перемещено!')
+  }
+
   function requestDeleteItem(id: string) {
     if (listLocked) { showLockedToast(); return }
     const timer = setTimeout(() => {
@@ -127,9 +156,10 @@ export function useListScreenVM() {
     send({
       type: 'item:add', catId: addModal!, name: newItem.name.trim(),
       qty: parseFloat(newItem.qty) || 1, price: 0, unit: newItem.unit,
+      kind: newItem.kind,
       eventId: currentEventId ?? undefined,
     })
-    setNewItem({ name: '', qty: '1', unit: 'шт' })
+    setNewItem({ name: '', qty: '1', unit: 'шт', kind: 'bring' })
     setAddModal(null)
     setOpenCats(p => ({ ...p, [addModal!]: true }))
     showToast('Добавлено!')
@@ -194,10 +224,13 @@ export function useListScreenVM() {
     // state
     openCats, addModal, catModal, buyerModal, selectedEmoji,
     newItem, newCat, customBuyer, confirmCat, actionItemId, renamingId, renameTick,
+    priceModalItemId, priceInput, moveModalItemId,
     // derived
     amIAdmin, listLocked, hasBudget,
     // item actions
     onUpdate, requestDeleteItem, saveItem, handleBuyerTap, assignBuyer, triggerRename,
+    openPriceModal, savePrice, setPriceInput, setPriceModalItemId,
+    openMoveModal, moveToCategory, setMoveModalItemId,
     // category actions
     toggleCat, saveCat,
     // setters for view

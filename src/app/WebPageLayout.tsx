@@ -15,7 +15,7 @@ export function WebPageLayout({ children, wide = false }: WebPageLayoutProps) {
       <div className="web-page__promo hidden lg:flex">
         <div className="web-page__promo-inner">
           <div className="web-page__logo">🔥</div>
-          <h1 className="web-page__headline">Котёл</h1>
+          <h1 className="web-page__headline">Планер</h1>
           <p className="web-page__tagline">
             Планируйте закупки вместе: списки, участники, итоги и напоминания — в одном месте.
           </p>

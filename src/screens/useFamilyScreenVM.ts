@@ -75,6 +75,7 @@ export function useFamilyScreenVM() {
     setEditMember(member)
     setEditName(member.name)
     setEditLabel(member.label ?? '')
+    setGroupSearch('')
   }
 
   async function handleEdit() {

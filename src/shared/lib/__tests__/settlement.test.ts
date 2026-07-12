@@ -10,7 +10,7 @@ function member(id: string, name: string): Member {
 
 function boughtItem(buyerId: string, price: number, qty = 1, eventId = 'e1'): Item {
   return {
-    id: `${buyerId}-${price}`, cat_id: 'food', event_id: eventId,
+    id: `${buyerId}-${price}`, cat_id: 'food', event_id: eventId, kind: 'bring',
     name: 'Товар', qty, unit: 'шт', price,
     enabled: true, bought: true,
     buyer_id: buyerId, buyer_name: buyerId,

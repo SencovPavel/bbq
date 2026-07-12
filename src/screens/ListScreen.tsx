@@ -1,5 +1,6 @@
 import { GlassCard, Divider } from '@shared/ui/GlassCard'
 import { ItemRow } from '@widgets/ItemRow'
+import { SegmentedControl } from '@shared/ui/SegmentedControl'
 import { Modal, ModalButtons, GlassInput, GlassSelect } from '@shared/ui/Modal'
 import { ConfirmModal } from '@shared/ui/ConfirmModal'
 import { EmptyState } from '@shared/ui/EmptyState'
@@ -18,8 +19,11 @@ export function ListScreen() {
     events, categories, members, visibleItems, listTotal, actionItem, me,
     openCats, addModal, catModal, buyerModal, selectedEmoji,
     newItem, newCat, customBuyer, confirmCat, renamingId, renameTick,
+    priceModalItemId, priceInput, moveModalItemId,
     amIAdmin, listLocked, hasBudget,
     onUpdate, requestDeleteItem, saveItem, handleBuyerTap, assignBuyer, triggerRename,
+    openPriceModal, savePrice, setPriceInput, setPriceModalItemId,
+    openMoveModal, moveToCategory, setMoveModalItemId,
     toggleCat, saveCat,
     setAddModal, setCatModal, setEmoji, setNewItem, setNewCat,
     setCustomBuyer, setConfirmCat, setActionItemId, setShowEventSheet,
@@ -132,18 +136,34 @@ export function ListScreen() {
       )}
 
       {/* Add item modal */}
-      <Modal open={!!addModal} onClose={() => setAddModal(null)} title="Добавить позицию">
+      <Modal open={!!addModal} onClose={() => setAddModal(null)} title="Добавить пункт">
+        <div className="mb-3">
+          <div className="text-[11px] font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--muted)' }}>
+            Тип пункта
+          </div>
+          <SegmentedControl
+            value={newItem.kind}
+            onChange={v => setNewItem(p => ({ ...p, kind: v as 'bring' | 'task' }))}
+            label="Тип пункта"
+            options={[
+              { value: 'bring', label: 'Взять с собой' },
+              { value: 'task', label: 'Сделать' },
+            ]}
+          />
+        </div>
         <GlassInput label="Название" value={newItem.name}
           onChange={e => setNewItem(p => ({ ...p, name: e.target.value }))}
-          placeholder="Шашлык из курицы" autoFocus />
-        <div className="form-field-row">
-          <GlassInput label="Кол-во" type="number" min="0" step="0.5"
-            value={newItem.qty} onChange={e => setNewItem(p => ({ ...p, qty: e.target.value }))} />
-          <GlassSelect label="Единица" value={newItem.unit}
-            onChange={e => setNewItem(p => ({ ...p, unit: e.target.value }))}>
-            {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
-          </GlassSelect>
-        </div>
+          placeholder={newItem.kind === 'task' ? 'Подключить интернет' : 'Шашлык из курицы'} autoFocus />
+        {newItem.kind !== 'task' && (
+          <div className="form-field-row">
+            <GlassInput label="Кол-во" type="number" min="0" step="0.5"
+              value={newItem.qty} onChange={e => setNewItem(p => ({ ...p, qty: e.target.value }))} />
+            <GlassSelect label="Единица" value={newItem.unit}
+              onChange={e => setNewItem(p => ({ ...p, unit: e.target.value }))}>
+              {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+            </GlassSelect>
+          </div>
+        )}
         <ModalButtons onCancel={() => setAddModal(null)} onConfirm={saveItem} confirmText="Добавить" />
       </Modal>
 
@@ -181,6 +201,7 @@ export function ListScreen() {
       {/* Item actions sheet */}
       <ItemActionsSheet
         item={actionItem}
+        hasBudget={hasBudget}
         onClose={() => setActionItemId(null)}
         onRename={() => { if (actionItem) triggerRename(actionItem.id) }}
         onDelete={requestDeleteItem}
@@ -189,7 +210,36 @@ export function ListScreen() {
           if (navigator.share) navigator.share({ text }).catch(() => {})
           else navigator.clipboard?.writeText(text).then(() => vm.showLockedToast())
         }}
+        onSetPrice={openPriceModal}
+        onMove={openMoveModal}
       />
+
+      {/* Price modal */}
+      <Modal open={!!priceModalItemId} onClose={() => setPriceModalItemId(null)} title="Указать цену">
+        <GlassInput
+          label="Цена за единицу"
+          type="number" min="0" step="0.5" inputMode="decimal"
+          value={priceInput}
+          onChange={e => setPriceInput(e.target.value)}
+          placeholder="0" autoFocus
+        />
+        <ModalButtons onCancel={() => setPriceModalItemId(null)} onConfirm={savePrice} confirmText="Сохранить" />
+      </Modal>
+
+      {/* Move to category modal */}
+      <Modal open={!!moveModalItemId} onClose={() => setMoveModalItemId(null)} title="В другую категорию">
+        <div className="grid gap-[7px] mb-3" style={{ gridTemplateColumns: 'repeat(2,1fr)' }}>
+          {categories.map(cat => (
+            <button key={cat.id} onClick={() => moveToCategory(cat.id)}
+              className="py-[9px] px-2 rounded-[10px] text-[12px] font-bold cursor-pointer border-none text-left flex items-center gap-2"
+              style={{ background: 'var(--surface-white-8)', border: '1px solid var(--gb)', color: 'var(--text)', fontFamily: 'inherit' }}
+            >
+              <CatTile emoji={cat.icon} size={22} radius={6} />
+              {cat.title}
+            </button>
+          ))}
+        </div>
+      </Modal>
 
       {/* Buyer modal */}
       <Modal open={!!buyerModal} onClose={() => vm.setActionItemId(null)} title="Кто купит?">

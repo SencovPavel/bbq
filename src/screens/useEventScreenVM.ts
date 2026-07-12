@@ -151,7 +151,7 @@ export function useEventScreenVM() {
   function shareCode() {
     const code = group?.invite_code
     if (!code) return
-    const text = `Присоединяйся к «${group?.name}» в Котёл! Код: ${code}`
+    const text = `Присоединяйся к «${group?.name}» в Планер! Код: ${code}`
     if (navigator.share) {
       navigator.share({ text }).catch(() => {})
     } else {

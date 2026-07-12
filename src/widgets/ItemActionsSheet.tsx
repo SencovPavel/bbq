@@ -1,22 +1,28 @@
 import { Modal } from '@shared/ui/Modal'
-import { IconPencil, IconShare, IconTrash } from '@shared/ui/Icon'
+import { IconPencil, IconShare, IconTrash, IconChevronRight } from '@shared/ui/Icon'
 
 import type { Item } from '@shared/types'
 
 interface ItemActionsSheetProps {
   item: Item | null
+  hasBudget?: boolean
   onClose: () => void
   onRename: (id: string) => void
   onDelete: (id: string) => void
   onShare: (item: Item) => void
+  onSetPrice: (id: string) => void
+  onMove: (id: string) => void
 }
 
 export function ItemActionsSheet({
   item,
+  hasBudget = true,
   onClose,
   onRename,
   onDelete,
   onShare,
+  onSetPrice,
+  onMove,
 }: ItemActionsSheetProps) {
   if (!item) return null
 
@@ -26,6 +32,16 @@ export function ItemActionsSheet({
 
   return (
     <Modal open onClose={onClose} title={item.name}>
+      {hasBudget && item.kind !== 'task' && (
+        <button
+          type="button"
+          className={rowClass}
+          style={rowStyle}
+          onClick={() => { onSetPrice(item.id); onClose() }}
+        >
+          <span className="font-black" style={{ width: 16, textAlign: 'center', color: 'var(--accent)' }}>₽</span> Указать цену
+        </button>
+      )}
       <button
         type="button"
         className={rowClass}
@@ -33,6 +49,14 @@ export function ItemActionsSheet({
         onClick={() => { onRename(item.id); onClose() }}
       >
         <IconPencil size={16} /> Переименовать
+      </button>
+      <button
+        type="button"
+        className={rowClass}
+        style={rowStyle}
+        onClick={() => { onMove(item.id); onClose() }}
+      >
+        <IconChevronRight size={16} /> В другую категорию
       </button>
       <button
         type="button"

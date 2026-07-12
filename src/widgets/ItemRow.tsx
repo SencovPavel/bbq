@@ -85,6 +85,7 @@ export function ItemRow({ item, meId, readOnly = false, hasBudget = true, onUpda
   }
   function cancelEdit() { setEditName(item.name); setEditing(false) }
 
+  const isTask    = item.kind === 'task'
   const step      = stepForUnit(item.unit)
   const lineTotal = item.price * localQty
 
@@ -141,20 +142,22 @@ export function ItemRow({ item, meId, readOnly = false, hasBudget = true, onUpda
             opacity: readOnly ? 0.7 : 1,
           }}
         >
-          {isMe ? <>✓ Я</> : item.buyer_name ? <><IconPerson size={10} strokeWidth={2} /> {item.buyer_name}</> : '＋ Взять'}
+          {isMe ? <>✓ Я</> : item.buyer_name ? <><IconPerson size={10} strokeWidth={2} /> {item.buyer_name}</> : (isTask ? '＋ Назначить' : '＋ Взять')}
         </button>
       </div>
 
-      {/* Row 2: qty stepper + price + dots */}
+      {/* Row 2: qty stepper + price + dots (степпер/цена только для bring) */}
       <div className="flex items-center gap-2">
-        <Stepper
-          label={<>{fmtQty(localQty, item.unit)}{' '}<span className="font-semibold text-xs" style={{ color: 'var(--muted)' }}>{item.unit}</span></>}
-          onDec={() => changeQtyByStep(-step)}
-          onInc={() => changeQtyByStep(step)}
-          disabled={readOnly}
-        />
+        {!isTask && (
+          <Stepper
+            label={<>{fmtQty(localQty, item.unit)}{' '}<span className="font-semibold text-xs" style={{ color: 'var(--muted)' }}>{item.unit}</span></>}
+            onDec={() => changeQtyByStep(-step)}
+            onInc={() => changeQtyByStep(step)}
+            disabled={readOnly}
+          />
+        )}
 
-        {hasBudget && (
+        {hasBudget && !isTask && (
           <div
             className="ml-auto text-sm font-black tabular-nums shrink-0"
             style={{ color: item.price > 0 ? 'var(--accent)' : 'var(--muted)' }}
@@ -167,7 +170,7 @@ export function ItemRow({ item, meId, readOnly = false, hasBudget = true, onUpda
           <button
             type="button"
             onClick={() => onOpenActions(item.id)}
-            className={`size-6 rounded-sm border-none bg-transparent cursor-pointer flex items-center justify-center shrink-0${hasBudget ? '' : ' ml-auto'}`}
+            className={`size-6 rounded-sm border-none bg-transparent cursor-pointer flex items-center justify-center shrink-0${(hasBudget && !isTask) ? '' : ' ml-auto'}`}
             style={{ color: 'var(--muted)' }}
             title="Ещё"
           >

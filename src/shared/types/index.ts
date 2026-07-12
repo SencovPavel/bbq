@@ -26,6 +26,7 @@ export interface Item {
   id: string
   cat_id: string
   event_id: string | null
+  kind: 'bring' | 'task'
   name: string
   qty: number
   unit: string

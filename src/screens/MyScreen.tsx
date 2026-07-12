@@ -199,18 +199,20 @@ export function MyScreen() {
 
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-bold">{it.name}</div>
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <Stepper
-                    label={qty}
-                    onDec={() => changeQty(it.id, qty, -0.5)}
-                    onInc={() => changeQty(it.id, qty, 0.5)}
-                    disabled={listLocked}
-                  />
-                  <span className="text-[11px]" style={{ color: 'var(--muted)' }}>{it.unit}</span>
-                </div>
+                {it.kind !== 'task' && (
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    <Stepper
+                      label={qty}
+                      onDec={() => changeQty(it.id, qty, -0.5)}
+                      onInc={() => changeQty(it.id, qty, 0.5)}
+                      disabled={listLocked}
+                    />
+                    <span className="text-[11px]" style={{ color: 'var(--muted)' }}>{it.unit}</span>
+                  </div>
+                )}
               </div>
 
-              {hasBudget && (
+              {hasBudget && it.kind !== 'task' && (
                 <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
                   <div
                     className="font-extrabold tabular-nums"
