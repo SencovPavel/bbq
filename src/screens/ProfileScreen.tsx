@@ -1,8 +1,8 @@
-import type { ReactNode } from 'react'
-
 import { Modal, GlassInput }                          from '@shared/ui/Modal'
 import { UserAvatar }                                 from '@entities/member/ui/UserAvatar'
 import { BackButton, GlassIconButton }                from '@shared/ui/GlassIconButton'
+import { NavRow }                                     from '@shared/ui/NavRow'
+import { StatBox }                                    from '@shared/ui/StatBox'
 import { IconFlag, IconPencil, IconCrown, IconPerson } from '@shared/ui/Icon'
 
 import { useProfileScreenVM }                         from './useProfileScreenVM'
@@ -15,68 +15,6 @@ function plural(n: number, one: string, few: string, many: string): string {
   if (mod10 === 1 && mod100 !== 11) return one
   if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few
   return many
-}
-
-// ── StatBox ───────────────────────────────────────────────────────────────────
-
-function StatBox({ value, label }: { value: number; label: string }) {
-  return (
-    <div
-      className="flex-1 rounded-[10px] px-3 py-2.5"
-      style={{ background: 'rgba(255,255,255,.04)', border: '1px solid var(--gb)' }}
-    >
-      <div className="text-[19px] font-black tabular-nums" style={{ letterSpacing: '-.02em' }}>{value}</div>
-      <div className="text-[11px] font-bold mt-px" style={{ color: 'var(--muted)' }}>{label}</div>
-    </div>
-  )
-}
-
-// ── NavRow ────────────────────────────────────────────────────────────────────
-
-function NavRow({
-  icon, iconBg, iconColor, title, meta, soon, onClick,
-}: {
-  icon: ReactNode; iconBg: string; iconColor: string
-  title: string; meta?: string; soon?: boolean; onClick?: () => void
-}) {
-  const disabled = !onClick
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className="w-full flex items-center gap-[13px] px-[15px] py-[13px] bg-transparent border-none text-left"
-      style={{ cursor: disabled ? 'default' : 'pointer', opacity: disabled ? .55 : 1, fontFamily: 'inherit' }}
-    >
-      <div
-        className="size-9 rounded-[10px] flex items-center justify-center flex-shrink-0"
-        style={{ background: iconBg, color: iconColor }}
-      >
-        {icon}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-[14px] font-extrabold">{title}</div>
-        {meta && (
-          <div className="text-[11.5px] font-semibold mt-px" style={{ color: 'var(--muted)' }}>{meta}</div>
-        )}
-      </div>
-      {soon ? (
-        <span
-          className="text-[10px] font-extrabold uppercase rounded-pill px-2 py-[3px] flex-shrink-0"
-          style={{
-            color: 'var(--muted)',
-            background: 'rgba(255,255,255,.05)',
-            border: '1px solid var(--gb)',
-            letterSpacing: '.08em',
-          }}
-        >
-          Скоро
-        </span>
-      ) : (
-        <span className="flex-shrink-0 text-[18px]" style={{ color: 'var(--muted)' }}>›</span>
-      )}
-    </button>
-  )
 }
 
 // ── ProfileScreen ─────────────────────────────────────────────────────────────

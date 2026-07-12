@@ -23,9 +23,10 @@ export function isPast(dateStr: string | null): boolean {
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
 export function useEventsScreenVM() {
-  const serverState = useWsStore(s => s.serverState)
-  const send        = useWsStore(s => s.send)
-  const enterEvent  = useAppStore(s => s.enterEvent)
+  const serverState    = useWsStore(s => s.serverState)
+  const send           = useWsStore(s => s.send)
+  const enterEvent     = useAppStore(s => s.enterEvent)
+  const currentEventId = useAppStore(s => s.currentEventId)
 
   const [showModal, setShowModal] = useState(false)
   const [editEvent, setEditEvent] = useState<PicnicEvent | undefined>(undefined)
@@ -73,6 +74,8 @@ export function useEventsScreenVM() {
         time: data.event_time,
         location: data.location,
         description: data.description,
+        eventType: data.type,
+        hasBudget: data.has_budget,
       })
     }
     closeModal()
@@ -88,6 +91,7 @@ export function useEventsScreenVM() {
     events,
     upcoming,
     past,
+    currentEventId,
     showModal,
     editEvent,
     itemCount,

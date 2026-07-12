@@ -1,5 +1,6 @@
 import { NoEventsPrompt }  from '@widgets/NoEventsPrompt'
 import { EmptyState } from '@shared/ui/EmptyState'
+import { Stepper } from '@shared/ui/Stepper'
 import { UserAvatar } from '@entities/member/ui/UserAvatar'
 import { ReceiptScanner } from '@widgets/ReceiptScanner'
 import { IconCart, IconCheck, IconQrScan } from '@shared/ui/Icon'
@@ -28,9 +29,9 @@ function RsvpRow({ name, label, attending, onToggle }: {
         onClick={onToggle}
         className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-pill text-[11px] font-extrabold border transition-all active:scale-95 shrink-0 ml-2"
         style={{
-          background:  attending ? 'rgba(74,222,128,.13)' : 'rgba(248,113,113,.10)',
-          borderColor: attending ? 'rgba(74,222,128,.35)' : 'rgba(248,113,113,.30)',
-          color:       attending ? '#4ade80' : 'var(--red)',
+          background:  attending ? 'var(--surface-success-12)' : 'rgba(248,113,113,.10)',
+          borderColor: attending ? 'var(--surface-success-35)' : 'rgba(248,113,113,.30)',
+          color:       attending ? 'var(--green)' : 'var(--red)',
           fontFamily:  'inherit',
           cursor:      'pointer',
         }}
@@ -45,7 +46,7 @@ export function MyScreen() {
   const vm = useMyScreenVM()
   const {
     me, events, myItems, sorted, amIAdmin,
-    actualTotal, boughtItems, boughtCount, pct, listLocked,
+    actualTotal, boughtItems, boughtCount, pct, listLocked, hasBudget,
     amIAttending, currentEvent, toggleRsvp,
     myFamilyMembers, familyMemberAttending, toggleFamilyRsvp,
     scanOpen, setScanOpen,
@@ -74,32 +75,34 @@ export function MyScreen() {
               <div className="text-base font-black">Привет, {me?.name}!</div>
               <div className="text-[11.5px] mt-0.5 font-semibold" style={{ color: 'var(--muted)' }}>
                 {myItems.length > 0
-                  ? `${boughtCount} из ${myItems.length} куплено`
-                  : 'Вноси цены когда покупаешь'}
+                  ? `${boughtCount} из ${myItems.length} ${hasBudget ? 'куплено' : 'сделано'}`
+                  : 'Вноси отметки, когда готово'}
               </div>
             </div>
-            <button
-              type="button"
-              title="Отсканировать чек"
-              onClick={() => {
-                if (listLocked) { showLockedToast(); return }
-                setScanOpen(true)
-              }}
-              disabled={listLocked}
-              className="h-[38px] px-3 pl-[11px] rounded-pill shrink-0 inline-flex items-center gap-1.5
-                         text-xs font-extrabold border active:scale-95 transition"
-              style={{
-                background: 'var(--gradient-hero-my)',
-                borderColor: 'var(--surface-fire-32)',
-                color: 'var(--accent)',
-                fontFamily: 'inherit',
-                cursor: listLocked ? 'default' : 'pointer',
-                opacity: listLocked ? 0.45 : 1,
-              }}
-            >
-              <IconQrScan size={15} strokeWidth={2} />
-              <span>Чек</span>
-            </button>
+            {hasBudget && (
+              <button
+                type="button"
+                title="Отсканировать чек"
+                onClick={() => {
+                  if (listLocked) { showLockedToast(); return }
+                  setScanOpen(true)
+                }}
+                disabled={listLocked}
+                className="h-[38px] px-3 pl-[11px] rounded-pill shrink-0 inline-flex items-center gap-1.5
+                           text-xs font-extrabold border active:scale-95 transition"
+                style={{
+                  background: 'var(--gradient-hero-my)',
+                  borderColor: 'var(--surface-fire-32)',
+                  color: 'var(--accent)',
+                  fontFamily: 'inherit',
+                  cursor: listLocked ? 'default' : 'pointer',
+                  opacity: listLocked ? 0.45 : 1,
+                }}
+              >
+                <IconQrScan size={15} strokeWidth={2} />
+                <span>Чек</span>
+              </button>
+            )}
           </div>
 
           {currentEvent && (
@@ -141,19 +144,23 @@ export function MyScreen() {
             </>
           )}
 
-          <div className="h-px my-3" style={{ background: 'var(--surface-white-10)' }} />
-          <div className="text-[11px] font-extrabold uppercase tracking-wider mb-1" style={{ color: 'var(--muted)' }}>
-            Потрачено по факту
-          </div>
-          <div className="text-display font-black tracking-tight tabular-nums" style={{ color: 'var(--accent)' }}>
-            {boughtItems.length > 0 ? fmt(actualTotal) : `${myItems.length} поз.`}
-          </div>
-          <div className="h-[5px] rounded-full mt-2.5 overflow-hidden" style={{ background: 'var(--surface-white-10)' }}>
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${pct}%`, background: 'var(--gradient-progress)' }}
-            />
-          </div>
+          {hasBudget && (
+            <>
+              <div className="h-px my-3" style={{ background: 'var(--surface-white-10)' }} />
+              <div className="text-[11px] font-extrabold uppercase tracking-wider mb-1" style={{ color: 'var(--muted)' }}>
+                Потрачено по факту
+              </div>
+              <div className="text-display font-black tracking-tight tabular-nums" style={{ color: 'var(--accent)' }}>
+                {boughtItems.length > 0 ? fmt(actualTotal) : `${myItems.length} поз.`}
+              </div>
+              <div className="h-[5px] rounded-full mt-2.5 overflow-hidden" style={{ background: 'var(--surface-white-10)' }}>
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{ width: `${pct}%`, background: 'var(--gradient-progress)' }}
+                />
+              </div>
+            </>
+          )}
         </div>
 
         {myItems.length === 0 && (
@@ -193,48 +200,35 @@ export function MyScreen() {
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-bold">{it.name}</div>
                 <div className="flex items-center gap-1.5 mt-1.5">
-                  <button
-                    type="button"
-                    onClick={() => changeQty(it.id, qty, -0.5)}
+                  <Stepper
+                    label={qty}
+                    onDec={() => changeQty(it.id, qty, -0.5)}
+                    onInc={() => changeQty(it.id, qty, 0.5)}
                     disabled={listLocked}
-                    className="flex items-center justify-center rounded-sm text-sm border size-[22px]"
-                    style={{
-                      background: 'var(--surface-input)', borderColor: 'var(--gbs)', color: 'var(--text)',
-                      cursor: listLocked ? 'default' : 'pointer', opacity: listLocked ? 0.5 : 1,
-                    }}
-                  >−</button>
-                  <span className="text-sm font-bold">{qty}</span>
-                  <button
-                    type="button"
-                    onClick={() => changeQty(it.id, qty, 0.5)}
-                    disabled={listLocked}
-                    className="flex items-center justify-center rounded-sm text-sm border size-[22px]"
-                    style={{
-                      background: 'var(--surface-input)', borderColor: 'var(--gbs)', color: 'var(--text)',
-                      cursor: listLocked ? 'default' : 'pointer', opacity: listLocked ? 0.5 : 1,
-                    }}
-                  >+</button>
+                  />
                   <span className="text-[11px]" style={{ color: 'var(--muted)' }}>{it.unit}</span>
                 </div>
               </div>
 
-              <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
-                <div
-                  className="font-extrabold tabular-nums"
-                  style={{ color: price > 0 ? 'var(--accent)' : 'var(--muted)', fontSize: price > 0 ? 13 : 11 }}
-                >
-                  {price > 0 ? fmt(price * qty) : 'нет цены'}
+              {hasBudget && (
+                <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
+                  <div
+                    className="font-extrabold tabular-nums"
+                    style={{ color: price > 0 ? 'var(--accent)' : 'var(--muted)', fontSize: price > 0 ? 13 : 11 }}
+                  >
+                    {price > 0 ? fmt(price * qty) : 'нет цены'}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <PriceCell item={it} readOnly={listLocked} onChange={updatePrice} />
+                    <span className="text-[10px]" style={{ color: 'var(--muted)' }}>₽/{it.unit}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <PriceCell item={it} readOnly={listLocked} onChange={updatePrice} />
-                  <span className="text-[10px]" style={{ color: 'var(--muted)' }}>₽/{it.unit}</span>
-                </div>
-              </div>
+              )}
             </div>
           )
         })}
 
-        {boughtCount > 0 && actualTotal > 0 && (
+        {boughtCount > 0 && hasBudget && actualTotal > 0 && (
           <div className="text-center text-xs py-2" style={{ color: 'var(--muted)' }}>
             Куплено {boughtCount} из {myItems.length} · итого{' '}
             <b style={{ color: 'var(--accent)' }}>{fmt(actualTotal)}</b>

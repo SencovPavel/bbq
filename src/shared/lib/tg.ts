@@ -32,6 +32,8 @@ interface WebAppBridge {
     impactOccurred(style: string): void
     notificationOccurred(type: string): void
   }
+  showScanQrPopup?(params: { text?: string }, callback?: (text: string) => boolean | void): void
+  closeScanQrPopup?(): void
 }
 
 declare global {
@@ -101,4 +103,18 @@ export function haptic(type = 'light'): void {
 
 export function hapticNotify(type = 'success'): void {
   window.Telegram?.WebApp?.HapticFeedback?.notificationOccurred(type)
+}
+
+/**
+ * Открывает нативный QR-сканер Telegram (Bot API ≥6.4). Возвращает false, если
+ * недоступен (не Telegram / старый клиент) — вызывающий код должен дать ручной фолбэк.
+ */
+export function scanQr(onText: (text: string) => void, hint = 'Наведи камеру на QR-код'): boolean {
+  const wa = getWebApp()
+  if (!wa?.showScanQrPopup) return false
+  wa.showScanQrPopup({ text: hint }, (text) => {
+    onText(text)
+    return true
+  })
+  return true
 }

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { IconDots, IconPerson } from '@shared/ui/Icon'
+import { Stepper } from '@shared/ui/Stepper'
 import type { Item } from '@shared/types'
 
 // ── Source badge ──────────────────────────────────────────────────────────────
@@ -29,6 +30,7 @@ export interface ItemRowProps {
   item: Item
   meId?: string
   readOnly?: boolean
+  hasBudget?: boolean
   onUpdate: (id: string, field: string, value: unknown) => void
   onBuyerTap: (id: string) => void
   onOpenActions: (id: string) => void
@@ -38,7 +40,7 @@ export interface ItemRowProps {
   fmt: (n: number) => string
 }
 
-export function ItemRow({ item, meId, readOnly = false, onUpdate, onBuyerTap, onOpenActions, renameTrigger, stepForUnit, fmtQty, fmt }: ItemRowProps) {
+export function ItemRow({ item, meId, readOnly = false, hasBudget = true, onUpdate, onBuyerTap, onOpenActions, renameTrigger, stepForUnit, fmtQty, fmt }: ItemRowProps) {
   // Qty: local optimistic state + debounce
   const [localQty, setLocalQty] = useState(() => Number(item.qty) || 0)
   const qtyTimer   = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -145,42 +147,27 @@ export function ItemRow({ item, meId, readOnly = false, onUpdate, onBuyerTap, on
 
       {/* Row 2: qty stepper + price + dots */}
       <div className="flex items-center gap-2">
-        <div
-          className="flex items-center shrink-0 rounded-sm p-px"
-          style={{ background: 'var(--surface-subtle)', border: '1px solid var(--gb)' }}
-        >
-          <button
-            type="button"
-            onClick={() => changeQtyByStep(-step)}
-            disabled={readOnly}
-            className="size-[22px] border-none bg-transparent text-sm flex items-center justify-center"
-            style={{ color: 'var(--text)', fontFamily: 'inherit', cursor: readOnly ? 'default' : 'pointer', opacity: readOnly ? 0.5 : 1 }}
-          >−</button>
-          <span className="text-sm font-extrabold px-2 min-w-[50px] text-center tabular-nums">
-            {fmtQty(localQty, item.unit)}{' '}
-            <span className="font-semibold text-xs" style={{ color: 'var(--muted)' }}>{item.unit}</span>
-          </span>
-          <button
-            type="button"
-            onClick={() => changeQtyByStep(step)}
-            disabled={readOnly}
-            className="size-[22px] border-none bg-transparent text-sm flex items-center justify-center"
-            style={{ color: 'var(--text)', fontFamily: 'inherit', cursor: readOnly ? 'default' : 'pointer', opacity: readOnly ? 0.5 : 1 }}
-          >+</button>
-        </div>
+        <Stepper
+          label={<>{fmtQty(localQty, item.unit)}{' '}<span className="font-semibold text-xs" style={{ color: 'var(--muted)' }}>{item.unit}</span></>}
+          onDec={() => changeQtyByStep(-step)}
+          onInc={() => changeQtyByStep(step)}
+          disabled={readOnly}
+        />
 
-        <div
-          className="ml-auto text-sm font-black tabular-nums shrink-0"
-          style={{ color: item.price > 0 ? 'var(--accent)' : 'var(--muted)' }}
-        >
-          {item.price > 0 ? fmt(lineTotal) : '—'}
-        </div>
+        {hasBudget && (
+          <div
+            className="ml-auto text-sm font-black tabular-nums shrink-0"
+            style={{ color: item.price > 0 ? 'var(--accent)' : 'var(--muted)' }}
+          >
+            {item.price > 0 ? fmt(lineTotal) : '—'}
+          </div>
+        )}
 
         {!readOnly && (
           <button
             type="button"
             onClick={() => onOpenActions(item.id)}
-            className="size-6 rounded-sm border-none bg-transparent cursor-pointer flex items-center justify-center shrink-0"
+            className={`size-6 rounded-sm border-none bg-transparent cursor-pointer flex items-center justify-center shrink-0${hasBudget ? '' : ' ml-auto'}`}
             style={{ color: 'var(--muted)' }}
             title="Ещё"
           >

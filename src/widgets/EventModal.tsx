@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { IconX } from '@shared/ui/Icon'
+import { Toggle } from '@shared/ui/Toggle'
+import { EVENT_TYPES } from '@shared/config/event-types'
 import type { PicnicEvent } from '@shared/types'
 
 export interface EventModalProps {
@@ -15,6 +17,13 @@ export function EventModal({ event, onSave, onClose, onDelete }: EventModalProps
   const [time,        setTime]        = useState(event?.event_time  ? event.event_time.slice(0, 5) : '')
   const [location,    setLocation]    = useState(event?.location    ?? '')
   const [description, setDescription] = useState(event?.description ?? '')
+  const [type,        setType]        = useState(event?.type ?? EVENT_TYPES[0].id)
+  const [hasBudget,   setHasBudget]   = useState(event ? event.has_budget !== false : true)
+
+  function pickType(t: typeof EVENT_TYPES[number]) {
+    setType(t.id)
+    if (!event) setHasBudget(t.hasBudgetDefault)
+  }
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '11px 13px', borderRadius: 12,
@@ -45,6 +54,34 @@ export function EventModal({ event, onSave, onClose, onDelete }: EventModalProps
         </div>
 
         <div className="flex flex-col gap-3">
+          <div>
+            <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
+              Тип события
+            </label>
+            <div className="grid grid-cols-3 gap-[7px]" role="group" aria-label="Тип события">
+              {EVENT_TYPES.map(t => {
+                const active = type === t.id
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => pickType(t)}
+                    className="flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl border cursor-pointer"
+                    style={{
+                      borderColor: active ? 'var(--accent)' : 'var(--card-b)',
+                      background: active ? 'var(--surface-fire-14)' : 'var(--surface-input)',
+                      color: active ? 'var(--accent)' : 'var(--text)',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    <span className="text-[18px]">{t.icon}</span>
+                    <span className="text-[10.5px] font-extrabold text-center leading-tight">{t.label}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
           <div>
             <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
               Название *
@@ -88,6 +125,19 @@ export function EventModal({ event, onSave, onClose, onDelete }: EventModalProps
               placeholder="Любые заметки про событие…"
             />
           </div>
+
+          <div
+            className="flex items-center justify-between gap-3 p-3 rounded-xl"
+            style={{ background: 'var(--surface-input)', border: '1px solid var(--card-b)' }}
+          >
+            <div>
+              <div className="text-[13px] font-extrabold" style={{ color: 'var(--text)' }}>Считать бюджет</div>
+              <div className="text-[11px] mt-px" style={{ color: 'var(--muted)' }}>
+                Цены, расчёт долгов и переводов между участниками
+              </div>
+            </div>
+            <Toggle on={hasBudget} onToggle={() => setHasBudget(v => !v)} />
+          </div>
         </div>
 
         <div className="flex gap-2 mt-5">
@@ -101,7 +151,11 @@ export function EventModal({ event, onSave, onClose, onDelete }: EventModalProps
           <button
             onClick={() => {
               if (!name.trim()) return
-              onSave({ name: name.trim(), event_date: date || null, event_time: time || null, location: location || null, description: description || null })
+              onSave({
+                name: name.trim(), event_date: date || null, event_time: time || null,
+                location: location || null, description: description || null,
+                type, has_budget: hasBudget,
+              })
             }}
             className="flex-1 py-[13px] rounded-[12px] border-none cursor-pointer font-extrabold text-[15px]"
             style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit', opacity: name.trim() ? 1 : 0.5 }}>

@@ -70,6 +70,7 @@ export function useListScreenVM() {
   )
 
   const listLocked = isEventItemsLocked(currentEvent?.status)
+  const hasBudget  = currentEvent?.has_budget !== false
 
   const eventItems = useMemo(
     () => currentEventId ? items.filter(i => i.event_id === currentEventId) : items,
@@ -194,7 +195,7 @@ export function useListScreenVM() {
     openCats, addModal, catModal, buyerModal, selectedEmoji,
     newItem, newCat, customBuyer, confirmCat, actionItemId, renamingId, renameTick,
     // derived
-    amIAdmin, listLocked,
+    amIAdmin, listLocked, hasBudget,
     // item actions
     onUpdate, requestDeleteItem, saveItem, handleBuyerTap, assignBuyer, triggerRename,
     // category actions

@@ -2,7 +2,7 @@ import { useId, type ReactNode } from 'react'
 import { GlassCard, Divider } from '@shared/ui/GlassCard'
 import {
   IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle,
-  IconReceipt, IconClipboard, IconChevronUp, IconChevronDown,
+  IconReceipt, IconClipboard, IconCheck, IconChevronUp, IconChevronDown,
 } from '@shared/ui/Icon'
 import { CatTile } from '@entities/category/ui/CatTile'
 import { ActivityFeed } from '@widgets/ActivityFeed'
@@ -92,9 +92,9 @@ export function SummaryScreen() {
   const vm = useSummaryScreenVM()
   const {
     events, activity, amIAdmin,
-    actualTotal, boughtCount, enabledLen, pct, perPerson, ppl, catRows,
+    actualTotal, boughtCount, enabledLen, pct, perPerson, ppl, catRows, hasBudget,
     myTransfers, iSend, net, singleTransfer, counterparty,
-    analysis, loading, panelOpen,
+    analysis, loading, panelOpen, copied,
     runAnalysis, shareList, copyTransfer, setShowEventSheet, fmt,
   } = vm
 
@@ -123,22 +123,24 @@ export function SummaryScreen() {
         <div className="flex items-center gap-4">
           <ReadyRing pct={pct} done={boughtCount} total={enabledLen} />
           <div className="flex-1 min-w-0">
-            <StatLabel>Куплено</StatLabel>
+            <StatLabel>{hasBudget ? 'Куплено' : 'Готово'}</StatLabel>
             <div className="text-display font-black tracking-tight leading-none tabular-nums whitespace-nowrap">
-              {actualTotal > 0 ? fmt(actualTotal) : `${enabledLen} поз.`}
+              {hasBudget && actualTotal > 0 ? fmt(actualTotal) : `${enabledLen} поз.`}
             </div>
-            <div className="text-[11px] mt-[5px]" style={{ opacity: 0.7 }}>
-              На человека ·{' '}
-              <b className="font-extrabold" style={{ opacity: 0.95 }}>
-                {fmt(perPerson ?? 0)}
-              </b>
-              {' '}· {ppl} чел.
-            </div>
+            {hasBudget && (
+              <div className="text-[11px] mt-[5px]" style={{ opacity: 0.7 }}>
+                На человека ·{' '}
+                <b className="font-extrabold" style={{ opacity: 0.95 }}>
+                  {fmt(perPerson ?? 0)}
+                </b>
+                {' '}· {ppl} чел.
+              </div>
+            )}
           </div>
         </div>
 
         {/* Личный баланс */}
-        {myTransfers.length > 0 && (
+        {hasBudget && myTransfers.length > 0 && (
           <div
             className="mt-4 pt-3.5 flex items-center gap-3"
             style={{ borderTop: '1px solid var(--surface-white-14)' }}
@@ -175,10 +177,13 @@ export function SummaryScreen() {
                 type="button"
                 title="Скопировать"
                 onClick={copyTransfer}
-                className="size-[34px] rounded-[10px] flex items-center justify-center shrink-0 border-none cursor-pointer"
-                style={{ background: 'var(--surface-scrim-light)', color: 'var(--text-on-accent)' }}
+                className="size-[34px] rounded-[10px] flex items-center justify-center shrink-0 border-none cursor-pointer transition-colors duration-200"
+                style={{
+                  background: copied ? 'var(--surface-success-20)' : 'var(--surface-scrim-light)',
+                  color: copied ? 'var(--green)' : 'var(--text-on-accent)',
+                }}
               >
-                <IconClipboard size={14} />
+                {copied ? <IconCheck size={14} strokeWidth={2.4} /> : <IconClipboard size={14} />}
               </button>
             )}
           </div>
@@ -207,9 +212,11 @@ export function SummaryScreen() {
                 {cat.title}
                 <span className="text-[11px]" style={{ color: 'var(--muted)' }}>{catDone}/{catItems.length}</span>
               </span>
-              <span className="text-[13px] font-extrabold" style={{ color: catTotal > 0 ? 'var(--accent)' : 'var(--muted)' }}>
-                {catTotal > 0 ? fmt(catTotal) : '—'}
-              </span>
+              {hasBudget && (
+                <span className="text-[13px] font-extrabold" style={{ color: catTotal > 0 ? 'var(--accent)' : 'var(--muted)' }}>
+                  {catTotal > 0 ? fmt(catTotal) : '—'}
+                </span>
+              )}
             </div>
           </div>
         ))}
@@ -232,7 +239,7 @@ export function SummaryScreen() {
         }}
       >
         <IconRobot size={15} />
-        {loading ? 'Анализирую...' : 'Проверить с агентом'}
+        {loading ? 'Анализирую...' : (analysis ? 'Обновить анализ' : 'Проверить с агентом')}
       </button>
 
       {panelOpen && analysis && (

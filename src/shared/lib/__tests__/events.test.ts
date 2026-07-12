@@ -19,6 +19,8 @@ function event(
     location: null,
     description: null,
     created_at: '2024-01-01T00:00:00.000Z',
+    type: null,
+    has_budget: true,
     ...overrides,
   }
 }

@@ -24,6 +24,7 @@ export function useSummaryScreenVM() {
   const [analysis,  setAnalysis]  = useState<AnalysisResult | null>(null)
   const [loading,   setLoading]   = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
+  const [copied,    setCopied]    = useState(false)
 
   // Persist panel open/closed state per group
   useEffect(() => {
@@ -44,6 +45,12 @@ export function useSummaryScreenVM() {
     () => members.some(m => m.user_id === meId && m.is_admin),
     [members, meId],
   )
+
+  const currentEvent = useMemo(
+    () => currentEventId ? events.find(e => e.id === currentEventId) : undefined,
+    [events, currentEventId],
+  )
+  const hasBudget = currentEvent?.has_budget !== false
 
   const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson } = useMemo(
     () => calcSummary(items, members, currentEventId),
@@ -130,7 +137,7 @@ export function useSummaryScreenVM() {
       })
       text += '\n'
     })
-    text += `💰 Куплено: ${fmt(actualTotal)}\n👤 На человека (${ppl} чел.): ${fmt(perPerson ?? 0)}`
+    if (hasBudget) text += `💰 Куплено: ${fmt(actualTotal)}\n👤 На человека (${ppl} чел.): ${fmt(perPerson ?? 0)}`
     if (navigator.share) navigator.share({ text }).catch(() => {})
     else navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
   }
@@ -138,18 +145,24 @@ export function useSummaryScreenVM() {
   function copyTransfer() {
     if (!singleTransfer) return
     const text = `${singleTransfer.fromName} → ${singleTransfer.toName}: ${fmt(singleTransfer.amount)}`
-    navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
+    navigator.clipboard?.writeText(text).then(() => {
+      showToast('Скопировано!')
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    })
   }
 
   return {
     // state
     events, categories, items, members, activity,
     // totals
-    amIAdmin, actualTotal, boughtCount, enabledLen, pct, perPerson, ppl, enabled, catRows,
+    amIAdmin, actualTotal, boughtCount, enabledLen, pct, perPerson, ppl, enabled, catRows, hasBudget,
     // personal balance
     myTransfers, iSend, net, singleTransfer, counterparty,
     // agent
     analysis, loading, panelOpen,
+    // copy feedback
+    copied,
     // actions
     runAnalysis, shareList, copyTransfer, setShowEventSheet, fmt,
   }

@@ -1,7 +1,8 @@
 import type { CSSProperties } from 'react'
-import { IconPerson } from '@shared/ui/Icon'
+import { IconPerson, IconSparkles } from '@shared/ui/Icon'
 import { BrandLockup } from '@shared/ui/BrandLockup'
 import { BackButton } from '@shared/ui/GlassIconButton'
+import { SegmentedControl } from '@shared/ui/SegmentedControl'
 import { useOnboardingScreenVM, type OnboardingTab } from './useOnboardingScreenVM'
 import type { User } from '@shared/types'
 
@@ -40,19 +41,16 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
 
       <div className="lg:p-0 lg:bg-transparent lg:border-none rounded-[20px] p-5 w-full glass lg:shadow-none">
         {/* Tabs */}
-        <div className="flex gap-[6px] mb-5">
-          {(['create', 'join'] as OnboardingTab[]).map(t => (
-            <button key={t} onClick={() => switchTab(t)}
-              className="flex-1 py-[9px] rounded-[10px] text-[13px] font-bold cursor-pointer border-none transition-all"
-              style={{
-                background: tab === t ? 'var(--accent)' : 'var(--surface-white-6)',
-                border:     tab === t ? '1px solid var(--accent)' : '1px solid var(--gb)',
-                color:      tab === t ? 'var(--text-on-accent)' : 'var(--muted)',
-                fontFamily: 'inherit',
-              }}>
-              {t === 'create' ? '＋ Создать группу' : 'Войти по коду'}
-            </button>
-          ))}
+        <div className="mb-5">
+          <SegmentedControl
+            value={tab}
+            onChange={v => switchTab(v as OnboardingTab)}
+            label="Способ входа"
+            options={[
+              { value: 'create', label: '＋ Создать группу' },
+              { value: 'join', label: 'Войти по коду' },
+            ]}
+          />
         </div>
 
         {hasTg && (
@@ -103,6 +101,16 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
         </div>
 
         {err && <div className="text-center text-[12px] mt-3" style={{ color: 'var(--red)' }}>{err}</div>}
+      </div>
+
+      <div
+        className="mt-4 flex items-start gap-2.5 rounded-[12px]"
+        style={{ background: 'rgba(96,165,250,.06)', border: '1px solid rgba(96,165,250,.18)', padding: '12px 14px' }}
+      >
+        <span style={{ color: 'var(--blue)', flexShrink: 0, marginTop: 1 }}><IconSparkles size={15} /></span>
+        <div className="text-[12px] leading-relaxed" style={{ color: 'var(--muted-2)' }}>
+          Подключи Telegram-чат — агент сам соберёт задачи и пункты из обсуждения
+        </div>
       </div>
     </div>
   )

@@ -71,34 +71,9 @@ export function EventScreen() {
         />
 
         <div className="relative">
-          {amIAdmin && currentEvent && (
-            <div className="absolute top-0 right-0 z-10 flex items-center gap-1.5">
-              {canCompleteEvent && (
-                <button
-                  type="button"
-                  onClick={() => setConfirmComplete(true)}
-                  title="Завершить событие"
-                  className="size-8 rounded-[9px] flex items-center justify-center border cursor-pointer"
-                  style={{ background: 'rgba(34,197,94,.12)', borderColor: 'rgba(34,197,94,.35)', color: '#4ade80', fontFamily: 'inherit' }}
-                >
-                  <IconFlag size={15} strokeWidth={2} />
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => setShowEventEdit(true)}
-                title="Редактировать событие"
-                className="size-8 rounded-[9px] flex items-center justify-center border cursor-pointer"
-                style={{ background: 'rgba(251,191,36,.12)', borderColor: 'rgba(251,191,36,.3)', color: 'var(--accent-2)', fontFamily: 'inherit' }}
-              >
-                <IconPencil size={13} />
-              </button>
-            </div>
-          )}
-
-          <div className={amIAdmin && currentEvent ? 'pr-[4.75rem]' : undefined}>
-            {countdownLabel && (
-              <div className="mb-3">
+          {(countdownLabel || (amIAdmin && currentEvent)) && (
+            <div className="flex items-center justify-between gap-2 mb-3">
+              {countdownLabel ? (
                 <div
                   className="inline-flex items-center gap-1.5 h-8 px-3 rounded-pill"
                   style={{ background: 'rgba(16,14,11,.35)', border: `1px solid ${urgency.border}` }}
@@ -106,8 +81,34 @@ export function EventScreen() {
                   <span className="size-1.5 rounded-full shrink-0" style={{ background: urgency.dot, boxShadow: urgency.glow }} />
                   <span className="text-xs font-black tracking-tight" style={{ color: urgency.text }}>{countdownLabel}</span>
                 </div>
-              </div>
-            )}
+              ) : <span />}
+
+              {amIAdmin && currentEvent && (
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {canCompleteEvent && (
+                    <button
+                      type="button"
+                      onClick={() => setConfirmComplete(true)}
+                      title="Завершить событие"
+                      className="size-8 rounded-[9px] flex items-center justify-center border cursor-pointer"
+                      style={{ background: 'rgba(34,197,94,.12)', borderColor: 'rgba(34,197,94,.35)', color: 'var(--green)', fontFamily: 'inherit' }}
+                    >
+                      <IconFlag size={15} strokeWidth={2} />
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setShowEventEdit(true)}
+                    title="Редактировать событие"
+                    className="size-8 rounded-[9px] flex items-center justify-center border cursor-pointer"
+                    style={{ background: 'rgba(251,191,36,.12)', borderColor: 'rgba(251,191,36,.3)', color: 'var(--accent-2)', fontFamily: 'inherit' }}
+                  >
+                    <IconPencil size={13} />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Event name */}
           <div className="text-xl font-black tracking-tight mb-3">
@@ -132,7 +133,6 @@ export function EventScreen() {
               )}
             </div>
           )}
-          </div>
 
           {/* Readiness ring */}
           {currentEvent && (
@@ -297,7 +297,7 @@ export function EventScreen() {
             type="button"
             onClick={shareCode}
             className="w-full py-2.5 rounded-md border-none text-sm font-extrabold cursor-pointer flex items-center justify-center gap-2"
-            style={{ background: 'linear-gradient(90deg, var(--accent), var(--accent-2))', color: '#fff', fontFamily: 'inherit' }}
+            style={{ background: 'linear-gradient(90deg, var(--accent), var(--accent-2))', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}
           >
             <IconShare size={15} strokeWidth={2} /> Пригласить друзей
           </button>
@@ -339,7 +339,7 @@ export function EventScreen() {
                     )}
                     {isMe && (
                       <span className="text-[10px] font-bold rounded-pill px-1.5 py-px"
-                        style={{ background: 'rgba(255,107,53,.15)', border: '1px solid rgba(255,107,53,.3)', color: 'var(--accent)' }}>
+                        style={{ background: 'var(--surface-fire-15)', border: '1px solid var(--surface-fire-30)', color: 'var(--accent)' }}>
                         я
                       </span>
                     )}

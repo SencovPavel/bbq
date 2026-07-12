@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 
 import {
   getFamilyMembers,
@@ -46,6 +46,13 @@ export function useFamilyScreenVM() {
   const [editName,       setEditName]       = useState('')
   const [editLabel,      setEditLabel]      = useState('')
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+
+  // ── Поиск по группам (для >6 групп) ───────────────────────────────────────────
+  const [groupSearch, setGroupSearch] = useState('')
+  const filteredGroups = useMemo(
+    () => groups.filter(g => g.name.toLowerCase().includes(groupSearch.trim().toLowerCase())),
+    [groups, groupSearch],
+  )
 
   // ── Actions ────────────────────────────────────────────────────────────────
   async function handleAdd() {
@@ -121,6 +128,8 @@ export function useFamilyScreenVM() {
     editMember, setEditMember, editName, setEditName, editLabel, setEditLabel,
     // delete confirm
     confirmDeleteId, setConfirmDeleteId,
+    // group search
+    groupSearch, setGroupSearch, filteredGroups,
     // actions
     handleAdd, openEdit, handleEdit, handleDelete, toggleGroup,
     goBack: () => popScreen('profile'),

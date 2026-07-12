@@ -1,4 +1,4 @@
-import { IconFlame, IconPerson } from '@shared/ui/Icon'
+import { IconFlame, IconPerson, IconSparkles } from '@shared/ui/Icon'
 import { BrandLockup } from '@shared/ui/BrandLockup'
 import { groupTint, TINT_STYLES } from '@shared/lib/group-icon'
 import { UserAvatar } from '@entities/member/ui/UserAvatar'
@@ -66,35 +66,37 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
               </div>
             </div>
           )}
-          {groups.map(g => {
-            const tint = TINT_STYLES[groupTint(g.id)]
-            return (
-            <div key={g.id}
-              onClick={() => onEnter(g.id)}
-              className="glass rounded-[16px] p-4 mb-[10px] flex items-center gap-3 cursor-pointer active:opacity-80 transition-opacity">
-              <div className="flex items-center justify-center rounded-[12px] flex-shrink-0"
-                style={{
-                  width: 46,
-                  height: 46,
-                  color: 'var(--color-cream)',
-                  background: `linear-gradient(135deg, ${tint.from}, ${tint.to})`,
-                  border: `1px solid ${tint.border}`,
-                  fontSize: 22,
-                }}>
-                {g.emoji
-                  ? <span>{g.emoji}</span>
-                  : <IconFlame size={22} strokeWidth={1.5} />}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[15px] font-extrabold truncate">{g.name}</div>
-                <div className="text-[11px] mt-[2px]" style={{ color: 'var(--muted)' }}>
-                  {g.member_count} участн. · {g.item_count} позиций
+          <div className="grid gap-[10px]" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+            {groups.map(g => {
+              const tint = TINT_STYLES[groupTint(g.id)]
+              return (
+              <div key={g.id}
+                onClick={() => onEnter(g.id)}
+                className="glass rounded-[16px] p-4 flex items-center gap-3 cursor-pointer active:opacity-80 transition-opacity">
+                <div className="flex items-center justify-center rounded-[12px] flex-shrink-0"
+                  style={{
+                    width: 46,
+                    height: 46,
+                    color: 'var(--color-cream)',
+                    background: `linear-gradient(135deg, ${tint.from}, ${tint.to})`,
+                    border: `1px solid ${tint.border}`,
+                    fontSize: 22,
+                  }}>
+                  {g.emoji
+                    ? <span>{g.emoji}</span>
+                    : <IconFlame size={22} strokeWidth={1.5} />}
                 </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[15px] font-extrabold truncate">{g.name}</div>
+                  <div className="text-[11px] mt-[2px]" style={{ color: 'var(--muted)' }}>
+                    {g.member_count} участн. · {g.item_count} позиций
+                  </div>
+                </div>
+                <div className="text-[18px]" style={{ color: 'var(--muted)' }}>›</div>
               </div>
-              <div className="text-[18px]" style={{ color: 'var(--muted)' }}>›</div>
-            </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-[10px]">
@@ -108,6 +110,24 @@ export function GroupsScreen({ onEnter, onCreate, onJoin }: GroupsScreenProps) {
             style={{ background: 'var(--g)', border: '1px solid var(--gb)', color: 'var(--text)', fontFamily: 'inherit' }}>
             Войти по коду
           </button>
+        </div>
+
+        <div
+          className="mt-6 flex items-start gap-3 rounded-[14px]"
+          style={{ background: 'rgba(255,255,255,.03)', border: '1px solid var(--gb)', padding: '14px 16px' }}
+        >
+          <div
+            className="size-8 rounded-[10px] flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(96,165,250,.12)', color: 'var(--blue)' }}
+          >
+            <IconSparkles size={15} />
+          </div>
+          <div>
+            <div className="text-[12.5px] font-extrabold mb-[3px]">Подключи Telegram</div>
+            <div className="text-[11.5px] leading-relaxed" style={{ color: 'var(--muted)' }}>
+              Агент будет автоматически парсить чат и предлагать дополнения к списку задач
+            </div>
+          </div>
         </div>
     </div>
   )

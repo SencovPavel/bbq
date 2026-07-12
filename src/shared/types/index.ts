@@ -48,6 +48,8 @@ export interface PicnicEvent {
   description: string | null
   status: 'active' | 'completed'
   created_at: string
+  type: string | null
+  has_budget: boolean
 }
 
 export interface Member {

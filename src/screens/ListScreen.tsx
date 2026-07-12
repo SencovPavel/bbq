@@ -18,7 +18,7 @@ export function ListScreen() {
     events, categories, members, visibleItems, listTotal, actionItem, me,
     openCats, addModal, catModal, buyerModal, selectedEmoji,
     newItem, newCat, customBuyer, confirmCat, renamingId, renameTick,
-    amIAdmin, listLocked,
+    amIAdmin, listLocked, hasBudget,
     onUpdate, requestDeleteItem, saveItem, handleBuyerTap, assignBuyer, triggerRename,
     toggleCat, saveCat,
     setAddModal, setCatModal, setEmoji, setNewItem, setNewCat,
@@ -41,8 +41,8 @@ export function ListScreen() {
       {categories.length > 0 && (
         <div className="flex items-center justify-between mb-3 px-0.5" aria-label="Сумма по списку">
           <span className="text-[11px] font-extrabold uppercase tracking-wider" style={{ color: 'var(--muted)' }}>По списку</span>
-          <span className="text-sm font-black tabular-nums tracking-tight" style={{ color: listTotal > 0 ? 'var(--accent)' : 'var(--muted)' }}>
-            {listTotal > 0 ? fmt(listTotal) : `${visibleItems.length} поз.`}
+          <span className="text-sm font-black tabular-nums tracking-tight" style={{ color: hasBudget && listTotal > 0 ? 'var(--accent)' : 'var(--muted)' }}>
+            {hasBudget && listTotal > 0 ? fmt(listTotal) : `${visibleItems.length} поз.`}
           </span>
         </div>
       )}
@@ -92,6 +92,7 @@ export function ListScreen() {
                       item={it}
                       meId={me?.id}
                       readOnly={listLocked}
+                      hasBudget={hasBudget}
                       onUpdate={onUpdate}
                       onBuyerTap={handleBuyerTap}
                       onOpenActions={setActionItemId}

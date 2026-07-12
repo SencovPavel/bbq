@@ -1,6 +1,8 @@
 import { Modal, ModalButtons, GlassInput } from '@shared/ui/Modal'
 import { ConfirmModal } from '@shared/ui/ConfirmModal'
 import { EmptyState } from '@shared/ui/EmptyState'
+import { SegmentedControl } from '@shared/ui/SegmentedControl'
+import { Toggle } from '@shared/ui/Toggle'
 import { UserAvatar } from '@entities/member/ui/UserAvatar'
 import { BackButton, GlassIconButton } from '@shared/ui/GlassIconButton'
 import { IconPerson, IconPlus } from '@shared/ui/Icon'
@@ -9,7 +11,7 @@ import { useFamilyScreenVM, FAMILY_LABELS } from './useFamilyScreenVM'
 // ── LabelSelect ───────────────────────────────────────────────────────────────
 
 function LabelSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const options = [...FAMILY_LABELS, '']
+  const options = [...FAMILY_LABELS, ''].map(l => ({ value: l, label: l || 'без метки' }))
   return (
     <div className="mb-1">
       <div
@@ -18,58 +20,8 @@ function LabelSelect({ value, onChange }: { value: string; onChange: (v: string)
       >
         Кто это
       </div>
-      <div className="flex flex-wrap gap-2">
-        {options.map(l => {
-          const active = l === '' ? !FAMILY_LABELS.includes(value) && value === '' : value === l
-          return (
-            <button
-              key={l || '__none__'}
-              type="button"
-              onClick={() => onChange(l)}
-              className="px-3 py-1 rounded-pill text-[12px] font-bold border transition-all"
-              style={{
-                background:  active ? 'var(--surface-fire-12)' : 'var(--surface-white-8)',
-                borderColor: active ? 'var(--accent)' : 'var(--gb)',
-                color:       active ? 'var(--accent)' : 'var(--muted)',
-                fontFamily:  'inherit',
-                cursor:      'pointer',
-              }}
-            >
-              {l || 'без метки'}
-            </button>
-          )
-        })}
-      </div>
+      <SegmentedControl value={value} onChange={onChange} options={options} label="Кто это" fullWidth={false} />
     </div>
-  )
-}
-
-// ── Toggle ────────────────────────────────────────────────────────────────────
-
-function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className="relative border-none cursor-pointer transition-colors duration-200 shrink-0"
-      style={{
-        width: 40,
-        height: 22,
-        borderRadius: 11,
-        background: on ? 'var(--accent)' : 'var(--surface-white-10)',
-      }}
-      aria-pressed={on}
-    >
-      <span
-        className="absolute top-[3px] rounded-full transition-all duration-200"
-        style={{
-          width: 16,
-          height: 16,
-          background: '#fff',
-          left: on ? 'calc(100% - 19px)' : 3,
-        }}
-      />
-    </button>
   )
 }
 
@@ -81,6 +33,7 @@ export function FamilyScreen() {
     addOpen, setAddOpen, newName, setNewName, newLabel, setNewLabel,
     editMember, setEditMember, editName, setEditName, editLabel, setEditLabel,
     confirmDeleteId, setConfirmDeleteId,
+    groupSearch, setGroupSearch, filteredGroups,
     handleAdd, openEdit, handleEdit, handleDelete, toggleGroup,
     goBack,
   } = useFamilyScreenVM()
@@ -119,6 +72,14 @@ export function FamilyScreen() {
           </div>
         )}
 
+        {groups.length > 6 && members.length > 0 && (
+          <GlassInput
+            value={groupSearch}
+            onChange={e => setGroupSearch(e.target.value)}
+            placeholder="Поиск группы…"
+          />
+        )}
+
         {members.map(member => (
           <div key={member.id} className="glass rounded-[18px] overflow-hidden">
             <div className="flex items-center gap-3 px-4 py-3.5">
@@ -151,20 +112,26 @@ export function FamilyScreen() {
                   >
                     Участвует в пикниках
                   </div>
-                  <div className="flex flex-col gap-2">
-                    {groups.map(group => {
-                      const enabled = member.groups.some(g => g.group_id === group.id)
-                      return (
-                        <div key={group.id} className="flex items-center justify-between gap-3">
-                          <span className="text-[13px] font-semibold">{group.name}</span>
-                          <Toggle
-                            on={enabled}
-                            onToggle={() => toggleGroup(member.id, group.id, enabled)}
-                          />
-                        </div>
-                      )
-                    })}
-                  </div>
+                  {filteredGroups.length === 0 ? (
+                    <div className="text-center text-[12px] py-2" style={{ color: 'var(--muted)' }}>
+                      Ничего не найдено
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      {filteredGroups.map(group => {
+                        const enabled = member.groups.some(g => g.group_id === group.id)
+                        return (
+                          <div key={group.id} className="flex items-center justify-between gap-3">
+                            <span className="text-[13px] font-semibold">{group.name}</span>
+                            <Toggle
+                              on={enabled}
+                              onToggle={() => toggleGroup(member.id, group.id, enabled)}
+                            />
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
               </>
             )}

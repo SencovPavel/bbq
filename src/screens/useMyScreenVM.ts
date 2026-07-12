@@ -51,6 +51,7 @@ export function useMyScreenVM() {
     [events, currentEventId],
   )
   const listLocked = isEventItemsLocked(currentEvent?.status)
+  const hasBudget  = currentEvent?.has_budget !== false
 
   const amIAttending = useMemo(() => {
     if (!currentEventId || !meId) return true
@@ -146,7 +147,7 @@ export function useMyScreenVM() {
     // data
     me, events, members, myItems, sorted, amIAdmin,
     // totals
-    actualTotal, boughtItems, boughtCount, pct, listLocked,
+    actualTotal, boughtItems, boughtCount, pct, listLocked, hasBudget,
     // rsvp (own + family)
     amIAttending, currentEvent, toggleRsvp,
     myFamilyMembers, familyMemberAttending, toggleFamilyRsvp,
