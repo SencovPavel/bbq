@@ -56,14 +56,16 @@ export async function getFamilyMembers(): Promise<FamilyMemberFull[]> {
   return r.json()
 }
 
-export async function addFamilyMember(data: { name: string; label?: string }) {
+export async function addFamilyMember(
+  data: { name: string; label?: string },
+): Promise<{ ok: true; member: FamilyMemberFull } | { ok: false; error: string }> {
   const r = await authFetch('/family/members', {
     method: 'POST',
     body: JSON.stringify(data),
   })
   const json = (await r.json()) as FamilyMemberFull & { error?: string }
-  if (!r.ok) return { error: json.error ?? 'Не удалось добавить' }
-  return json
+  if (!r.ok) return { ok: false, error: json.error ?? 'Не удалось добавить' }
+  return { ok: true, member: json }
 }
 
 export async function updateFamilyMember(id: string, data: { name?: string; label?: string | null }) {

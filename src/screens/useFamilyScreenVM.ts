@@ -60,8 +60,8 @@ export function useFamilyScreenVM() {
     if (!name) return
     try {
       const result = await addFamilyMember({ name, label: newLabel || undefined })
-      if (result.error) { showToast(result.error, 'error'); return }
-      setMembers(prev => [...prev, result])
+      if (!result.ok) { showToast(result.error, 'error'); return }
+      setMembers(prev => [...prev, result.member])
       setAddOpen(false)
       setNewName('')
       setNewLabel(FAMILY_LABELS[0])
