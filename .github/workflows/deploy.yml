@@ -1,34 +1,76 @@
-name: Deploy
+# picnic-frontend/.github/workflows/deploy.yml
+#
+# Сборка на GitHub-раннере → на сервер по SSH приезжает готовый dist/.
+# На сервере: распаковка в releases/<sha> и атомарное переключение
+# симлинка current, на который смотрит nginx.
+
+name: Build & Deploy
 
 on:
   push:
     branches: [main, dev]
 
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   deploy:
-    name: Deploy → ${{ github.ref_name }}
-    runs-on: self-hosted
+    name: Build & Deploy → ${{ github.ref_name }}
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy frontend
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Build
+        run: |
+          npm ci
+          # npm test        # ← раскомментируй, чтобы гонять тесты перед деплоем
+          npm run build
+
+      - name: Pack release
+        run: tar czf release.tgz -C dist .
+
+      - name: Setup SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts
+          printf 'Host deploy\n  HostName %s\n  Port %s\n  User %s\n  IdentityFile ~/.ssh/id_ed25519\n' \
+            "$SSH_HOST" "$SSH_PORT" "${{ secrets.SSH_USER }}" >> ~/.ssh/config
+
+      - name: Upload & activate release
         env:
           BRANCH: ${{ github.ref_name }}
         run: |
-          set -e
+          set -euo pipefail
 
           if [ "$BRANCH" = "main" ]; then
             DEPLOY_DIR="/var/www/picnic/fe-main"
           else
             DEPLOY_DIR="/var/www/picnic/fe-dev"
           fi
+          SHA="${GITHUB_SHA::7}"
 
-          echo "▶ Deploying '$BRANCH' → $DEPLOY_DIR"
+          scp release.tgz "deploy:/tmp/picnic-fe-$SHA.tgz"
 
-          cd "$DEPLOY_DIR"
-          git fetch origin
-          git checkout "$BRANCH"
-          git reset --hard "origin/$BRANCH"
-          npm ci --prefer-offline
-          npm run build
-
-          echo "✅ Done: $BRANCH → $DEPLOY_DIR/dist"
+          ssh deploy "DEPLOY_DIR='$DEPLOY_DIR' SHA='$SHA' bash -s" <<'REMOTE'
+            set -euo pipefail
+            RELEASE="$DEPLOY_DIR/releases/$SHA"
+            mkdir -p "$RELEASE"
+            tar xzf "/tmp/picnic-fe-$SHA.tgz" -C "$RELEASE"
+            rm -f "/tmp/picnic-fe-$SHA.tgz"
+            ln -sfn "$RELEASE" "$DEPLOY_DIR/current"
+            ls -1dt "$DEPLOY_DIR"/releases/*/ | tail -n +6 | xargs -r rm -rf --
+            echo "✅ Done: $SHA → $DEPLOY_DIR/current"
+          REMOTE
