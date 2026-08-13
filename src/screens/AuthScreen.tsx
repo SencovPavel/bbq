@@ -67,7 +67,7 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
 
         {/* Подзаголовок */}
         <p className="text-center" style={{ fontSize: 13.5, color: 'var(--muted)', marginBottom: 24 }}>
-          Готовим закупки на компанию вместе
+          Готовимся к событиям вместе
         </p>
 
       </header>

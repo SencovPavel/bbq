@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { calcSettlement } from '../settlement'
-import type { Item, Member } from '../../types'
+import type { Item, Member, EventRsvp, FamilyMember, FamilyRsvp } from '../../types'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -141,5 +141,69 @@ describe('итоговые метрики', () => {
   it('perPerson = total / количество участников', () => {
     const items = [boughtItem('a', 900)]
     expect(calcSettlement(items, [A, B, C], 'e1').perPerson).toBe(300)
+  })
+})
+
+// ── взвешенные доли: RSVP «не иду» и члены семьи ───────────────────────────────
+
+function rsvp(userId: string, attending: boolean, eventId = 'e1'): EventRsvp {
+  return { event_id: eventId, user_id: userId, attending }
+}
+
+function familyMember(
+  id: string, ownerId: string, costPct: number, includeInCalc = true,
+): FamilyMember {
+  return {
+    id, owner_id: ownerId, name: id, label: null,
+    include_in_calc: includeInCalc, cost_pct: costPct,
+  }
+}
+
+function familyRsvp(familyMemberId: string, attending: boolean, eventId = 'e1'): FamilyRsvp {
+  return { family_member_id: familyMemberId, event_id: eventId, attending }
+}
+
+describe('взвешенные доли', () => {
+  it('участник «не иду» исключается из деления', () => {
+    // Аня заплатила 900, Саша не идёт → делим на 2 (Аня, Боря), доля 450
+    const items = [boughtItem('a', 900)]
+    const { transfers } = calcSettlement(
+      items, [A, B, C], 'e1', [rsvp('c', false)],
+    )
+    expect(transfers).toHaveLength(1)
+    expect(transfers[0].fromId).toBe('b')
+    expect(transfers[0].toId).toBe('a')
+    expect(transfers[0].amount).toBe(450)
+  })
+
+  it('член семьи с cost_pct добавляет долю владельцу', () => {
+    // Аня платит 900, у Ани член семьи с долей 50% (идёт) → веса A=1.5, B=1
+    // total=900, perShare=900/2.5=360, доля Ани=540 → Боря должен 360
+    const items = [boughtItem('a', 900)]
+    const { transfers } = calcSettlement(
+      items, [A, B], 'e1', [], [familyMember('f1', 'a', 50)], [],
+    )
+    expect(transfers).toHaveLength(1)
+    expect(transfers[0].fromId).toBe('b')
+    expect(transfers[0].amount).toBe(360)
+  })
+
+  it('include_in_calc=false — член семьи игнорируется', () => {
+    const items = [boughtItem('a', 900)]
+    const { transfers } = calcSettlement(
+      items, [A, B], 'e1', [], [familyMember('f1', 'a', 50, false)], [],
+    )
+    // как без семьи: доля 450
+    expect(transfers).toHaveLength(1)
+    expect(transfers[0].amount).toBe(450)
+  })
+
+  it('член семьи «не иду» не учитывается', () => {
+    const items = [boughtItem('a', 900)]
+    const { transfers } = calcSettlement(
+      items, [A, B], 'e1', [], [familyMember('f1', 'a', 50)], [familyRsvp('f1', false)],
+    )
+    expect(transfers).toHaveLength(1)
+    expect(transfers[0].amount).toBe(450)
   })
 })

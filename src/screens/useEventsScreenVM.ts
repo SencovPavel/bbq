@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { useWsStore } from '@stores/wsStore'
 import { useAppStore } from '@stores/appStore'
 import { sendEventUpdates } from '@shared/lib/event-update'
+import { buildEventAddMessage } from '@shared/lib/events'
 import type { PicnicEvent } from '@shared/types'
 
 // ── Pure helpers (exported so EventsScreen.tsx can reuse them) ────────────────
@@ -25,8 +26,15 @@ export function isPast(dateStr: string | null): boolean {
 export function useEventsScreenVM() {
   const serverState    = useWsStore(s => s.serverState)
   const send           = useWsStore(s => s.send)
-  const enterEvent     = useAppStore(s => s.enterEvent)
+  const enterEventRaw  = useAppStore(s => s.enterEvent)
+  const setTab         = useAppStore(s => s.setTab)
   const currentEventId = useAppStore(s => s.currentEventId)
+
+  // Вход в событие из списка событий переводит на вкладку «Список»
+  const enterEvent = useCallback((id: string) => {
+    enterEventRaw(id)
+    setTab('list')
+  }, [enterEventRaw, setTab])
 
   const [showModal, setShowModal] = useState(false)
   const [editEvent, setEditEvent] = useState<PicnicEvent | undefined>(undefined)
@@ -67,16 +75,15 @@ export function useEventsScreenVM() {
     if (editEvent) {
       sendEventUpdates(send, editEvent.id, data)
     } else {
-      send({
-        type: 'event:add',
-        name: data.name,
-        date: data.event_date,
-        time: data.event_time,
-        location: data.location,
+      send(buildEventAddMessage({
+        name:        data.name ?? '',
+        date:        data.event_date,
+        time:        data.event_time,
+        location:    data.location,
         description: data.description,
-        eventType: data.type,
-        hasBudget: data.has_budget,
-      })
+        type:        data.type,
+        hasBudget:   data.has_budget,
+      }))
     }
     closeModal()
   }

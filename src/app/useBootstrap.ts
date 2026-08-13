@@ -18,7 +18,6 @@ import {
 import { useAppStore } from '@stores/appStore'
 import { useSessionStore } from '@stores/sessionStore'
 import { useWsStore } from '@stores/wsStore'
-import { useToastStore } from '@stores/toastStore'
 
 import type { User } from '@shared/types'
 
@@ -45,7 +44,7 @@ export function useBootstrap() {
 
   const resetWs    = useWsStore(s => s.reset)
   const serverState = useWsStore(s => s.serverState)
-  const showToast  = useToastStore(s => s.show)
+  const setLoadError = useWsStore(s => s.setLoadError)
 
   const screen  = useAppStore(s => s.screen)
   const groupId = useSessionStore(s => s.groupId)
@@ -106,23 +105,14 @@ export function useBootstrap() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Connection timeout ───────────────────────────────────────────────────────
+  // Если за 12с данные не пришли — показываем ErrorState с «Повторить»
+  // (см. App.tsx), не выкидывая пользователя из группы.
   const isLoading = screen === 'app' && Boolean(groupId) && !serverState
   useEffect(() => {
     if (!isLoading) return
-    const id = window.setTimeout(() => {
-      showToast(
-        'Не удалось подключиться. Запустите бэкенд (npm start) и выполните migrate.',
-        'error',
-      )
-      clearGroupSession()
-      setGroupId(null)
-      resetWs()
-      exitEvent()
-      setShowEventSheet(false)
-      setScreen('groups')
-    }, 12_000)
+    const id = window.setTimeout(() => setLoadError(true), 12_000)
     return () => clearTimeout(id)
-  }, [isLoading, showToast, setGroupId, resetWs, exitEvent, setShowEventSheet, setScreen])
+  }, [isLoading, setLoadError])
 
   // ── Navigation helpers ───────────────────────────────────────────────────────
   function enterGroup(gId: string) {

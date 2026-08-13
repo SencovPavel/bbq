@@ -38,7 +38,10 @@ export function useSummaryScreenVM() {
   }, [groupId, panelOpen])
 
   // ── Derived data ─────────────────────────────────────────────────────────────
-  const { categories = [], items = [], members = [], events = [], activity = [] } = serverState ?? {}
+  const {
+    categories = [], items = [], members = [], events = [], activity = [],
+    rsvp = [], familyMembers = [], familyRsvp = [],
+  } = serverState ?? {}
   const meId = me?.id
 
   const amIAdmin = useMemo(
@@ -52,14 +55,14 @@ export function useSummaryScreenVM() {
   )
   const hasBudget = currentEvent?.has_budget !== false
 
-  const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson } = useMemo(
-    () => calcSummary(items, members, currentEventId),
-    [items, members, currentEventId],
+  const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson, participantWeight } = useMemo(
+    () => calcSummary(items, members, currentEventId, rsvp, familyMembers, familyRsvp),
+    [items, members, currentEventId, rsvp, familyMembers, familyRsvp],
   )
 
   const { transfers } = useMemo(
-    () => calcSettlement(items, members, currentEventId),
-    [items, members, currentEventId],
+    () => calcSettlement(items, members, currentEventId, rsvp, familyMembers, familyRsvp),
+    [items, members, currentEventId, rsvp, familyMembers, familyRsvp],
   )
 
   const enabled = useMemo(
@@ -69,7 +72,11 @@ export function useSummaryScreenVM() {
     [items, currentEventId],
   )
 
-  const ppl = members.length
+  // Делитель «на человека» с учётом RSVP «не иду» и долей семьи.
+  // Целое отображаем как есть, дробное — с одним знаком (напр. 2.5).
+  const ppl = Number.isInteger(participantWeight)
+    ? participantWeight
+    : Number(participantWeight.toFixed(1))
 
   // ── Personal balance ─────────────────────────────────────────────────────────
   const myTransfers = useMemo(

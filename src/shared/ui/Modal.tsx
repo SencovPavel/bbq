@@ -1,5 +1,9 @@
-import { useEffect, type ReactNode, type InputHTMLAttributes, type SelectHTMLAttributes } from 'react'
+import {
+  useEffect, useId, useRef,
+  type ReactNode, type InputHTMLAttributes, type SelectHTMLAttributes,
+} from 'react'
 import { createPortal } from 'react-dom'
+import { useModalA11y } from './useModalA11y'
 
 interface ModalProps {
   open: boolean
@@ -9,10 +13,15 @@ interface ModalProps {
 }
 
 export function Modal({ open, onClose, title, children }: ModalProps) {
+  const panelRef = useRef<HTMLDivElement>(null)
+  const titleId  = useId()
+
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [open])
+
+  useModalA11y(open, onClose, panelRef)
 
   if (!open) return null
 
@@ -23,6 +32,10 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
         className="modal-panel w-full max-w-[500px] rounded-t-[28px] overflow-y-auto slide-up"
         style={{
           background: 'var(--surface-modal-deep)',
@@ -37,7 +50,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
           <div className="rounded-full" style={{ width: 36, height: 4, background: 'var(--gb)' }} />
         </div>
         {title && (
-          <div className="text-[16px] font-extrabold text-center mb-5">{title}</div>
+          <div id={titleId} className="text-[16px] font-extrabold text-center mb-5">{title}</div>
         )}
         {children}
       </div>

@@ -9,12 +9,15 @@ import { EventSheet }     from '@widgets/EventSheet'
 import { Toast }          from '@widgets/Toast'
 import { OfflineBanner }  from '@widgets/OfflineBanner'
 
+import { ErrorState }      from '@shared/ui/ErrorState'
+
 import { FamilyScreen }    from './screens/FamilyScreen'
 import { ProfileScreen }   from './screens/ProfileScreen'
 import { ListScreen }      from './screens/ListScreen'
 import { SummaryScreen }   from './screens/SummaryScreen'
 import { MyScreen }        from './screens/MyScreen'
 import { EventScreen }     from './screens/EventScreen'
+import { EventsScreen }    from './screens/EventsScreen'
 import { GroupsScreen }    from './screens/GroupsScreen'
 import { OnboardingScreen } from './screens/OnboardingScreen'
 import { AuthScreen }      from './screens/AuthScreen'
@@ -29,7 +32,7 @@ import { useWsStore }      from '@stores/wsStore'
 
 import type { Tab } from '@shared/types'
 
-const TAB_ORDER: Tab[] = ['list', 'my', 'summary', 'members']
+const TAB_ORDER: Tab[] = ['events', 'list', 'my', 'summary', 'members']
 
 export default function App() {
   // ── Bootstrap & event lifecycle ────────────────────────────────────────────
@@ -46,6 +49,8 @@ export default function App() {
   const groupId     = useSessionStore(s => s.groupId)
   const setMe       = useSessionStore(s => s.setMe)
   const serverState = useWsStore(s => s.serverState)
+  const loadError   = useWsStore(s => s.loadError)
+  const retryConnect = useWsStore(s => s.retryConnect)
 
   const currentEvent = currentEventId
     ? serverState?.events?.find(e => e.id === currentEventId)
@@ -71,7 +76,17 @@ export default function App() {
     return (
       <div className="relative min-h-screen">
         <Blobs />
-        <AppLoader message={isAppDataLoading ? 'Подключаемся...' : 'Загрузка...'} />
+        {loadError ? (
+          <div className="flex items-center justify-center min-h-screen">
+            <ErrorState
+              title="Не удалось загрузить данные"
+              body="Проверьте подключение к серверу и попробуйте снова"
+              onRetry={retryConnect}
+            />
+          </div>
+        ) : (
+          <AppLoader message={isAppDataLoading ? 'Подключаемся...' : 'Загрузка...'} />
+        )}
       </div>
     )
   }
@@ -152,6 +167,7 @@ export default function App() {
         onTabChange={handleTabChange}
         onBack={backToGroups}
       >
+        {tab === 'events'  && <EventsScreen />}
         {tab === 'list'    && <ListScreen />}
         {tab === 'summary' && <SummaryScreen />}
         {tab === 'my'      && <MyScreen />}

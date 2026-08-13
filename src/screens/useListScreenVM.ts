@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 
 import { fmt } from '@shared/lib/session'
 import { loadOpenCats, saveOpenCats } from '@shared/lib/ui-persist'
@@ -46,6 +46,13 @@ export function useListScreenVM() {
 
   // Undo-delete: id → setTimeout handle
   const [pendingDeletes, setPendingDeletes] = useState<Map<string, ReturnType<typeof setTimeout>>>(new Map())
+
+  // Держим актуальные таймеры в ref, чтобы очистить их при размонтировании
+  const pendingDeletesRef = useRef(pendingDeletes)
+  useEffect(() => { pendingDeletesRef.current = pendingDeletes }, [pendingDeletes])
+  useEffect(() => () => {
+    pendingDeletesRef.current.forEach(timer => clearTimeout(timer))
+  }, [])
 
   // ── Persisted category open/closed state ─────────────────────────────────────
   useEffect(() => {
@@ -205,6 +212,16 @@ export function useListScreenVM() {
     setBuyerModal(null)
   }
 
+  // ── Share single item ─────────────────────────────────────────────────────────
+  function shareItem(item: Item) {
+    const text = `${item.name} — ${fmtQty(item.qty, item.unit)}`
+    if (navigator.share) {
+      navigator.share({ text }).catch(() => {})
+      return
+    }
+    navigator.clipboard?.writeText(text).then(() => showToast('Скопировано!'))
+  }
+
   // ── Rename trigger ────────────────────────────────────────────────────────────
   function triggerRename(itemId: string) {
     setRenamingId(itemId)
@@ -228,7 +245,7 @@ export function useListScreenVM() {
     // derived
     amIAdmin, listLocked, hasBudget,
     // item actions
-    onUpdate, requestDeleteItem, saveItem, handleBuyerTap, assignBuyer, triggerRename,
+    onUpdate, requestDeleteItem, saveItem, handleBuyerTap, assignBuyer, triggerRename, shareItem,
     openPriceModal, savePrice, setPriceInput, setPriceModalItemId,
     openMoveModal, moveToCategory, setMoveModalItemId,
     // category actions

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { calcSummary } from '../summary'
-import type { Item, Member } from '../../types'
+import type { Item, Member, EventRsvp, FamilyMember } from '../../types'
 
 function item(overrides: Partial<Item> = {}): Item {
   return {
@@ -118,5 +118,31 @@ describe('фильтрация по currentEventId', () => {
       item({ id: 'i2', event_id: 'evt2', bought: true, price: 200, qty: 1 }),
     ]
     expect(calcSummary(items, [], 'evt1').actualTotal).toBe(100)
+  })
+})
+
+// ── взвешенные доли: RSVP и семья ──────────────────────────────────────────────
+
+describe('perPerson с учётом RSVP и семьи', () => {
+  it('участник «не иду» уменьшает делитель', () => {
+    const items = [item({ event_id: 'e1', bought: true, price: 900, qty: 1 })]
+    const members = [member('u1'), member('u2'), member('u3')]
+    const rsvp: EventRsvp[] = [{ event_id: 'e1', user_id: 'u3', attending: false }]
+    // делим на 2 идущих → 450
+    const r = calcSummary(items, members, 'e1', rsvp)
+    expect(r.perPerson).toBe(450)
+    expect(r.participantWeight).toBe(2)
+  })
+
+  it('член семьи с cost_pct увеличивает суммарный вес', () => {
+    const items = [item({ event_id: 'e1', bought: true, price: 900, qty: 1 })]
+    const members = [member('u1'), member('u2')]
+    const family: FamilyMember[] = [{
+      id: 'f1', owner_id: 'u1', name: 'Дочь', label: null,
+      include_in_calc: true, cost_pct: 50,
+    }]
+    const r = calcSummary(items, members, 'e1', [], family, [])
+    expect(r.participantWeight).toBe(2.5)
+    expect(r.perPerson).toBe(360)
   })
 })

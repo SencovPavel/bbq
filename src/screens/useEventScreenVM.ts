@@ -89,12 +89,12 @@ export function useEventScreenVM() {
 
   const urgency =
     daysLeft === null || daysLeft < 0
-      ? { dot: 'var(--muted)',    text: 'var(--muted)',    border: 'rgba(255,255,255,.14)', glow: 'none' }
+      ? { dot: 'var(--muted)',    text: 'var(--muted)',    border: 'var(--surface-white-14)', glow: 'none' }
     : daysLeft <= 1
-      ? { dot: 'var(--red)',      text: 'var(--red)',      border: 'rgba(248,113,113,.4)',  glow: '0 0 8px rgba(248,113,113,.7)' }
+      ? { dot: 'var(--red)',      text: 'var(--red)',      border: 'color-mix(in srgb, var(--color-danger) 40%, transparent)',  glow: '0 0 8px color-mix(in srgb, var(--color-danger) 70%, transparent)' }
     : daysLeft <= 4
-      ? { dot: 'var(--accent-2)', text: 'var(--accent-2)', border: 'rgba(251,191,36,.4)',   glow: '0 0 8px rgba(251,191,36,.7)' }
-      : { dot: '#4ade80',         text: '#4ade80',         border: 'rgba(74,222,128,.38)',  glow: '0 0 8px rgba(74,222,128,.6)' }
+      ? { dot: 'var(--accent-2)', text: 'var(--accent-2)', border: 'var(--surface-amber-40)',   glow: '0 0 8px var(--surface-amber-70)' }
+      : { dot: 'var(--green)',    text: 'var(--green)',    border: 'var(--surface-success-35)',  glow: '0 0 8px color-mix(in srgb, var(--color-success) 60%, transparent)' }
 
   // Readiness ring
   const evItems = useMemo(
@@ -103,13 +103,24 @@ export function useEventScreenVM() {
   )
   const evBought   = useMemo(() => evItems.filter(i => i.bought), [evItems])
   const readyPct   = evItems.length ? Math.round(evBought.length / evItems.length * 100) : 0
-  const readyColor = readyPct === 100 ? '#4ade80' : 'var(--accent-2)'
+  const readyColor = readyPct === 100 ? 'var(--green)' : 'var(--accent-2)'
 
   // Member spend
   const eventItems = useMemo(
     () => currentEventId ? items.filter(i => i.event_id === currentEventId) : items,
     [items, currentEventId],
   )
+
+  // Потрачено каждым участником — один проход вместо filter+reduce в JSX
+  const spentByMember = useMemo(() => {
+    const map = new Map<string, number>()
+    for (const it of eventItems) {
+      if (it.enabled && it.bought && it.buyer_id && it.price > 0) {
+        map.set(it.buyer_id, (map.get(it.buyer_id) ?? 0) + it.price * it.qty)
+      }
+    }
+    return map
+  }, [eventItems])
 
   // ── Actions ───────────────────────────────────────────────────────────────
   function handleCompleteEvent() {
@@ -180,7 +191,7 @@ export function useEventScreenVM() {
 
   return {
     // data
-    events, members, items, group, eventItems, evItems, evBought,
+    events, members, items, group, eventItems, evItems, evBought, spentByMember,
     currentEvent, amIAdmin, canCompleteEvent,
     // countdown
     countdownLabel, urgency, daysLeft,

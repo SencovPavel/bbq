@@ -119,7 +119,7 @@ export function ProfileScreen() {
         <div className="glass rounded-[18px] overflow-hidden">
           <NavRow
             icon={<IconPerson size={18} strokeWidth={1.8} />}
-            iconBg="rgba(167,139,250,.14)" iconColor="#c4b5fd"
+            iconBg="var(--surface-violet-14)" iconColor="#c4b5fd"
             title="Моя семья"
             meta={familyMeta}
             onClick={goToFamily}
@@ -127,7 +127,7 @@ export function ProfileScreen() {
           <div className="h-px mx-[15px]" style={{ background: 'var(--gb)' }} />
           <NavRow
             icon={<IconFlag size={17} strokeWidth={1.8} />}
-            iconBg="rgba(74,222,128,.13)" iconColor="#4ade80"
+            iconBg="var(--surface-success-13)" iconColor="var(--green)"
             title="Предпочтения и ограничения"
             meta="Аллергии, вегетарианство, не ем острое"
             soon

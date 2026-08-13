@@ -17,7 +17,7 @@ export function WebPageLayout({ children, wide = false }: WebPageLayoutProps) {
           <div className="web-page__logo">🔥</div>
           <h1 className="web-page__headline">Планер</h1>
           <p className="web-page__tagline">
-            Планируйте закупки вместе: списки, участники, итоги и напоминания — в одном месте.
+            Планируйте события вместе: списки, участники, итоги и напоминания — в одном месте.
           </p>
           <ul className="web-page__features">
             <li>Общий список в реальном времени</li>

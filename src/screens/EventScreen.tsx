@@ -31,7 +31,7 @@ function MetaChip({ icon, children }: { icon: ReactNode; children: ReactNode }) 
 export function EventScreen() {
   const vm = useEventScreenVM()
   const {
-    events, members, eventItems, evItems, evBought,
+    events, members, spentByMember, evItems, evBought,
     currentEvent, amIAdmin, canCompleteEvent,
     countdownLabel, urgency, readyPct, readyColor, C,
     group, copied, me,
@@ -60,14 +60,14 @@ export function EventScreen() {
       <div
         className="rounded-lg p-5 mb-3.5 relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, rgba(249,115,22,.18), rgba(251,191,36,.06))',
+          background: 'linear-gradient(135deg, rgba(249,115,22,.18), var(--surface-amber-6))',
           border: '1px solid rgba(249,115,22,.25)',
           backdropFilter: 'blur(24px)',
         }}
       >
         <div
           className="pointer-events-none absolute -top-8 -right-8 size-36 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(251,191,36,.18), transparent 65%)' }}
+          style={{ background: 'radial-gradient(circle, var(--surface-amber-18), transparent 65%)' }}
         />
 
         <div className="relative">
@@ -101,7 +101,7 @@ export function EventScreen() {
                     onClick={() => setShowEventEdit(true)}
                     title="Редактировать событие"
                     className="size-8 rounded-[9px] flex items-center justify-center border cursor-pointer"
-                    style={{ background: 'rgba(251,191,36,.12)', borderColor: 'rgba(251,191,36,.3)', color: 'var(--accent-2)', fontFamily: 'inherit' }}
+                    style={{ background: 'var(--surface-amber-12)', borderColor: 'var(--surface-amber-30)', color: 'var(--accent-2)', fontFamily: 'inherit' }}
                   >
                     <IconPencil size={13} />
                   </button>
@@ -278,7 +278,7 @@ export function EventScreen() {
           {/* Инвайт-код */}
           <div
             className="flex items-center gap-2.5 p-2.5 rounded-md mb-2.5"
-            style={{ background: 'rgba(251,191,36,.06)', border: '1px dashed rgba(251,191,36,.28)' }}
+            style={{ background: 'var(--surface-amber-6)', border: '1px dashed var(--surface-amber-28)' }}
           >
             <span className="text-[11px] font-extrabold uppercase tracking-wide" style={{ color: 'var(--muted)' }}>Код</span>
             <span className="flex-1 text-xl font-black tracking-widest tabular-nums" style={{ color: 'var(--accent-2)' }}>
@@ -307,9 +307,7 @@ export function EventScreen() {
       {/* ── Участники ─────────────────────────────────────────────────────────── */}
       <CollapseSection title="Участники" count={members.length} defaultOpen>
         {members.map((m, i) => {
-          const spent = eventItems
-            .filter(it => it.enabled && it.bought && it.buyer_id === m.user_id && it.price > 0)
-            .reduce((s, it) => s + it.price * it.qty, 0)
+          const spent = spentByMember.get(m.user_id) ?? 0
           const isMe = m.user_id === me?.id
 
           return (
@@ -320,9 +318,9 @@ export function EventScreen() {
                   className="flex items-center justify-center rounded-full text-sm font-extrabold shrink-0 size-9"
                   style={{
                     background: m.is_admin
-                      ? 'linear-gradient(135deg,rgba(251,191,36,.35),rgba(249,115,22,.2))'
-                      : 'linear-gradient(135deg,rgba(249,115,22,.2),rgba(251,191,36,.1))',
-                    border: m.is_admin ? '1px solid rgba(251,191,36,.4)' : '1px solid var(--gbs)',
+                      ? 'linear-gradient(135deg,var(--surface-amber-35),rgba(249,115,22,.2))'
+                      : 'linear-gradient(135deg,rgba(249,115,22,.2),var(--surface-amber-10))',
+                    border: m.is_admin ? '1px solid var(--surface-amber-40)' : '1px solid var(--gbs)',
                     color: m.is_admin ? 'var(--accent-2)' : 'var(--accent)',
                   }}
                 >
@@ -333,7 +331,7 @@ export function EventScreen() {
                     <span className="text-sm font-bold truncate">{m.name}</span>
                     {m.is_admin && (
                       <span className="inline-flex items-center gap-0.5 text-[10px] font-bold rounded-pill px-1.5 py-px"
-                        style={{ background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.3)', color: 'var(--accent-2)' }}>
+                        style={{ background: 'var(--surface-amber-15)', border: '1px solid var(--surface-amber-30)', color: 'var(--accent-2)' }}>
                         <IconCrown size={9} strokeWidth={2} /> Админ
                       </span>
                     )}
@@ -355,8 +353,8 @@ export function EventScreen() {
                       onClick={() => promoteMember(m.user_id, m.name, m.is_admin)}
                       className="flex items-center justify-center size-7 rounded-md border cursor-pointer"
                       style={{
-                        background: m.is_admin ? 'rgba(251,191,36,.12)' : 'rgba(255,255,255,.06)',
-                        borderColor: m.is_admin ? 'rgba(251,191,36,.3)' : 'var(--gb)',
+                        background: m.is_admin ? 'var(--surface-amber-12)' : 'rgba(255,255,255,.06)',
+                        borderColor: m.is_admin ? 'var(--surface-amber-30)' : 'var(--gb)',
                         color: m.is_admin ? 'var(--accent-2)' : 'var(--muted)', fontFamily: 'inherit',
                       }}
                     >
@@ -393,7 +391,7 @@ export function EventScreen() {
             type="button"
             onClick={() => setConfirmDelete(true)}
             className="w-full py-3 rounded-md border text-sm font-extrabold cursor-pointer flex items-center justify-center gap-2"
-            style={{ background: 'rgba(248,113,113,.08)', borderColor: 'rgba(248,113,113,.25)', color: 'var(--red)', fontFamily: 'inherit' }}
+            style={{ background: 'var(--surface-danger-8)', borderColor: 'var(--surface-danger-25)', color: 'var(--red)', fontFamily: 'inherit' }}
           >
             <IconShield size={15} strokeWidth={2} /> Удалить группу
           </button>

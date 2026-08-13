@@ -29,8 +29,8 @@ function RsvpRow({ name, label, attending, onToggle }: {
         onClick={onToggle}
         className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-pill text-[11px] font-extrabold border transition-all active:scale-95 shrink-0 ml-2"
         style={{
-          background:  attending ? 'var(--surface-success-12)' : 'rgba(248,113,113,.10)',
-          borderColor: attending ? 'var(--surface-success-35)' : 'rgba(248,113,113,.30)',
+          background:  attending ? 'var(--surface-success-12)' : 'var(--surface-danger-10)',
+          borderColor: attending ? 'var(--surface-success-35)' : 'var(--surface-danger-30)',
           color:       attending ? 'var(--green)' : 'var(--red)',
           fontFamily:  'inherit',
           cursor:      'pointer',
@@ -182,9 +182,14 @@ export function MyScreen() {
                 opacity: it.bought ? 0.65 : 1,
               }}
             >
-              <div
+              <button
+                type="button"
+                role="checkbox"
+                aria-checked={it.bought}
+                aria-label={it.bought ? `${it.name}: отметить некупленным` : `${it.name}: отметить купленным`}
+                disabled={listLocked}
                 onClick={() => { if (!listLocked) toggleBought(it.id, !it.bought) }}
-                className="flex items-center justify-center rounded-full shrink-0 mt-px transition-all duration-200"
+                className="flex items-center justify-center rounded-full shrink-0 mt-px transition-all duration-200 p-0"
                 style={{
                   width: 28, height: 28,
                   border: it.bought ? '2px solid var(--green)' : '2px solid var(--gbs)',
@@ -192,10 +197,11 @@ export function MyScreen() {
                   color: it.bought ? 'var(--text-on-success)' : 'transparent',
                   cursor: listLocked ? 'default' : 'pointer',
                   opacity: listLocked ? 0.7 : 1,
+                  fontFamily: 'inherit',
                 }}
               >
                 <IconCheck size={13} />
-              </div>
+              </button>
 
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-bold">{it.name}</div>

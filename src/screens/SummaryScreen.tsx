@@ -113,10 +113,10 @@ export function SummaryScreen() {
       <div
         className="rounded-lg p-5 mb-3"
         style={{
-          background:     'linear-gradient(135deg, rgba(249,115,22,.22), rgba(245,158,11,.08))',
-          border:         '1px solid rgba(249,115,22,.28)',
+          background:     'var(--gradient-hero-summary)',
+          border:         '1px solid var(--surface-fire-28)',
           backdropFilter: 'blur(24px)',
-          boxShadow:      '0 12px 40px rgba(249,115,22,.12)',
+          boxShadow:      '0 12px 40px var(--surface-fire-12)',
         }}
       >
         {/* Готовность + суммы */}

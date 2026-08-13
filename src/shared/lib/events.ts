@@ -20,3 +20,31 @@ export const pickEventOnEntry = (events: PicnicEvent[]): PicnicEvent | undefined
   if (active) return active
   return [...events].sort(compareEventsNewestFirst)[0]
 }
+
+export interface EventAddInput {
+  name:         string
+  date?:        string | null
+  time?:        string | null
+  location?:    string | null
+  description?: string | null
+  type?:        string | null
+  hasBudget?:   boolean
+}
+
+/**
+ * Единый билдер сообщения `event:add`, чтобы событие из любого места
+ * (экран «События» и шторка EventSheet) получало одинаковый набор полей —
+ * тип события, бюджет и описание — и корректный сидинг категорий на бэкенде.
+ */
+export function buildEventAddMessage(input: EventAddInput): Record<string, unknown> {
+  return {
+    type:        'event:add',
+    name:        input.name,
+    date:        input.date ?? null,
+    time:        input.time ?? null,
+    location:    input.location ?? null,
+    description: input.description ?? null,
+    eventType:   input.type ?? null,
+    hasBudget:   input.hasBudget ?? true,
+  }
+}

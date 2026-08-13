@@ -5,7 +5,7 @@
 :root {
   --bg: var(--color-bg-base);
   --text: var(--color-cream);
-  --muted: color-mix(in srgb, var(--color-cream) 45%, transparent);
+  --muted: color-mix(in srgb, var(--color-cream) 50%, transparent);
   --muted-2: color-mix(in srgb, var(--color-cream) 65%, transparent);
 
   --accent: var(--color-fire);
@@ -33,10 +33,12 @@
   --surface-white-8: color-mix(in srgb, var(--color-white) 8%, transparent);
   --surface-white-10: color-mix(in srgb, var(--color-white) 10%, transparent);
   --surface-white-12: color-mix(in srgb, var(--color-white) 12%, transparent);
+  --surface-white-14: color-mix(in srgb, var(--color-white) 14%, transparent);
   --surface-white-15: color-mix(in srgb, var(--color-white) 15%, transparent);
 
   --surface-fire-6: color-mix(in srgb, var(--color-fire) 6%, transparent);
   --surface-fire-8: color-mix(in srgb, var(--color-fire) 8%, transparent);
+  --surface-fire-12: color-mix(in srgb, var(--color-fire) 12%, transparent);
   --surface-fire-14: color-mix(in srgb, var(--color-fire) 14%, transparent);
   --surface-fire-15: color-mix(in srgb, var(--color-fire) 15%, transparent);
   --surface-fire-18: color-mix(in srgb, var(--color-fire) 18%, transparent);
@@ -48,9 +50,11 @@
   --surface-fire-32: color-mix(in srgb, var(--color-fire) 32%, transparent);
   --surface-fire-40: color-mix(in srgb, var(--color-fire) 40%, transparent);
 
+  --surface-amber-4: color-mix(in srgb, var(--color-amber) 4%, transparent);
   --surface-amber-6: color-mix(in srgb, var(--color-amber) 6%, transparent);
   --surface-amber-8: color-mix(in srgb, var(--color-amber) 8%, transparent);
   --surface-amber-10: color-mix(in srgb, var(--color-amber) 10%, transparent);
+  --surface-amber-12: color-mix(in srgb, var(--color-amber) 12%, transparent);
   --surface-amber-14: color-mix(in srgb, var(--color-amber) 14%, transparent);
   --surface-amber-65: color-mix(in srgb, var(--color-amber) 65%, transparent);
   --surface-amber-70: color-mix(in srgb, var(--color-amber) 70%, transparent);
@@ -61,15 +65,23 @@
   --surface-amber-28: color-mix(in srgb, var(--color-amber) 28%, transparent);
   --surface-amber-30: color-mix(in srgb, var(--color-amber) 30%, transparent);
   --surface-amber-35: color-mix(in srgb, var(--color-amber) 35%, transparent);
+  --surface-amber-40: color-mix(in srgb, var(--color-amber) 40%, transparent);
 
   --surface-success-12: color-mix(in srgb, var(--color-success) 12%, transparent);
+  --surface-success-13: color-mix(in srgb, var(--color-success) 13%, transparent);
   --surface-success-20: color-mix(in srgb, var(--color-success) 20%, transparent);
   --surface-success-30: color-mix(in srgb, var(--color-success) 30%, transparent);
   --surface-success-35: color-mix(in srgb, var(--color-success) 35%, transparent);
 
   --surface-danger-8: color-mix(in srgb, var(--color-danger) 8%, transparent);
+  --surface-danger-10: color-mix(in srgb, var(--color-danger) 10%, transparent);
   --surface-danger-12: color-mix(in srgb, var(--color-danger) 12%, transparent);
   --surface-danger-25: color-mix(in srgb, var(--color-danger) 25%, transparent);
+  --surface-danger-30: color-mix(in srgb, var(--color-danger) 30%, transparent);
+
+  /* Акцент ИИ-агента (сумеречный) */
+  --color-violet: #a78bfa;
+  --surface-violet-14: color-mix(in srgb, var(--color-violet) 14%, transparent);
 
   --surface-scrim: color-mix(in srgb, var(--color-bg-base) 70%, transparent);
   --surface-scrim-heavy: color-mix(in srgb, var(--color-bg-base) 85%, transparent);
@@ -166,12 +178,13 @@
   --offline-pulse-scale: 0.85;
 
   --text-on-accent: var(--color-white);
+  --text-on-success: var(--color-coal);
   --color-info-muted: color-mix(in srgb, var(--color-info) 75%, var(--color-cream));
   --text-faint: color-mix(in srgb, var(--color-cream) 25%, transparent);
 
   --gradient-agent-panel: linear-gradient(
     90deg,
     var(--surface-info-10),
-    color-mix(in srgb, #a78bfa 8%, transparent)
+    var(--surface-violet-14)
   );
 }

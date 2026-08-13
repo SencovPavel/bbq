@@ -67,8 +67,15 @@ export function ListScreen() {
         return (
           <GlassCard key={cat.id}>
             <div
+              role="button"
+              tabIndex={0}
+              aria-expanded={isOpen}
+              aria-label={`Категория «${cat.title}», ${isOpen ? 'свернуть' : 'развернуть'}`}
               className="flex items-center gap-[10px] px-[15px] py-[13px] cursor-pointer select-none"
               onClick={() => toggleCat(cat.id)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCat(cat.id) }
+              }}
             >
               <CatTile emoji={cat.icon} size={36} radius={10} />
               <div className="text-[14px] font-extrabold flex-1">{cat.title}</div>
@@ -205,11 +212,7 @@ export function ListScreen() {
         onClose={() => setActionItemId(null)}
         onRename={() => { if (actionItem) triggerRename(actionItem.id) }}
         onDelete={requestDeleteItem}
-        onShare={it => {
-          const text = `${it.name} — ${it.qty} ${it.unit}`
-          if (navigator.share) navigator.share({ text }).catch(() => {})
-          else navigator.clipboard?.writeText(text).then(() => vm.showLockedToast())
-        }}
+        onShare={vm.shareItem}
         onSetPrice={openPriceModal}
         onMove={openMoveModal}
       />

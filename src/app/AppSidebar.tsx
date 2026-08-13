@@ -43,11 +43,26 @@ export function AppSidebar({
     <aside className="app-sidebar hidden lg:flex">
       {/* Brand */}
       <div className="app-sidebar__brand">
-        <BrandLockup size="md" accent={false} subtitle="Совместные закупки" />
+        <BrandLockup size="md" accent={false} subtitle="Списки и события вместе" />
       </div>
 
       {/* Nav — вверху */}
       <nav className="app-sidebar__nav" aria-label="Разделы">
+        <button
+          type="button"
+          className={`app-sidebar__nav-item${activeTab === 'events' ? ' is-active' : ''}`}
+          onClick={() => onTabChange('events')}
+          aria-current={activeTab === 'events' ? 'page' : undefined}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <span>События</span>
+        </button>
         {NAV_TABS.map(({ id, label, Icon }) => {
           const isActive = activeTab === id
           return (
@@ -56,6 +71,7 @@ export function AppSidebar({
               type="button"
               className={`app-sidebar__nav-item${isActive ? ' is-active' : ''}`}
               onClick={() => onTabChange(id)}
+              aria-current={isActive ? 'page' : undefined}
             >
               <Icon active={isActive} />
               <span>{label}</span>

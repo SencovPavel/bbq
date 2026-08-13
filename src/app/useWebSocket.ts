@@ -15,6 +15,8 @@ export function useWebSocket(groupId: string | null): void {
 
   const setServerState = useWsStore(s => s.setServerState)
   const setWsOk = useWsStore(s => s.setWsOk)
+  const setLoadError = useWsStore(s => s.setLoadError)
+  const retryNonce = useWsStore(s => s.retryNonce)
   const setSend = useWsStore(s => s.setSend)
   const showToast = useToastStore(s => s.show)
 
@@ -94,11 +96,13 @@ export function useWebSocket(groupId: string | null): void {
 
     ws.onclose = () => {
       setWsOk(false)
+      // Если начальная загрузка так и не прошла — показываем состояние ошибки
+      if (!useWsStore.getState().serverState) setLoadError(true)
       reconnRef.current = setTimeout(connectWs, 3000)
     }
 
     ws.onerror = () => ws.close()
-  }, [groupId, setServerState, setWsOk, showToast])
+  }, [groupId, setServerState, setWsOk, setLoadError, showToast])
 
   useEffect(() => {
     connect()
@@ -106,5 +110,6 @@ export function useWebSocket(groupId: string | null): void {
       clearTimeout(reconnRef.current)
       wsRef.current?.close()
     }
-  }, [connect])
+    // retryNonce в зависимостях: ручной «Повторить» пересоздаёт соединение
+  }, [connect, retryNonce])
 }

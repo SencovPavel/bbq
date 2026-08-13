@@ -21,7 +21,7 @@ export function CollapseSection({ title, count, defaultOpen = true, action, chil
     <div
       className="rounded-md mb-3 overflow-hidden"
       style={{
-        background: 'rgba(255,240,200,0.04)',
+        background: 'var(--surface-subtle)',
         border: '1px solid var(--gb)',
         backdropFilter: 'blur(20px)',
       }}
@@ -52,7 +52,7 @@ export function CollapseSection({ title, count, defaultOpen = true, action, chil
           {count != null && (
             <span
               className="text-[10.5px] font-extrabold rounded-pill px-1.5 py-px"
-              style={{ color: 'var(--accent-2)', background: 'rgba(251,191,36,.1)' }}
+              style={{ color: 'var(--accent-2)', background: 'var(--surface-amber-10)' }}
             >
               {count}
             </span>

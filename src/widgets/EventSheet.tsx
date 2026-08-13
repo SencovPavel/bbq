@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { isEventActive } from '@shared/lib/event-status'
+import { buildEventAddMessage } from '@shared/lib/events'
+import { useModalA11y } from '@shared/ui/useModalA11y'
 import { useWsStore } from '@stores/wsStore'
 import { useAppStore } from '@stores/appStore'
 import { useSessionStore } from '@stores/sessionStore'
@@ -130,6 +132,7 @@ export function EventSheet() {
   const [showCreate, setShowCreate] = useState(false)
   const [creating, setCreating]     = useState(false)
   const pendingNameRef              = useRef<string | null>(null)
+  const sheetRef                    = useRef<HTMLDivElement>(null)
 
   const events = useMemo(
     () => serverState?.events ?? [],
@@ -176,6 +179,8 @@ export function EventSheet() {
     return () => clearTimeout(timeoutId)
   }, [creating, showToast])
 
+  useModalA11y(showEventSheet, closeSheet, sheetRef)
+
   if (!showEventSheet) return null
 
   const active    = events.filter(e => isEventActive(e.status))
@@ -195,13 +200,12 @@ export function EventSheet() {
       showToast('Нет подключения к серверу', 'error')
       return
     }
-    const sent = send({
-      type: 'event:add',
+    const sent = send(buildEventAddMessage({
       name,
-      date: data.event_date ?? null,
-      time: data.event_time ?? null,
-      location: data.location ?? null,
-    })
+      date: data.event_date,
+      time: data.event_time,
+      location: data.location,
+    }))
     if (!sent) {
       showToast('Не удалось отправить — нет подключения', 'error')
       return
@@ -227,6 +231,10 @@ export function EventSheet() {
       />
 
       <div
+        ref={sheetRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Событие"
         className="event-sheet-panel fixed left-0 right-0 z-[160] mx-auto"
         style={{
           bottom: 0,
