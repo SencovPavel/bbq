@@ -8,8 +8,12 @@ export const GROUP_EMOJIS = [
 
 import { fmt, clearGroupSession } from '@shared/lib/session'
 import { shortDate } from '@shared/lib/format'
-import { canAdminCompleteEvent, isEventActive } from '@shared/lib/event-status'
-import { sendEventUpdates } from '@shared/lib/event-update'
+
+import {
+  canAdminCompleteEvent, isEventActive, sendEventUpdates, selectCurrentEvent,
+} from '@entities/event/model'
+import { selectEventItems } from '@entities/item/model'
+import { selectAmIAdmin } from '@entities/member/model'
 
 import { useWsStore } from '@stores/wsStore'
 import { useSessionStore } from '@stores/sessionStore'
@@ -67,12 +71,12 @@ export function useEventScreenVM() {
   const meId = me?.id
 
   const currentEvent = useMemo(
-    () => currentEventId ? events.find(e => e.id === currentEventId) : undefined,
+    () => selectCurrentEvent(events, currentEventId),
     [events, currentEventId],
   )
 
   const amIAdmin = useMemo(
-    () => members.find(m => m.user_id === meId)?.is_admin ?? false,
+    () => selectAmIAdmin(members, meId),
     [members, meId],
   )
 
@@ -107,7 +111,7 @@ export function useEventScreenVM() {
 
   // Member spend
   const eventItems = useMemo(
-    () => currentEventId ? items.filter(i => i.event_id === currentEventId) : items,
+    () => selectEventItems(items, currentEventId),
     [items, currentEventId],
   )
 

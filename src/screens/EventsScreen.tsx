@@ -1,4 +1,7 @@
+import type { CSSProperties } from 'react'
 import { IconPencil, IconCalendar, IconMapPin, IconPlus } from '@shared/ui/Icon'
+import { EmptyState } from '@shared/ui/EmptyState'
+import { Chip } from '@shared/ui/Chip'
 import { EventModal } from '@widgets/EventModal'
 import { EVENT_TYPES_BY_ID } from '@shared/config/event-types'
 import { useEventsScreenVM, formatDate, isPast } from './useEventsScreenVM'
@@ -10,26 +13,28 @@ interface EventCardProps {
   event: PicnicEvent
   itemCount: number
   isCurrent: boolean
+  delay?: number
   onEnter: () => void
   onEdit: () => void
 }
 
-function EventCard({ event, itemCount, isCurrent, onEnter, onEdit }: EventCardProps) {
+function EventCard({ event, itemCount, isCurrent, delay = 0, onEnter, onEdit }: EventCardProps) {
   const past = isPast(event.event_date)
   const d = event.event_date ? new Date(event.event_date.slice(0, 10) + 'T00:00:00') : null
   const eventType = event.type ? EVENT_TYPES_BY_ID[event.type] : undefined
 
   return (
     <div
-      className="relative rounded-[14px] p-4 cursor-pointer transition-all duration-150 active:scale-[.98]"
+      className="row-hover anim-up relative rounded-[14px] p-4 cursor-pointer transition-all duration-150 active:scale-[.98]"
       style={{
         background: past
           ? 'var(--surface-subtle)'
           : (isCurrent ? 'linear-gradient(135deg, var(--surface-fire-18), var(--surface-amber-6))' : 'var(--surface-cream-6)'),
         border: `1px solid ${past ? 'var(--surface-white-8)' : (isCurrent ? 'var(--surface-fire-30)' : 'var(--gb)')}`,
-        opacity: past ? 0.7 : 1,
         backdropFilter: 'blur(20px)',
-      }}
+        animationDelay: `${delay}s`,
+        '--anim-up-opacity': past ? 0.7 : 1,
+      } as CSSProperties}
       onClick={onEnter}
     >
       {isCurrent && (
@@ -69,6 +74,7 @@ function EventCard({ event, itemCount, isCurrent, onEnter, onEdit }: EventCardPr
             </div>
             <button
               onClick={e => { e.stopPropagation(); onEdit() }}
+              className="relative tap-target"
               style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: '2px', display: 'flex', flexShrink: 0 }}>
               <IconPencil size={14} />
             </button>
@@ -86,12 +92,7 @@ function EventCard({ event, itemCount, isCurrent, onEnter, onEdit }: EventCardPr
                 {event.location}
               </span>
             )}
-            <span
-              className="text-[11px] font-bold px-2 py-[2px] rounded-pill"
-              style={{ background: 'var(--surface-fire-12)', color: 'var(--accent)', border: '1px solid var(--surface-fire-20)' }}
-            >
-              {itemCount} поз.
-            </span>
+            <Chip tint="fire" size="sm">{itemCount} поз.</Chip>
           </div>
         </div>
       </div>
@@ -137,15 +138,13 @@ export function EventsScreen() {
 
       {/* Empty state */}
       {events.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <div className="mb-3" style={{ color: 'var(--muted)', opacity: 0.5 }}><IconCalendar size={48} /></div>
-          <div className="font-bold text-[15px] mb-1" style={{ color: 'var(--text)' }}>
-            Нет событий
-          </div>
-          <div className="text-[13px]" style={{ color: 'var(--muted)' }}>
-            Создайте первый пикник,<br />шашлык или вечеринку
-          </div>
-        </div>
+        <EmptyState
+          icon={<IconCalendar size={40} strokeWidth={1.4} />}
+          title="Нет событий"
+          body="Создайте первое событие — поездку, переезд, праздник или личное дело"
+          ctaLabel="＋ Создать первое событие"
+          onCta={openCreate}
+        />
       )}
 
       {/* Upcoming */}
@@ -155,9 +154,10 @@ export function EventsScreen() {
             Впереди
           </div>
           <div className="grid gap-[10px]" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))' }}>
-            {upcoming.map(e => (
+            {upcoming.map((e, i) => (
               <EventCard key={e.id} event={e} itemCount={itemCount(e.id)}
                 isCurrent={e.id === currentEventId}
+                delay={i * 0.05}
                 onEnter={() => enterEvent(e.id)}
                 onEdit={() => openEdit(e)} />
             ))}
@@ -172,9 +172,10 @@ export function EventsScreen() {
             Прошедшие
           </div>
           <div className="grid gap-[10px]" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))' }}>
-            {past.map(e => (
+            {past.map((e, i) => (
               <EventCard key={e.id} event={e} itemCount={itemCount(e.id)}
                 isCurrent={e.id === currentEventId}
+                delay={i * 0.05}
                 onEnter={() => enterEvent(e.id)}
                 onEdit={() => openEdit(e)} />
             ))}

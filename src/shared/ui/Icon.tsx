@@ -286,6 +286,13 @@ export function IconPlus({ size = 14, strokeWidth = 1.8 }: IconProps) {
   )
 }
 
+export function IconRefresh({ size = 13, strokeWidth = 2.2 }: IconProps) {
+  return icon({ size, strokeWidth }, <>
+    <polyline points="23 4 23 10 17 10" />
+    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+  </>)
+}
+
 export function IconSparkles({ size = 13, strokeWidth = 1.8 }: IconProps) {
   return base(size, strokeWidth,
     <>

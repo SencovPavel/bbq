@@ -2,9 +2,11 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 
 import { fmt } from '@shared/lib/session'
 import { loadOpenCats, saveOpenCats } from '@shared/lib/ui-persist'
-import { stepForUnit, fmtQty } from '@shared/lib/item-unit'
 import { haptic } from '@shared/lib/tg'
-import { isEventItemsLocked } from '@shared/lib/event-status'
+
+import { isEventItemsLocked, selectCurrentEvent, selectHasBudget, LIST_LOCKED_MESSAGE } from '@entities/event/model'
+import { stepForUnit, fmtQty, selectEventItems } from '@entities/item/model'
+import { selectAmIAdmin } from '@entities/member/model'
 
 import { useWsStore } from '@stores/wsStore'
 import { useSessionStore } from '@stores/sessionStore'
@@ -12,8 +14,8 @@ import { useAppStore } from '@stores/appStore'
 import { useToastStore } from '@stores/toastStore'
 
 import type { Item } from '@shared/types'
+import type { AddItemPayload } from '@widgets/AddItemModal'
 
-export const UNITS  = ['шт','кг','л','г','мл','упак','наб','пуч','банк','меш','рул']
 export const EMOJIS = ['🏡','🥩','🔥','🥗','🧃','🍽️','🍕','🍺','🥤','🍰','🫙','🌽','🥚','🧀','🥖','🧂','🫒','🍉','🍦','🎉','📦']
 
 const sortByName = (list: Item[]) =>
@@ -33,7 +35,6 @@ export function useListScreenVM() {
   const [catModal,      setCatModal]     = useState(false)
   const [buyerModal,    setBuyerModal]   = useState<string | null>(null)
   const [selectedEmoji, setEmoji]        = useState('📦')
-  const [newItem,       setNewItem]      = useState<{ name: string; qty: string; unit: string; kind: 'bring' | 'task' }>({ name: '', qty: '1', unit: 'шт', kind: 'bring' })
   const [newCat,        setNewCat]       = useState({ title: '' })
   const [customBuyer,   setCustomBuyer]  = useState('')
   const [confirmCat,    setConfirmCat]   = useState<{ id: string; title: string } | null>(null)
@@ -70,20 +71,20 @@ export function useListScreenVM() {
   const meId = me?.id
 
   const amIAdmin = useMemo(
-    () => members.find(m => m.user_id === meId)?.is_admin ?? false,
+    () => selectAmIAdmin(members, meId),
     [members, meId],
   )
 
   const currentEvent = useMemo(
-    () => currentEventId ? events.find(e => e.id === currentEventId) : undefined,
+    () => selectCurrentEvent(events, currentEventId),
     [events, currentEventId],
   )
 
   const listLocked = isEventItemsLocked(currentEvent?.status)
-  const hasBudget  = currentEvent?.has_budget !== false
+  const hasBudget  = selectHasBudget(currentEvent)
 
   const eventItems = useMemo(
-    () => currentEventId ? items.filter(i => i.event_id === currentEventId) : items,
+    () => selectEventItems(items, currentEventId),
     [items, currentEventId],
   )
 
@@ -104,7 +105,7 @@ export function useListScreenVM() {
 
   // ── Locked guard helper ───────────────────────────────────────────────────────
   function showLockedToast() {
-    showToast('Событие завершено — список только для просмотра', 'muted')
+    showToast(LIST_LOCKED_MESSAGE, 'muted')
   }
 
   // ── Item mutations ────────────────────────────────────────────────────────────
@@ -157,18 +158,16 @@ export function useListScreenVM() {
     })
   }
 
-  function saveItem() {
+  function saveItem(payload: AddItemPayload) {
     if (listLocked) { showLockedToast(); return }
-    if (!newItem.name.trim()) return
     send({
-      type: 'item:add', catId: addModal!, name: newItem.name.trim(),
-      qty: parseFloat(newItem.qty) || 1, price: 0, unit: newItem.unit,
-      kind: newItem.kind,
+      type: 'item:add', catId: payload.catId, name: payload.name,
+      qty: payload.qty, price: 0, unit: payload.unit,
+      kind: payload.kind,
       eventId: currentEventId ?? undefined,
     })
-    setNewItem({ name: '', qty: '1', unit: 'шт', kind: 'bring' })
     setAddModal(null)
-    setOpenCats(p => ({ ...p, [addModal!]: true }))
+    setOpenCats(p => ({ ...p, [payload.catId]: true }))
     showToast('Добавлено!')
   }
 
@@ -240,7 +239,7 @@ export function useListScreenVM() {
     events, categories, items, members, me, visibleItems, listTotal, actionItem,
     // state
     openCats, addModal, catModal, buyerModal, selectedEmoji,
-    newItem, newCat, customBuyer, confirmCat, actionItemId, renamingId, renameTick,
+    newCat, customBuyer, confirmCat, actionItemId, renamingId, renameTick,
     priceModalItemId, priceInput, moveModalItemId,
     // derived
     amIAdmin, listLocked, hasBudget,
@@ -251,11 +250,11 @@ export function useListScreenVM() {
     // category actions
     toggleCat, saveCat,
     // setters for view
-    setAddModal, setCatModal, setEmoji, setNewItem, setNewCat,
+    setAddModal, setCatModal, setEmoji, setNewCat,
     setCustomBuyer, setConfirmCat, setActionItemId, setShowEventSheet,
     // helpers
     catItems, send, showLockedToast, fmt, stepForUnit, fmtQty,
     // constants
-    UNITS, EMOJIS,
+    EMOJIS,
   }
 }

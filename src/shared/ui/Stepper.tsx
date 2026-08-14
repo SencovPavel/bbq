@@ -24,7 +24,7 @@ export function Stepper({ label, onDec, onInc, disabled = false }: StepperProps)
         type="button"
         onClick={onDec}
         disabled={disabled}
-        className="size-[22px] border-none bg-transparent text-sm flex items-center justify-center"
+        className="relative tap-target size-[22px] border-none bg-transparent text-sm flex items-center justify-center"
         style={btnStyle}
       >−</button>
       <span className="text-sm font-extrabold px-2 min-w-[50px] text-center tabular-nums">{label}</span>
@@ -32,7 +32,7 @@ export function Stepper({ label, onDec, onInc, disabled = false }: StepperProps)
         type="button"
         onClick={onInc}
         disabled={disabled}
-        className="size-[22px] border-none bg-transparent text-sm flex items-center justify-center"
+        className="relative tap-target size-[22px] border-none bg-transparent text-sm flex items-center justify-center"
         style={btnStyle}
       >+</button>
     </div>

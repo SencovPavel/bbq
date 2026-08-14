@@ -10,3 +10,9 @@ export const memberInitials = (name: string): string => {
 
 /** Display name: prefer first_name + last_name over username. */
 export const memberDisplayName = (m: Pick<Member, 'name'>): string => m.name
+
+/** Является ли текущий пользователь администратором группы. */
+export const selectAmIAdmin = (
+  members: Member[],
+  meId: string | null | undefined,
+): boolean => (meId ? (members.find(m => m.user_id === meId)?.is_admin ?? false) : false)

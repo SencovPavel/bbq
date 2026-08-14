@@ -6,15 +6,21 @@ import { analyzeWithAgent } from '@shared/api/api'
 import { calcSummary } from '@shared/lib/summary'
 import { calcSettlement } from '@shared/lib/settlement'
 
+import { isEventItemsLocked, selectCurrentEvent, selectHasBudget, LIST_LOCKED_MESSAGE } from '@entities/event/model'
+import { selectEventItems } from '@entities/item/model'
+import { selectAmIAdmin } from '@entities/member/model'
+
 import { useWsStore } from '@stores/wsStore'
 import { useSessionStore } from '@stores/sessionStore'
 import { useAppStore } from '@stores/appStore'
 import { useToastStore } from '@stores/toastStore'
 
 import type { AnalysisResult } from '@shared/types'
+import type { AddItemPayload } from '@widgets/AddItemModal'
 
 export function useSummaryScreenVM() {
   const serverState       = useWsStore(s => s.serverState)
+  const send              = useWsStore(s => s.send)
   const groupId           = useSessionStore(s => s.groupId)
   const me                = useSessionStore(s => s.me)
   const showToast         = useToastStore(s => s.show)
@@ -25,6 +31,8 @@ export function useSummaryScreenVM() {
   const [loading,   setLoading]   = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
   const [copied,    setCopied]    = useState(false)
+  // Название позиции из панели агента, добавляемой в список (null — модалка закрыта)
+  const [addMissingName, setAddMissingName] = useState<string | null>(null)
 
   // Persist panel open/closed state per group
   useEffect(() => {
@@ -45,15 +53,16 @@ export function useSummaryScreenVM() {
   const meId = me?.id
 
   const amIAdmin = useMemo(
-    () => members.some(m => m.user_id === meId && m.is_admin),
+    () => selectAmIAdmin(members, meId),
     [members, meId],
   )
 
   const currentEvent = useMemo(
-    () => currentEventId ? events.find(e => e.id === currentEventId) : undefined,
+    () => selectCurrentEvent(events, currentEventId),
     [events, currentEventId],
   )
-  const hasBudget = currentEvent?.has_budget !== false
+  const hasBudget  = selectHasBudget(currentEvent)
+  const listLocked = isEventItemsLocked(currentEvent?.status)
 
   const { actualTotal, boughtCount, enabledCount: enabledLen, pct, perPerson, participantWeight } = useMemo(
     () => calcSummary(items, members, currentEventId, rsvp, familyMembers, familyRsvp),
@@ -66,9 +75,7 @@ export function useSummaryScreenVM() {
   )
 
   const enabled = useMemo(
-    () => currentEventId
-      ? items.filter(i => i.event_id === currentEventId && i.enabled)
-      : items.filter(i => i.enabled),
+    () => selectEventItems(items, currentEventId).filter(i => i.enabled),
     [items, currentEventId],
   )
 
@@ -131,6 +138,29 @@ export function useSummaryScreenVM() {
     }
   }
 
+  // ── Добавление позиции из панели агента («Забыли из чата») ───────────────────
+  /** Можно ли добавлять позиции из панели агента: список открыт и есть куда класть. */
+  const canAddMissing = !listLocked && categories.length > 0
+
+  function openAddMissing(name: string) {
+    if (listLocked) { showToast(LIST_LOCKED_MESSAGE, 'muted'); return }
+    if (!categories.length) { showToast('Сначала создай категорию в списке', 'muted'); return }
+    setAddMissingName(name)
+  }
+
+  function closeAddMissing() { setAddMissingName(null) }
+
+  function submitAddMissing(payload: AddItemPayload) {
+    if (listLocked) { showToast(LIST_LOCKED_MESSAGE, 'muted'); return }
+    send({
+      type: 'item:add', catId: payload.catId, name: payload.name,
+      qty: payload.qty, price: 0, unit: payload.unit, kind: payload.kind,
+      eventId: currentEventId ?? undefined,
+    })
+    setAddMissingName(null)
+    showToast('Добавлено!')
+  }
+
   function shareList() {
     let text = `🔥 ${serverState?.group?.name || 'Пикник'} — список\n\n`
     categories.forEach(cat => {
@@ -168,6 +198,8 @@ export function useSummaryScreenVM() {
     myTransfers, iSend, net, singleTransfer, counterparty,
     // agent
     analysis, loading, panelOpen,
+    // add missing item (панель агента)
+    addMissingName, canAddMissing, openAddMissing, closeAddMissing, submitAddMissing,
     // copy feedback
     copied,
     // actions

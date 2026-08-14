@@ -10,13 +10,27 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, title, body, ctaLabel, onCta }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-14 px-4 text-center">
-      <div className="mb-4 opacity-40" style={{ color: 'var(--muted)' }}>
+    <div className="flex flex-col items-center text-center" style={{ padding: '40px 24px 24px' }}>
+      <div
+        className="flex items-center justify-center mb-4 shrink-0"
+        style={{
+          width: 72,
+          height: 72,
+          borderRadius: 22,
+          background: 'var(--surface-white-6)',
+          border: '1px solid var(--gb)',
+          color: 'var(--muted)',
+          backdropFilter: 'blur(20px)',
+        }}
+      >
         {icon}
       </div>
-      <div className="text-lg font-extrabold mb-2 tracking-tight">{title}</div>
+      <div className="text-lg font-black mb-1.5" style={{ letterSpacing: '-.01em' }}>{title}</div>
       {body && (
-        <p className="text-sm leading-relaxed max-w-[260px] mb-6" style={{ color: 'var(--muted)' }}>
+        <p
+          className="text-sm leading-relaxed max-w-[260px]"
+          style={{ color: 'var(--muted)', marginBottom: ctaLabel ? 18 : 0 }}
+        >
           {body}
         </p>
       )}
@@ -24,8 +38,13 @@ export function EmptyState({ icon, title, body, ctaLabel, onCta }: EmptyStatePro
         <button
           type="button"
           onClick={onCta}
-          className="px-6 py-3 rounded-md text-sm font-extrabold border-none cursor-pointer"
-          style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}
+          className="px-[22px] py-3 rounded-md text-sm font-black border-none cursor-pointer"
+          style={{
+            background: 'var(--accent)',
+            color: 'var(--text-on-accent)',
+            fontFamily: 'inherit',
+            boxShadow: 'var(--shadow-brand-md)',
+          }}
         >
           {ctaLabel}
         </button>

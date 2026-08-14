@@ -22,7 +22,7 @@ export default {
         'accent-2': 'var(--accent-2)',
         text: 'var(--text)',
         muted: 'var(--muted)',
-        glass: 'rgba(255,240,200,0.05)',
+        glass: 'var(--surface-cream-5)',
       },
       fontFamily: {
         sans: ['Nunito', '-apple-system', 'SF Pro Display', 'sans-serif'],

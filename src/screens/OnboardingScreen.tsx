@@ -36,7 +36,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
         </div>
       </div>
       <div className="text-[13px] mb-6 lg:mb-8 text-center lg:text-left" style={{ color: 'var(--muted)' }}>
-        Список покупок и расчёты для большой компании. На одном экране — все участники, что куплено, сколько с кого.
+        Организуй что угодно вместе — от пикника до переезда.
       </div>
 
       <div className="lg:p-0 lg:bg-transparent lg:border-none rounded-[20px] p-5 w-full glass lg:shadow-none">
@@ -64,7 +64,7 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
 
         {!canAuth && (
           <div className="mb-3 rounded-xl px-3 py-[10px] text-[12px]"
-            style={{ background: 'rgba(255,80,80,.08)', border: '1px solid var(--gb)', color: 'var(--muted)' }}>
+            style={{ background: 'var(--surface-danger-10)', border: '1px solid var(--surface-danger-30)', color: 'var(--red)' }}>
             Для создания или входа в группу нужен аккаунт на сайте или Telegram Mini App.
           </div>
         )}
@@ -79,7 +79,11 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
             </div>
             <button onClick={doCreate}
               className="w-full py-[14px] rounded-[12px] border-none text-[15px] font-extrabold cursor-pointer mt-1"
-              style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}>
+              style={{
+                background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit',
+                boxShadow: 'var(--shadow-brand-md)',
+                opacity: groupName.trim() ? 1 : 0.5,
+              }}>
               Создать группу
             </button>
           </div>
@@ -89,12 +93,24 @@ export function OnboardingScreen({ onDone }: OnboardingScreenProps) {
             <div className="mb-3">
               <label className="block text-[11px] font-extrabold mb-[6px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>Код приглашения</label>
               <input
-                style={{ ...inputStyle, textTransform: 'uppercase', letterSpacing: '.1em', fontSize: 18, textAlign: 'center', lineHeight: '1.2' }}
+                style={{
+                  ...inputStyle,
+                  textTransform: 'uppercase',
+                  letterSpacing: '.2em',
+                  fontSize: 'var(--t-xl)',
+                  fontWeight: 900,
+                  textAlign: 'center',
+                  lineHeight: '1.2',
+                }}
                 value={code} onChange={e => setCode(e.target.value)} placeholder="XXXXXX" maxLength={6} />
             </div>
             <button onClick={doJoin}
               className="w-full py-[14px] rounded-[12px] border-none text-[15px] font-extrabold cursor-pointer mt-1"
-              style={{ background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit' }}>
+              style={{
+                background: 'var(--accent)', color: 'var(--text-on-accent)', fontFamily: 'inherit',
+                boxShadow: 'var(--shadow-brand-md)',
+                opacity: code.trim() ? 1 : 0.5,
+              }}>
               Присоединиться
             </button>
           </div>

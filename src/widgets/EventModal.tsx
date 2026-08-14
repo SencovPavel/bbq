@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { IconX } from '@shared/ui/Icon'
 import { Toggle } from '@shared/ui/Toggle'
+import { ConfirmModal } from '@shared/ui/ConfirmModal'
 import { EVENT_TYPES } from '@shared/config/event-types'
 import type { PicnicEvent } from '@shared/types'
 
@@ -19,6 +20,7 @@ export function EventModal({ event, onSave, onClose, onDelete }: EventModalProps
   const [description, setDescription] = useState(event?.description ?? '')
   const [type,        setType]        = useState(event?.type ?? EVENT_TYPES[0].id)
   const [hasBudget,   setHasBudget]   = useState(event ? event.has_budget !== false : true)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   function pickType(t: typeof EVENT_TYPES[number]) {
     setType(t.id)
@@ -142,7 +144,7 @@ export function EventModal({ event, onSave, onClose, onDelete }: EventModalProps
 
         <div className="flex gap-2 mt-5">
           {onDelete && (
-            <button onClick={onDelete}
+            <button onClick={() => setConfirmDelete(true)}
               className="py-[13px] px-4 rounded-[12px] border-none cursor-pointer font-bold text-[13px]"
               style={{ background: 'var(--surface-danger-12)', color: 'var(--red)', fontFamily: 'inherit', border: '1px solid var(--surface-danger-25)' }}>
               Удалить
@@ -162,6 +164,16 @@ export function EventModal({ event, onSave, onClose, onDelete }: EventModalProps
             {event ? 'Сохранить' : 'Создать'}
           </button>
         </div>
+
+        {onDelete && (
+          <ConfirmModal
+            open={confirmDelete}
+            message={`Удалить «${event?.name ?? 'событие'}»? Список и позиции события будут удалены безвозвратно.`}
+            confirmText="Удалить"
+            onConfirm={() => { setConfirmDelete(false); onDelete() }}
+            onCancel={() => setConfirmDelete(false)}
+          />
+        )}
       </div>
     </div>
   )

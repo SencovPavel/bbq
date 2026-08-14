@@ -65,14 +65,16 @@ export function FamilyScreen() {
             <EmptyState
               icon={<IconPerson size={44} strokeWidth={1.4} />}
               title="Пока никого нет"
-              body="Добавь членов семьи, которые ходят с тобой на пикники — детей, партнёра, гостей"
+              body="Добавь членов семьи, которые участвуют вместе с тобой — детей, партнёра, гостей"
               ctaLabel="+ Добавить первого"
               onCta={() => setAddOpen(true)}
             />
           </div>
         )}
 
-        {members.map(member => {
+        {members.length > 0 && (
+        <div className="cards-grid">
+        {members.map((member, i) => {
           const chips = member.groups.slice(0, 3)
           const overflow = member.groups.length - chips.length
           return (
@@ -80,8 +82,8 @@ export function FamilyScreen() {
               key={member.id}
               type="button"
               onClick={() => openEdit(member)}
-              className="glass rounded-[18px] overflow-hidden w-full text-left border-none cursor-pointer"
-              style={{ fontFamily: 'inherit' }}
+              className="row-hover anim-up glass rounded-[18px] overflow-hidden w-full text-left border-none cursor-pointer"
+              style={{ fontFamily: 'inherit', animationDelay: `${i * 0.05}s` }}
             >
               <div className="flex items-center gap-3 px-4 py-3.5">
                 <UserAvatar name={member.name} size={40} />
@@ -116,6 +118,8 @@ export function FamilyScreen() {
             </button>
           )
         })}
+        </div>
+        )}
 
         {!loading && members.length > 0 && (
           <div
@@ -158,7 +162,7 @@ export function FamilyScreen() {
           return (
             <div className="mb-3">
               <div className="text-[11px] font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--muted)' }}>
-                Участвует в пикниках
+                Участвует в группах
               </div>
               {groups.length > 6 && (
                 <GlassInput

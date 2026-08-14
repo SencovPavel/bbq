@@ -56,3 +56,23 @@
 .tab-in-l {
   animation: tabSlideInLeft 0.22s ease-out both;
 }
+
+@keyframes fadeUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    /* Позволяет карточкам с собственной итоговой прозрачностью (например,
+       притушенным "прошедшим" элементам) не быть перезаписанными анимацией —
+       переопределяется через инлайн `--anim-up-opacity`. */
+    opacity: var(--anim-up-opacity, 1);
+  }
+}
+
+/* Каскадная анимация появления карточек: animationDelay задаётся инлайн
+   (например `${i * 0.05}s`) на каждой карточке списка. */
+.anim-up {
+  animation: fadeUp 0.3s ease both;
+}

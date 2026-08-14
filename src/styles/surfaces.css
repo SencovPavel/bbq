@@ -25,7 +25,10 @@
   --surface-sidebar: color-mix(in srgb, var(--color-bg-base) 72%, transparent);
   --surface-elevated: var(--color-coal);
   --surface-muted: var(--color-stone-700);
+  --surface-cream-4: color-mix(in srgb, var(--color-cream) 4%, transparent);
+  --surface-cream-5: color-mix(in srgb, var(--color-cream) 5%, transparent);
   --surface-cream-6: color-mix(in srgb, var(--color-cream) 6%, transparent);
+  --surface-cream-8: color-mix(in srgb, var(--color-cream) 8%, transparent);
   --surface-input: color-mix(in srgb, var(--color-cream) 6%, transparent);
   --surface-strong: color-mix(in srgb, var(--color-cream) 8%, transparent);
   --surface-subtle: color-mix(in srgb, var(--color-cream) 4%, transparent);
@@ -55,7 +58,6 @@
   --surface-amber-8: color-mix(in srgb, var(--color-amber) 8%, transparent);
   --surface-amber-10: color-mix(in srgb, var(--color-amber) 10%, transparent);
   --surface-amber-12: color-mix(in srgb, var(--color-amber) 12%, transparent);
-  --surface-amber-14: color-mix(in srgb, var(--color-amber) 14%, transparent);
   --surface-amber-65: color-mix(in srgb, var(--color-amber) 65%, transparent);
   --surface-amber-70: color-mix(in srgb, var(--color-amber) 70%, transparent);
   --surface-amber-15: color-mix(in srgb, var(--color-amber) 15%, transparent);

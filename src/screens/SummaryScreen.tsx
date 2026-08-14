@@ -2,11 +2,12 @@ import { useId, type ReactNode } from 'react'
 import { GlassCard, Divider } from '@shared/ui/GlassCard'
 import {
   IconShare, IconRobot, IconAlertCircle, IconAlertTriangle, IconCheckCircle,
-  IconReceipt, IconClipboard, IconCheck, IconChevronUp, IconChevronDown,
+  IconReceipt, IconClipboard, IconCheck, IconChevronUp, IconChevronDown, IconPlus,
 } from '@shared/ui/Icon'
 import { CatTile } from '@entities/category/ui/CatTile'
 import { ActivityFeed } from '@widgets/ActivityFeed'
 import { NoEventsPrompt } from '@widgets/NoEventsPrompt'
+import { AddItemModal } from '@widgets/AddItemModal'
 import { useSummaryScreenVM } from './useSummaryScreenVM'
 
 // ── StatLabel ─────────────────────────────────────────────────────────────────
@@ -91,10 +92,11 @@ function ReadyRing({ pct, done, total, size = 60, sw = 6 }: ReadyRingProps) {
 export function SummaryScreen() {
   const vm = useSummaryScreenVM()
   const {
-    events, activity, amIAdmin,
+    events, activity, amIAdmin, categories,
     actualTotal, boughtCount, enabledLen, pct, perPerson, ppl, catRows, hasBudget,
     myTransfers, iSend, net, singleTransfer, counterparty,
     analysis, loading, panelOpen, copied,
+    addMissingName, canAddMissing, openAddMissing, closeAddMissing, submitAddMissing,
     runAnalysis, shareList, copyTransfer, setShowEventSheet, fmt,
   } = vm
 
@@ -256,10 +258,27 @@ export function SummaryScreen() {
               {analysis.missing!.map((m, i) => (
                 <div key={i} className="flex items-start gap-2 py-[6px] text-[12px] border-b last:border-none" style={{ borderColor: 'var(--gb)' }}>
                   <span style={{ color: 'var(--red)', marginTop: 1 }}><IconAlertCircle size={13} /></span>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="font-bold">{m.name}</div>
                     {m.hint && <div style={{ color: 'var(--muted)' }}>"{m.hint}"</div>}
                   </div>
+                  {canAddMissing && (
+                    <button
+                      type="button"
+                      title="Добавить в список"
+                      aria-label={`Добавить «${m.name}» в список`}
+                      onClick={() => openAddMissing(m.name)}
+                      className="shrink-0 h-[26px] px-2 rounded-[9px] text-[11px] font-extrabold flex items-center gap-1 cursor-pointer"
+                      style={{
+                        background: 'var(--surface-fire-12)',
+                        border: '1px solid var(--accent)',
+                        color: 'var(--accent)',
+                        fontFamily: 'inherit',
+                      }}
+                    >
+                      <IconPlus size={11} strokeWidth={2.4} /> Добавить
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -297,6 +316,15 @@ export function SummaryScreen() {
       >
         <IconShare size={15} strokeWidth={2} /> Поделиться списком
       </button>
+
+      {/* Добавление позиции из панели агента */}
+      <AddItemModal
+        open={addMissingName !== null}
+        initialName={addMissingName ?? ''}
+        categories={categories}
+        onClose={closeAddMissing}
+        onSubmit={submitAddMissing}
+      />
     </div>
   )
 }

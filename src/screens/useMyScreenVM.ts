@@ -1,7 +1,10 @@
 import { useState, useMemo, useCallback } from 'react'
 
 import { fmt } from '@shared/lib/session'
-import { isEventItemsLocked } from '@shared/lib/event-status'
+
+import { isEventItemsLocked, selectCurrentEvent, selectHasBudget, LIST_LOCKED_MESSAGE } from '@entities/event/model'
+import { selectEventItems } from '@entities/item/model'
+import { selectAmIAdmin } from '@entities/member/model'
 
 import { useWsStore } from '@stores/wsStore'
 import { useSessionStore } from '@stores/sessionStore'
@@ -47,11 +50,11 @@ export function useMyScreenVM() {
   )
 
   const currentEvent = useMemo(
-    () => currentEventId ? events.find(e => e.id === currentEventId) : undefined,
+    () => selectCurrentEvent(events, currentEventId),
     [events, currentEventId],
   )
   const listLocked = isEventItemsLocked(currentEvent?.status)
-  const hasBudget  = currentEvent?.has_budget !== false
+  const hasBudget  = selectHasBudget(currentEvent)
 
   const amIAttending = useMemo(() => {
     if (!currentEventId || !meId) return true
@@ -60,7 +63,7 @@ export function useMyScreenVM() {
   }, [rsvp, currentEventId, meId])
 
   const amIAdmin = useMemo(
-    () => members.find(m => m.user_id === meId)?.is_admin ?? false,
+    () => selectAmIAdmin(members, meId),
     [members, meId],
   )
 
@@ -82,7 +85,7 @@ export function useMyScreenVM() {
   )
 
   const items = useMemo(
-    () => currentEventId ? allItems.filter(i => i.event_id === currentEventId) : allItems,
+    () => selectEventItems(allItems, currentEventId),
     [allItems, currentEventId],
   )
 
@@ -122,7 +125,7 @@ export function useMyScreenVM() {
   }
 
   function showLockedToast() {
-    showToast('Событие завершено — список только для просмотра', 'muted')
+    showToast(LIST_LOCKED_MESSAGE, 'muted')
   }
 
   function toggleBought(id: string, val: boolean) {

@@ -57,7 +57,7 @@ export function GroupBar({ group, currentEvent, onBack }: GroupBarProps) {
     <div
       className="flex items-center gap-2 px-3.5 pt-[max(12px,env(safe-area-inset-top))] pb-2.5
                  bg-[rgba(16,14,11,0.78)] backdrop-blur-xl backdrop-saturate-150
-                 border-b border-[rgba(255,220,150,0.06)]"
+                 border-b border-[var(--surface-cream-6)]"
     >
       <GlassIconButton onClick={onBack} ariaLabel="Все группы">
         <IconChevronLeft size={15} />

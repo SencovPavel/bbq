@@ -3,6 +3,7 @@ import { UserAvatar }                                 from '@entities/member/ui/
 import { BackButton, GlassIconButton }                from '@shared/ui/GlassIconButton'
 import { NavRow }                                     from '@shared/ui/NavRow'
 import { StatBox }                                    from '@shared/ui/StatBox'
+import { Chip }                                       from '@shared/ui/Chip'
 import { IconFlag, IconPencil, IconCrown, IconPerson } from '@shared/ui/Icon'
 
 import { useProfileScreenVM }                         from './useProfileScreenVM'
@@ -57,17 +58,13 @@ export function ProfileScreen() {
                     {me?.name ?? '—'}
                   </span>
                   {me?.is_admin && (
-                    <span
-                      className="inline-flex items-center gap-[3px] text-[9.5px] font-extrabold uppercase rounded-pill px-[7px] py-[2px]"
-                      style={{
-                        color: 'var(--accent)',
-                        background: 'rgba(249,115,22,.12)',
-                        border: '1px solid rgba(249,115,22,.28)',
-                        letterSpacing: '.06em',
-                      }}
+                    <Chip
+                      tint="fire"
+                      icon={<IconCrown size={9} />}
+                      style={{ fontSize: 9.5, padding: '2px 7px', textTransform: 'uppercase', letterSpacing: '.06em' }}
                     >
-                      <IconCrown size={9} /> Админ
-                    </span>
+                      Админ
+                    </Chip>
                   )}
                 </div>
                 {me?.username && (
@@ -90,48 +87,50 @@ export function ProfileScreen() {
           </div>
         </div>
 
-        {/* ── Обо мне (read-only) ───────────────────────────────────────────── */}
-        <div className="glass rounded-[18px] p-4">
-          <div className="flex items-center justify-between mb-2.5">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
-              Обо мне
-            </span>
-            <button
-              onClick={openEdit}
-              className="inline-flex items-center gap-1 text-xs font-bold border-none bg-transparent cursor-pointer p-0"
-              style={{ color: 'var(--accent)', fontFamily: 'inherit' }}
-            >
-              <IconPencil size={12} /> {me?.bio ? 'Изменить' : 'Добавить'}
-            </button>
+        <div className="cards-grid--fit">
+          {/* ── Обо мне (read-only) ───────────────────────────────────────────── */}
+          <div className="glass rounded-[18px] p-4">
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
+                Обо мне
+              </span>
+              <button
+                onClick={openEdit}
+                className="inline-flex items-center gap-1 text-xs font-bold border-none bg-transparent cursor-pointer p-0"
+                style={{ color: 'var(--accent)', fontFamily: 'inherit' }}
+              >
+                <IconPencil size={12} /> {me?.bio ? 'Изменить' : 'Добавить'}
+              </button>
+            </div>
+            {me?.bio ? (
+              <p className="text-[13.5px] leading-relaxed m-0" style={{ wordBreak: 'break-word' }}>
+                {me.bio}
+              </p>
+            ) : (
+              <p className="text-[13px] leading-normal m-0 italic" style={{ color: 'var(--muted)' }}>
+                Расскажи коротко о себе — что обычно берёшь на себя в общих делах
+              </p>
+            )}
           </div>
-          {me?.bio ? (
-            <p className="text-[13.5px] leading-relaxed m-0" style={{ wordBreak: 'break-word' }}>
-              {me.bio}
-            </p>
-          ) : (
-            <p className="text-[13px] leading-normal m-0 italic" style={{ color: 'var(--muted)' }}>
-              Расскажи коротко о себе — что любишь готовить, за что отвечаешь на пикниках
-            </p>
-          )}
-        </div>
 
-        {/* ── Навигация ─────────────────────────────────────────────────────── */}
-        <div className="glass rounded-[18px] overflow-hidden">
-          <NavRow
-            icon={<IconPerson size={18} strokeWidth={1.8} />}
-            iconBg="var(--surface-violet-14)" iconColor="#c4b5fd"
-            title="Моя семья"
-            meta={familyMeta}
-            onClick={goToFamily}
-          />
-          <div className="h-px mx-[15px]" style={{ background: 'var(--gb)' }} />
-          <NavRow
-            icon={<IconFlag size={17} strokeWidth={1.8} />}
-            iconBg="var(--surface-success-13)" iconColor="var(--green)"
-            title="Предпочтения и ограничения"
-            meta="Аллергии, вегетарианство, не ем острое"
-            soon
-          />
+          {/* ── Навигация ─────────────────────────────────────────────────────── */}
+          <div className="glass rounded-[18px] overflow-hidden">
+            <NavRow
+              icon={<IconPerson size={18} strokeWidth={1.8} />}
+              iconBg="var(--surface-violet-14)" iconColor="#c4b5fd"
+              title="Моя семья"
+              meta={familyMeta}
+              onClick={goToFamily}
+            />
+            <div className="h-px mx-[15px]" style={{ background: 'var(--gb)' }} />
+            <NavRow
+              icon={<IconFlag size={17} strokeWidth={1.8} />}
+              iconBg="var(--surface-success-13)" iconColor="var(--green)"
+              title="Предпочтения и ограничения"
+              meta="Аллергии, вегетарианство, не ем острое"
+              soon
+            />
+          </div>
         </div>
 
         {/* ── Футер ────────────────────────────────────────────────────────── */}

@@ -100,3 +100,57 @@
 .hero-glow {
   background: radial-gradient(circle, var(--surface-amber-18), transparent 65%);
 }
+
+/* ── tap-target ────────────────────────────────────────────────────────
+ * Невидимая hit-area ≥44×44 для мелких иконок-кнопок (edit-карандаш,
+ * степпер +/-, и т.п.). Класс сам выставляет родителю position:relative —
+ * достаточно повесить .tap-target на сам кликабельный элемент.
+ * ::before percentage-inset считается от размера самого элемента
+ * (containing block абсолютно спозиционированного потомка), поэтому
+ * для элементов < 44px итоговые inset уходят в отрицательные значения
+ * и растягивают невидимую область наружу до 44×44. */
+.tap-target {
+  position: relative;
+}
+.tap-target::before {
+  content: '';
+  position: absolute;
+  inset: calc((100% - 44px) / 2);
+}
+
+/* ── row-hover ─────────────────────────────────────────────────────────
+ * Лёгкая подсветка строк/карточек при наведении (десктоп, мышь). */
+.row-hover {
+  transition: background 0.12s;
+}
+.row-hover:hover {
+  background: var(--surface-cream-4);
+}
+
+/* ── cards-grid ────────────────────────────────────────────────────────
+ * Мобильный/планшетный вид — вертикальный список карточек; на lg+
+ * (десктоп) карточки укладываются в адаптивную сетку.
+ * --fit — для секций с малым фиксированным числом карточек (сжимается
+ * до фактического контента вместо пустых колонок). */
+.cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.cards-grid--fit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+@media (min-width: 1024px) {
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    align-items: start;
+  }
+  .cards-grid--fit {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    align-items: start;
+  }
+}

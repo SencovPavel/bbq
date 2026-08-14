@@ -169,6 +169,7 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
               background: 'var(--gradient-cta)',
               color: 'var(--text-on-accent)',
               opacity: loading ? .65 : 1,
+              boxShadow: 'var(--shadow-brand-md)',
               transition: 'opacity .15s',
             }}>
             {loading
@@ -245,6 +246,14 @@ export function AuthScreen({ onDone }: AuthScreenProps) {
           </button>
         </div>
       </div>
+
+      {/* Дисклеймер */}
+      <p
+        className="text-center"
+        style={{ fontSize: 11, color: 'var(--muted)', opacity: .55, marginTop: 18, lineHeight: 1.6 }}
+      >
+        Нажимая кнопку, вы соглашаетесь с условиями сервиса
+      </p>
     </div>
   )
 }

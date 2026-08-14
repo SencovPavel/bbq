@@ -8,7 +8,7 @@
  *   components/     — переиспользуемые классы (.glass, .btn-*)
  *   layout/         — shell, sidebar, web-page
  *   overlays/       — модалки на десктопе
- *   ui/             — toggle, loader
+ *   ui/             — loader
  *   animations.css  — keyframes
  *
  * В JSX: Tailwind для мелочей, BEM-классы для layout-блоков.
@@ -24,7 +24,6 @@
 @import './styles/layout/app-sidebar.css';
 @import './styles/layout/web-page.css';
 @import './styles/overlays/modal-desktop.css';
-@import './styles/ui/toggle.css';
 @import './styles/ui/loader.css';
 @import './styles/animations.css';
 

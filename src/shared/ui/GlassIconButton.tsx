@@ -32,12 +32,12 @@ export function GlassIconButton({
       aria-label={ariaLabel ?? title}
       style={{ width: size, height: size }}
       className={[
-        'rounded-full flex items-center justify-center shrink-0 cursor-pointer',
+        'relative tap-target rounded-full flex items-center justify-center shrink-0 cursor-pointer',
         'border active:scale-95 transition',
         'backdrop-blur-md backdrop-saturate-150',
         accent
           ? 'bg-[rgba(249,115,22,0.12)] border-[rgba(249,115,22,0.30)] text-[var(--accent)]'
-          : 'bg-[rgba(255,240,200,0.08)] border-[var(--card-b)] text-[var(--text)]',
+          : 'bg-[var(--surface-cream-8)] border-[var(--card-b)] text-[var(--text)]',
         className,
       ].filter(Boolean).join(' ')}
     >
